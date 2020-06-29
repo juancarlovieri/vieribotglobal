@@ -6,6 +6,7 @@ const fs = require('fs');
  
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
+bot.sendMessage(-1001265467717, 'ready');
 const cfduel = require('./cfduel.js');
 const cfreminder = require('./reminder.js');
 const wolfram = require('./wolfram.js');
@@ -42,23 +43,20 @@ var restart = 0;
 // messages.
 bot.on('message', (msg) => {
   var exit = 0;
+  console.log(msg);
   var args = msg.text.split(" ");
   if(args[0][0] == ';'){
     switch(args[0]){
-      case ';now':
-        if(restart){
-          console.log('restarting');
-        }
-      break;
       case ';atcoder':
         if(atcoder.duel(bot, msg) != 0){
 
         }
       break;
       case ';restart':
-        console.log(msg.from.username);
-        if(msg.from.username != 'juancarlovieri')return;
-        process.exit(0);
+        bot.sendMessage(msg.chat.id, "restarting");
+        setTimeout(() => {
+            process.exit(0);
+        }, 5000);
       break;
       case ';paksa':
         if(msg.author.id != '455184547840262144'){
