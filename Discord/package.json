@@ -1,0 +1,30 @@
+{
+  "name": "vieri_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "crypto": "^1.0.1",
+    "discord.js": "^12.2.0",
+    "encodeurl": "^1.0.2",
+    "escape-html": "^1.0.3",
+    "express": "^4.17.1",
+    "forever": "^3.0.0",
+    "html-entities": "^1.3.1",
+    "node-telegram-bot-api": "^0.50.0",
+    "plotly": "^1.0.6",
+    "sha256": "^0.2.0",
+    "sync-request": "^6.1.0",
+    "url": "^0.11.0",
+    "wolfram-alpha-api": "https://products.wolframalpha.com/api/libraries/javascript/wolfram-alpha-api-1.0.0-rc.1.tgz"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bot.js"
+  },
+  "author": "Juan Carlo Vieri",
+  "license": "ISC"
+}
