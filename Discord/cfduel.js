@@ -32,8 +32,6 @@ function download(uri, filename, callback){
 }
 
 function init(){
-  obj = JSON.parse(fs.readFileSync("idToUsername.json", "utf8"));
-  idToUsername = new Map(Object.entries(obj));
   obj = JSON.parse(fs.readFileSync("../vis.json", "utf8"));
   var vis = new Map(Object.entries(obj));
   if(vis.get('vis') == true)return 0;

@@ -282,9 +282,9 @@ module.exports = {
         }
         if(scoreA + scoreB == 1500 || temp.start + 3600000 < Date.now()){
           if(scoreA > scoreB){
-            msg.channel.send('<@' + msg.author.id + '> won against <@' + temp.opp + '>');
+            msg.channel.send('<@' + msg.author.id + '> won against <@' + temp.opp + '> with a final score of ' + scoreA + ' - ' + scoreB);
           } else{
-            msg.channel.send('<@' +temp.opp + '> won against <@' +  msg.author.id + '>');
+            msg.channel.send('<@' +temp.opp + '> won against <@' +  msg.author.id + '> with a final score of ' + scoreA + ' - ' + scoreB);
           }
           ongoing.delete(msg.author.id);
           ongoing.delete(temp.opp);

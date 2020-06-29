@@ -3,35 +3,12 @@ var bot = new Discord.Client();
 var auth = require('./auth.json');
 bot.login(auth.token);
 const fs = require('fs');
-var obj = JSON.parse(fs.readFileSync("idToUsername.json", "utf8"));
-var idToUsername = new Map(Object.entries(obj));
-obj = JSON.parse(fs.readFileSync("usernameToId.json"), "utf8");
-var usernameToId = new Map(Object.entries(obj));
+var obj;
 const cfduel = require('./cfduel.js');
 const atcoder = require('./atcoder.js');
 const wolfram = require('./wolfram.js');
 
 function save(){
-  var jsonObj = Object.fromEntries(idToUsername);
-  console.log(jsonObj);
-  var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("idToUsername.json", jsonContent, "utf8", function(err) {
-    if (err) {
-      console.log("An errr occured while writing JSON jsonObj to File.");
-      return console.log(err);
-    }
-    console.log("saved");
-  });
-  jsonObj = Object.fromEntries(usernameToId);
-  console.log(jsonObj);
-  var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("usernameToId.json", jsonContent, "utf8", function(err) {
-    if (err) {
-      console.log("An errr occured while writing JSON jsonObj to File.");
-      return console.log(err);
-    }
-    console.log("saved");
-  });
 }
 
 bot.on("message", msg => {
