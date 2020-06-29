@@ -1,3 +1,8 @@
 Discord/auth.json
 Telegram/auth.json
+.DS_Store
+Discord/node_modules/
+Discord/.DS_Store
+Telegram/node_modules/
+Telegram/.DS_Store
 
