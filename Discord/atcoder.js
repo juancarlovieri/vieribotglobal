@@ -100,7 +100,7 @@ module.exports = {
         var problems = JSON.parse(request('GET', 'https://kenkoooo.com/atcoder/resources/contest-problem.json').getBody());
         var submission = JSON.parse(request('GET', 'https://kenkoooo.com/atcoder/atcoder-api/results?user=' + handles.get(msg.author.id)).getBody());
         problems = shuffleArray(problems);
-        var num = (args[3][0].charCodeAt(0) - 97).toString();
+        var num = (args[3][0].charCodeAt(0) - 97 + 1).toString();
         // if(args[2].toLowerCase() == 'a')num = 1;
         // else if(args[2].toLowerCase() == 'b')num = 2;
         // else if(args[2].toLowerCase() == 'c')num = 3;
