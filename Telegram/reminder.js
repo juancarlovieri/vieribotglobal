@@ -13,12 +13,14 @@ module.exports = {
       bot.sendMessage(-1001265467717, 'internal error, contact developer');
       return;
     }
-    setTimeout(function(){
-      bot.sendMessage(-1001265467717, list[indx].name + ' is about to start in 1 hour!');
+    if((list[indx].startTimeSeconds - 3600) * 1000 - Date.now() >= 0){
       setTimeout(function(){
-        console.log('restarting to reset reminder');
-        process.exit(0);
-      }, (list[indx].startTimeSeconds + 1) * 1000 - Date.now());
-    }, (list[indx].startTimeSeconds - 3600) * 1000 - Date.now());
+        bot.sendMessage(-1001265467717, list[indx].name + ' is about to start in 1 hour!');
+      }, (list[indx].startTimeSeconds - 3600) * 1000 - Date.now());
+    }
+    setTimeout(function(){
+      console.log('restarting to reset reminder');
+      process.exit(0);
+    }, (list[indx].startTimeSeconds + 1) * 1000 - Date.now());
   }
 }
