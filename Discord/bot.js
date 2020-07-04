@@ -36,7 +36,11 @@ bot.on("message", msg => {
       return;
     }
     console.log('restarting');
-    process.exit(0);
+    msg.channel.send('restarting');
+    setTimeout(() => {
+        process.exit(0);
+    }, 5000);
+    return;
   }
   var args = msg.content.split(" ");
   if(args[0][0] == '^'){
