@@ -28,7 +28,9 @@ function command(args, msg){
   }
 }
 
+
 bot.on("message", msg => {
+  msg.channel.send('processing your request');
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
       return;

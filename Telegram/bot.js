@@ -6,7 +6,6 @@ const fs = require('fs');
  
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
-bot.sendMessage(-1001265467717, 'ready');
 const cfduel = require('./cfduel.js');
 const cfreminder = require('./reminder.js');
 const wolfram = require('./wolfram.js');
@@ -59,6 +58,7 @@ var restart = 0;
 // Listen for any kind of message. There are different kinds of
 // messages.
 bot.on('message', (msg) => {
+
   if(msg.text == ';restart'){
     if(msg.from.username != 'juancarlovieri')return;
     bot.sendMessage(msg.chat.id, "restarting");
@@ -94,8 +94,4 @@ bot.on('message', (msg) => {
   // }
 });
 
-module.exports = {
-  run: function(){
-
-  }
-}
+bot.sendMessage(-1001265467717, 'ready');
