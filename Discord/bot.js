@@ -29,7 +29,7 @@ function command(args, msg){
 }
 
 bot.on("ready", msg =>{
-  console.log('ready');
+  console.log('ready'); 
 })
 
 bot.on("message", msg => {
