@@ -1,3 +1,5 @@
+const lockFile = require('lockfile');
+
 module.exports = {
   remind: function(bot){
     var request = require('sync-request');
