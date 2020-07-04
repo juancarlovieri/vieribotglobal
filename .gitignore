@@ -5,4 +5,8 @@ Discord/node_modules/
 Discord/.DS_Store
 Telegram/node_modules/
 Telegram/.DS_Store
+Telegram/package-lock.json
+Discord/package-lock.json
+Discord/display.png
+Telegram/display.png
 
