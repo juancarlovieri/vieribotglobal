@@ -62,7 +62,7 @@ function command(args, msg){
         // });
       }
     break; 
-    case ';ask':
+    case '^ask':
       wolfram.ask(bot, msg);
     break;
   }
