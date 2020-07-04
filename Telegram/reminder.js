@@ -19,8 +19,16 @@ module.exports = {
       }, (list[indx].startTimeSeconds - 3600) * 1000 - Date.now());
     }
     setTimeout(function(){
-      console.log('restarting to reset reminder');
-      process.exit(0);
+      lockFile.lock('../lock.lock', opts, function(error){
+        if(error != undefined){
+          console.log('busy on restart to reset reminder');
+          console.log(error);
+          return;
+        }
+        lockFile.unlockSync('../lock.lock');
+        console.log('restarting to reset reminder');
+        process.exit(0);
+      });
     }, (list[indx].startTimeSeconds + 1) * 1000 - Date.now());
   }
 }
