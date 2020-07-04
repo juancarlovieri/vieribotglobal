@@ -20,21 +20,7 @@ function command(args, msg){
       }
     break;
     case '^duel':
-      if(cfduel.duel(bot, msg) != 0){
-        // console.log('reverting');
-        // var vis = new Map();
-        // vis.set('vis', false);
-        // var jsonObj = Object.fromEntries(vis);
-        // console.log(jsonObj);
-        // var jsonContent = JSON.stringify(jsonObj);
-        // fs.writeFileSync("../vis.json", jsonContent, "utf8", function(err) {
-        //   if (err) {
-        //     console.log("An errr occured while writing JSON jsonObj to File.");
-        //     return console.log(err);
-        //   }
-        //   console.log("saved");
-        // });
-      }
+      cfduel.duel(bot, msg);
     break; 
     case '^ask':
       wolfram.ask(bot, msg);
