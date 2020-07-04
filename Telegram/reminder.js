@@ -19,6 +19,9 @@ module.exports = {
       }, (list[indx].startTimeSeconds - 3600) * 1000 - Date.now());
     }
     setTimeout(function(){
+      var opts = {
+        wait: 30000
+      }
       lockFile.lock('../lock.lock', opts, function(error){
         if(error != undefined){
           console.log('busy on restart to reset reminder');
