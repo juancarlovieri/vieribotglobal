@@ -15,7 +15,6 @@ module.exports = {
     }
     setTimeout(function(){
       bot.sendMessage(-1001265467717, list[indx].name + ' is about to start in 1 hour!');
-      process.exit(0);
     }, (list[indx].startTimeSeconds - 3600) * 1000 - Date.now());
   }
 }
