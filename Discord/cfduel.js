@@ -19,6 +19,7 @@ var challenge = new Map();
 var regisTemp = new Map();
 var auth = require('./auth.json');
 var plotly = require('plotly')('juancarlovieri', auth.plotly);
+const lockFile = require('lockfile');
 
 function ratingArr(){return rating;}
 
@@ -32,20 +33,20 @@ function download(uri, filename, callback){
 }
 
 function init(){
-  obj = JSON.parse(fs.readFileSync("../vis.json", "utf8"));
-  var vis = new Map(Object.entries(obj));
-  if(vis.get('vis') == true)return 0;
-  vis.set('vis', true);
-  var jsonObj = Object.fromEntries(vis);
-  console.log(jsonObj);
-  var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("../vis.json", jsonContent, "utf8", function(err) {
-    if (err) {
-      console.log("An errr occured while writing JSON jsonObj to File.");
-      return console.log(err);
-    }
-    console.log("saved");
-  });
+  // obj = JSON.parse(fs.readFileSync("../vis.json", "utf8"));
+  // var vis = new Map(Object.entries(obj));
+  // if(vis.get('vis') == true)return 0;
+  // vis.set('vis', true);
+  // var jsonObj = Object.fromEntries(vis);
+  // console.log(jsonObj);
+  // var jsonContent = JSON.stringify(jsonObj);
+  // fs.writeFileSync("../vis.json", jsonContent, "utf8", function(err) {
+  //   if (err) {
+  //     console.log("An errr occured while writing JSON jsonObj to File.");
+  //     return console.log(err);
+  //   }
+  //   console.log("saved");
+  // });
   obj = JSON.parse(fs.readFileSync("../rating.json", "utf8"));
   rating = new Map(Object.entries(obj));
   obj = JSON.parse(fs.readFileSync("../points.json", "utf8"));

@@ -37,31 +37,39 @@ bot.onText(/\/start/, (msg) => {
 //   cfduel.duel(bot, msg);
 // });
 
-var restart = 0;
- 
-// Listen for any kind of message. There are different kinds of
-// messages.
-bot.on('message', (msg) => {
-  var exit = 0;
-  console.log(msg);
-  var args = msg.text.split(" ");
-  if(args[0][0] == ';'){
-    switch(args[0]){
-      case ';atcoder':
-        if(atcoder.duel(bot, msg) != 0){
+function command(args, msg){
+  switch(args[0]){
+    case ';atcoder':
+      if(atcoder.duel(bot, msg) != 0){
 
+      }
+    break;
+    case ';restart':
+      bot.sendMessage(msg.chat.id, "restarting");
+      setTimeout(() => {
+          process.exit(0);
+      }, 5000);
+    break;
+    case ';paksa':
+      if(msg.author.id != '455184547840262144'){
+        return;
+      }
+      console.log('reverting');
+      var vis = new Map();
+      vis.set('vis', false);
+      var jsonObj = Object.fromEntries(vis);
+      console.log(jsonObj);
+      var jsonContent = JSON.stringify(jsonObj);
+      fs.writeFileSync("../vis.json", jsonContent, "utf8", function(err) {
+        if (err) {
+          console.log("An errr occured while writing JSON jsonObj to File.");
+          return console.log(err);
         }
-      break;
-      case ';restart':
-        bot.sendMessage(msg.chat.id, "restarting");
-        setTimeout(() => {
-            process.exit(0);
-        }, 5000);
-      break;
-      case ';paksa':
-        if(msg.author.id != '455184547840262144'){
-          return;
-        }
+        console.log("saved");
+      });
+    break;
+    case ';duel':
+      if(cfduel.duel(bot, msg) != 0){
         console.log('reverting');
         var vis = new Map();
         vis.set('vis', false);
@@ -75,28 +83,35 @@ bot.on('message', (msg) => {
           }
           console.log("saved");
         });
-      break;
-      case ';duel':
-        if(cfduel.duel(bot, msg) != 0){
-          console.log('reverting');
-          var vis = new Map();
-          vis.set('vis', false);
-          var jsonObj = Object.fromEntries(vis);
-          console.log(jsonObj);
-          var jsonContent = JSON.stringify(jsonObj);
-          fs.writeFileSync("../vis.json", jsonContent, "utf8", function(err) {
-            if (err) {
-              console.log("An errr occured while writing JSON jsonObj to File.");
-              return console.log(err);
-            }
-            console.log("saved");
-          });
-        }
-      break; 
-      case ';ask':
-        wolfram.ask(bot, msg);
-      break;
+      }
+    break; 
+    case ';ask':
+      wolfram.ask(bot, msg);
+    break;
+  }
+}
+
+var restart = 0;
+ 
+// Listen for any kind of message. There are different kinds of
+// messages.
+bot.on('message', (msg) => {
+  var exit = 0;
+  console.log(msg);
+  var args = msg.text.split(" ");
+  if(args[0][0] == ';'){
+    var opts = {
+      wait: 30000
     }
+    lockFile.lock('../lock.lock', opts, function(error){
+      if(error != undefined){
+        console.log('busy');
+        console.log(error);
+        return;
+      }
+      command(args, msg);
+      lockFile.unlockSync('../lock.lock');
+    });
   }
   // const chatId = msg.chat.id;
   // console.log(msg);

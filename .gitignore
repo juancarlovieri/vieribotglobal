@@ -9,4 +9,7 @@ Telegram/package-lock.json
 Discord/package-lock.json
 Discord/display.png
 Telegram/display.png
+*.json
+!package.json
+*.lock
 
