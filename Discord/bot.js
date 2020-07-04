@@ -31,7 +31,7 @@ function command(args, msg){
 bot.on("message", msg => {
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
-      break;;
+      return;
     }
     console.log('restarting');
     process.exit(0);

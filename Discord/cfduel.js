@@ -959,7 +959,7 @@ module.exports = {
           const coba = request('GET', 'http://codeforces.com/api/user.rating?handle=' + contestants[i]);
           if(coba.statusCode >= 300){
             console.log('error');
-            bot.sendMessage(msg.chat.id, contestants[i] + ' not found');
+            msg.channel.send(contestants[i] + ' not found');
             return 1;
           }
           var ratings = JSON.parse(coba.getBody()).result;
