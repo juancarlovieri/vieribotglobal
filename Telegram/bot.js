@@ -65,6 +65,7 @@ bot.on('message', (msg) => {
     setTimeout(() => {
         process.exit(0);
     }, 5000);
+    return;
   }
   var exit = 0;
   console.log(msg);
