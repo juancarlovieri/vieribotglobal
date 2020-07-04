@@ -956,11 +956,13 @@ module.exports = {
         for(var i = 0; i < contestants.length; i++){
           names += contestants[i] + ' ';
           var request = require('sync-request');
-          if(JSON.parse(request('GET', 'http://codeforces.com/api/user.rating?handle=' + contestants[i]).getBody()).status != "OK"){
-            msg.channel.send(contestants[i] + ' not found');
+          const coba = request('GET', 'http://codeforces.com/api/user.rating?handle=' + contestants[i]);
+          if(coba.statusCode >= 300){
+            console.log('error');
+            bot.sendMessage(msg.chat.id, contestants[i] + ' not found');
             return 1;
           }
-          var ratings = JSON.parse(request('GET', 'http://codeforces.com/api/user.rating?handle=' + contestants[i]).getBody()).result;
+          var ratings = JSON.parse(coba.getBody()).result;
           var temp = {
             x: [],
             y: [],
