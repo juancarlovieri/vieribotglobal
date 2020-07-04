@@ -13,15 +13,7 @@ function save(){
 }
 
 function command(args, msg){
-
   switch(args[0]){
-    case '^restart':
-      if(msg.author.id != '455184547840262144'){
-        break;;
-      }
-      console.log('restarting');
-      process.exit(0);
-    break;
     case '^atcoder':
       if(atcoder.duel(bot, msg) != 0){
 
@@ -51,6 +43,13 @@ function command(args, msg){
 }
 
 bot.on("message", msg => {
+  if(msg.content == '^restart'){
+    if(msg.author.id != '455184547840262144'){
+      break;;
+    }
+    console.log('restarting');
+    process.exit(0);
+  }
   var args = msg.content.split(" ");
   if(args[0][0] == '^'){
     var opts = {

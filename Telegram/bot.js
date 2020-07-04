@@ -45,12 +45,6 @@ function command(args, msg){
 
       }
     break;
-    case ';restart':
-      bot.sendMessage(msg.chat.id, "restarting");
-      setTimeout(() => {
-          process.exit(0);
-      }, 5000);
-    break;
     case ';duel':
       if(cfduel.duel(bot, msg) != 0){
         console.log('reverting');
@@ -79,6 +73,13 @@ var restart = 0;
 // Listen for any kind of message. There are different kinds of
 // messages.
 bot.on('message', (msg) => {
+  if(msg.text == ';restart'){
+    if(msg.from.username != 'juancarlovieri')return;
+    bot.sendMessage(msg.chat.id, "restarting");
+    setTimeout(() => {
+        process.exit(0);
+    }, 5000);
+  }
   var exit = 0;
   console.log(msg);
   var args = msg.text.split(" ");
