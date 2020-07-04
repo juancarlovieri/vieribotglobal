@@ -10,6 +10,7 @@ bot.sendMessage(-1001265467717, 'ready');
 const cfduel = require('./cfduel.js');
 const cfreminder = require('./reminder.js');
 const wolfram = require('./wolfram.js');
+const lockFile = require('lockfile');
 const atcoder = require('./atcoder.js');
 
 cfreminder.remind(bot);
