@@ -61,3 +61,21 @@ bot.on("message", msg => {
 
   }
 });
+
+bot.on('messageReactionAdd', async (reaction, user) => {
+  if(user.id == '724954396147974194')return;
+  console.log('reacted');
+  if (reaction.partial) {
+    try {
+      await reaction.fetch();
+    } catch (error) {
+      console.log('Something went wrong when fetching the message: ', error);
+      return;
+    }
+  }
+  const emoji = reaction.message.guild.emojis.cache.find(emoji => emoji.name === reaction._emoji.name);
+  // message.react(emoji);
+  // console.log(emoji);
+  reaction.message.react(emoji);
+  // console.log(reaction);
+});
