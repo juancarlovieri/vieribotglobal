@@ -73,9 +73,7 @@ bot.on('messageReactionAdd', async (reaction, user) => {
       return;
     }
   }
-  const emoji = reaction.message.guild.emojis.cache.find(emoji => emoji.name === reaction._emoji.name);
   // message.react(emoji);
-  // console.log(emoji);
-  reaction.message.react(emoji);
+  reaction.message.react(reaction._emoji);
   // console.log(reaction);
 });
