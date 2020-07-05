@@ -63,6 +63,7 @@ bot.on("message", msg => {
 });
 
 bot.on('messageReactionAdd', async (reaction, user) => {
+  if(user.bot == true)return;
   if(user.id == '724954396147974194')return;
   console.log('reacted');
   if (reaction.partial) {
