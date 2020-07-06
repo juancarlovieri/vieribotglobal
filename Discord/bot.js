@@ -19,8 +19,8 @@ function command(args, msg){
       return;
     }
     msg.channel.send('these are the files\nglobal:', {files: ["../rating.json", "../points.json"]});
-    msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json"]});
-    msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json"]});
+    msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
+    msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
     break;
     case '^atcoder':
       if(atcoder.duel(bot, msg) != 0){
