@@ -4,6 +4,7 @@ var auth = require('./auth.json');
 bot.login(auth.token);
 const fs = require('fs');
 var obj;
+const prettyMilliseconds = require('pretty-ms');
 const cfduel = require('./cfduel.js');
 const atcoder = require('./atcoder.js');
 const lockFile = require('lockfile');
@@ -18,9 +19,13 @@ function command(args, msg){
       if(msg.author.id != '455184547840262144'){
       return;
     }
+
     msg.channel.send('these are the files\nglobal:', {files: ["../rating.json", "../points.json"]});
     msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
     msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
+    break;
+    case '^uptime':
+      msg.channel.send(prettyMilliseconds(bot.uptime));
     break;
     case '^atcoder':
       if(atcoder.duel(bot, msg) != 0){
