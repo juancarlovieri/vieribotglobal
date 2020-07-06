@@ -41,7 +41,6 @@ bot.on("ready", msg =>{
 })
 
 bot.on("message", msg => {
-  console.log(msg);
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
       return;
@@ -72,6 +71,7 @@ bot.on("message", msg => {
 });
 
 bot.on('messageReactionAdd', async (reaction, user) => {
+  if(reaction.message.author.bot == true)return;
   if(user.bot == true)return;
   if(user.id == '724954396147974194')return;
   console.log('reacted');
