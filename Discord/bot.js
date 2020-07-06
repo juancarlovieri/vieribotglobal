@@ -14,6 +14,14 @@ function save(){
 
 function command(args, msg){
   switch(args[0]){
+    case '^send':
+      if(msg.author.id != '455184547840262144'){
+      return;
+    }
+    msg.channel.send('these are the files\nglobal:', {files: ["../rating.json", "../points.json"]});
+    msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json"]});
+    msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json"]});
+    break;
     case '^atcoder':
       if(atcoder.duel(bot, msg) != 0){
 
@@ -33,6 +41,7 @@ bot.on("ready", msg =>{
 })
 
 bot.on("message", msg => {
+  console.log(msg);
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
       return;
