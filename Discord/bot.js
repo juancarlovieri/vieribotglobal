@@ -19,10 +19,10 @@ function command(args, msg){
     case '^send':
       if(msg.author.id != '455184547840262144'){
       return;
-    }
-    msg.channel.send('these are the files\nglobal:', {files: ["./node.error.log", "./node.access.log", "../rating.json", "../points.json"]});
-    msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
-    msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
+      }
+      msg.channel.send('these are the files\nglobal:', {files: ["../debug.log", "../error.log", "../rating.json", "../points.json"]});
+      msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
+      msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
     break;
     case '^uptime':
       msg.channel.send(prettyMilliseconds(bot.uptime));
@@ -56,11 +56,22 @@ function play(){
   
 }
 
-var access = fs.createWriteStream('./node.access.log', { flags: 'a' })
-      , error = fs.createWriteStream('./node.error.log', { flags: 'a' });
+var util = require('util');
+var log_file = fs.createWriteStream('../debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
 
-process.stdout.pipe(access);
-process.stderr.pipe(error);
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
+
+var error_file = fs.createWriteStream('../error.log', {flags : 'w'});
+var error_stdout = process.stdout;
+
+console.error = function(d) { //
+  error_file.write(util.format(d) + '\n');
+  error_stdout.write(util.format(d) + '\n');
+};
 
 function play2(){
   const channel = bot.channels.cache.get("688603706039730326");
