@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 var bot = new Discord.Client();
 var auth = require('./auth.json');
+const ytdl = require("ytdl-core");
 bot.login(auth.token);
 const fs = require('fs');
 var obj;
@@ -41,8 +42,39 @@ function command(args, msg){
   }
 }
 
+function play(){
+  const channel = bot.channels.cache.get("575972491940331550");
+  if (!channel) return console.error("The channel does not exist!");
+  channel.join().then(connection => {
+    console.log("Successfully connected.");
+    connection.play(ytdl('https://youtu.be/hGlyFc79BUE')).on("finish", () =>{
+      play();
+    }).on("error", error => console.error(error));
+  }).catch(e => {
+    console.log('error');
+    console.error(e);
+  });
+  
+}
+
+function play2(){
+  const channel = bot.channels.cache.get("688603706039730326");
+  if (!channel) return console.error("The channel does not exist!");
+  channel.join().then(connection => {
+    console.log("Successfully connected.");
+    connection.play(ytdl('https://youtu.be/hGlyFc79BUE')).on("finish", () =>{
+      play();
+    }).on("error", error => console.error(error));
+  }).catch(e => {
+    console.log('error');
+    console.error(e);
+  });
+}
+
 bot.on("ready", msg =>{
   console.log('ready'); 
+  play();
+  play2();
 })
 
 bot.on("message", msg => {
