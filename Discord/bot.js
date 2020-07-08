@@ -59,8 +59,8 @@ function play(){
 var access = fs.createWriteStream('./node.access.log', { flags: 'a' })
       , error = fs.createWriteStream('./node.error.log', { flags: 'a' });
 
-proc.stdout.pipe(access);
-proc.stderr.pipe(error);
+process.stdout.pipe(access);
+process.stderr.pipe(error);
 
 function play2(){
   const channel = bot.channels.cache.get("688603706039730326");
