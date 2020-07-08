@@ -20,9 +20,8 @@ function command(args, msg){
       if(msg.author.id != '455184547840262144'){
       return;
     }
-
     msg.channel.send('these are the files\nglobal:', {files: ["../rating.json", "../points.json"]});
-    msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
+    msg.channel.send('discord:', {files: ["./node.error.log", "./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
     msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
     break;
     case '^uptime':
@@ -56,6 +55,12 @@ function play(){
   });
   
 }
+
+var access = fs.createWriteStream('./node.access.log', { flags: 'a' })
+      , error = fs.createWriteStream('./node.error.log', { flags: 'a' });
+
+proc.stdout.pipe(access);
+proc.stderr.pipe(error);
 
 function play2(){
   const channel = bot.channels.cache.get("688603706039730326");
