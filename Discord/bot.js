@@ -1,15 +1,15 @@
 const Discord = require("discord.js");
 var bot = new Discord.Client();
 var auth = require('./auth.json');
-const ytdl = require("ytdl-core");
+// const ytdl = require("ytdl-core");
 bot.login(auth.token);
-const fs = require('fs');
-var obj;
-const prettyMilliseconds = require('pretty-ms');
-const cfduel = require('./cfduel.js');
-const atcoder = require('./atcoder.js');
-const lockFile = require('lockfile');
-const wolfram = require('./wolfram.js');
+// const fs = require('fs');
+// var obj;
+// const prettyMilliseconds = require('pretty-ms');
+// const cfduel = require('./cfduel.js');
+// const atcoder = require('./atcoder.js');
+// const lockFile = require('lockfile');
+// const wolfram = require('./wolfram.js');
 
 function save(){
 }
