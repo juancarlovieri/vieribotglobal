@@ -1,15 +1,15 @@
 const Discord = require("discord.js");
 var bot = new Discord.Client();
 var auth = require('./auth.json');
-// const ytdl = require("ytdl-core");
+const ytdl = require("ytdl-core");
 bot.login(auth.token);
-// const fs = require('fs');
-// var obj;
-// const prettyMilliseconds = require('pretty-ms');
-// const cfduel = require('./cfduel.js');
-// const atcoder = require('./atcoder.js');
-// const lockFile = require('lockfile');
-// const wolfram = require('./wolfram.js');
+const fs = require('fs');
+var obj;
+const prettyMilliseconds = require('pretty-ms');
+const cfduel = require('./cfduel.js');
+const atcoder = require('./atcoder.js');
+const lockFile = require('lockfile');
+const wolfram = require('./wolfram.js');
 
 function save(){
 }
@@ -56,22 +56,22 @@ function play(){
   
 }
 
-// var util = require('util');
-// var log_file = fs.createWriteStream('../debug.log', {flags : 'w'});
-// var log_stdout = process.stdout;
+var util = require('util');
+var log_file = fs.createWriteStream('../debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
 
-// console.log = function(d) { //
-//   log_file.write(util.format(d) + '\n');
-//   log_stdout.write(util.format(d) + '\n');
-// };
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
 
-// var error_file = fs.createWriteStream('../error.log', {flags : 'w'});
-// var error_stdout = process.stdout;
+var error_file = fs.createWriteStream('../error.log', {flags : 'w'});
+var error_stdout = process.stdout;
 
-// console.error = function(d) { //
-//   error_file.write(util.format(d) + '\n');
-//   error_stdout.write(util.format(d) + '\n');
-// };
+console.error = function(d) { //
+  error_file.write(util.format(d) + '\n');
+  error_stdout.write(util.format(d) + '\n');
+};
 
 function play2(){
   const channel = bot.channels.cache.get("688603706039730326");
@@ -89,8 +89,8 @@ function play2(){
 
 bot.on("ready", msg =>{
   console.log('ready'); 
-  // play();
-  // play2();
+  play();
+  play2();
 })
 
 bot.on("message", msg => {
@@ -105,22 +105,21 @@ bot.on("message", msg => {
     }, 5000);
     return;
   }
-  // var args = msg.content.split(" ");
-  // if(args[0][0] == '^'){
-  //   var opts = {
-  //     wait: 30000
-  //   }
-  //   lockFile.lock('../lock.lock', opts, function(error){
-  //     if(error != undefined){
-  //       console.log('busy');
-  //       console.error(error);
-  //       return;
-  //     }
-  //     command(args, msg);
-  //     lockFile.unlockSync('../lock.lock');
-  //   });
-
-  // }
+  var args = msg.content.split(" ");
+  if(args[0][0] == '^'){
+    var opts = {
+      wait: 30000
+    }
+    lockFile.lock('../lock.lock', opts, function(error){
+      if(error != undefined){
+        console.log('busy');
+        console.error(error);
+        return;
+      }
+      command(args, msg);
+      lockFile.unlockSync('../lock.lock');
+    });
+  }
 });
 
 bot.on('messageReactionAdd', async (reaction, user) => {
