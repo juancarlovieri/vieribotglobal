@@ -89,8 +89,8 @@ function play2(){
 
 bot.on("ready", msg =>{
   console.log('ready'); 
-  play();
-  play2();
+  // play();
+  // play2();
 })
 
 bot.on("message", msg => {
