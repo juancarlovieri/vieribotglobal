@@ -56,22 +56,22 @@ function play(){
   
 }
 
-var util = require('util');
-var log_file = fs.createWriteStream('../debug.log', {flags : 'w'});
-var log_stdout = process.stdout;
+// var util = require('util');
+// var log_file = fs.createWriteStream('../debug.log', {flags : 'w'});
+// var log_stdout = process.stdout;
 
-console.log = function(d) { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
-};
+// console.log = function(d) { //
+//   log_file.write(util.format(d) + '\n');
+//   log_stdout.write(util.format(d) + '\n');
+// };
 
-var error_file = fs.createWriteStream('../error.log', {flags : 'w'});
-var error_stdout = process.stdout;
+// var error_file = fs.createWriteStream('../error.log', {flags : 'w'});
+// var error_stdout = process.stdout;
 
-console.error = function(d) { //
-  error_file.write(util.format(d) + '\n');
-  error_stdout.write(util.format(d) + '\n');
-};
+// console.error = function(d) { //
+//   error_file.write(util.format(d) + '\n');
+//   error_stdout.write(util.format(d) + '\n');
+// };
 
 function play2(){
   const channel = bot.channels.cache.get("688603706039730326");
