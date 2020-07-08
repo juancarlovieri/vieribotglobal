@@ -105,22 +105,22 @@ bot.on("message", msg => {
     }, 5000);
     return;
   }
-  var args = msg.content.split(" ");
-  if(args[0][0] == '^'){
-    var opts = {
-      wait: 30000
-    }
-    lockFile.lock('../lock.lock', opts, function(error){
-      if(error != undefined){
-        console.log('busy');
-        console.log(error);
-        return;
-      }
-      command(args, msg);
-      lockFile.unlockSync('../lock.lock');
-    });
+  // var args = msg.content.split(" ");
+  // if(args[0][0] == '^'){
+  //   var opts = {
+  //     wait: 30000
+  //   }
+  //   lockFile.lock('../lock.lock', opts, function(error){
+  //     if(error != undefined){
+  //       console.log('busy');
+  //       console.error(error);
+  //       return;
+  //     }
+  //     command(args, msg);
+  //     lockFile.unlockSync('../lock.lock');
+  //   });
 
-  }
+  // }
 });
 
 bot.on('messageReactionAdd', async (reaction, user) => {
