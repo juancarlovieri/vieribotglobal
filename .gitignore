@@ -12,5 +12,5 @@ Telegram/display.png
 *.json
 !package.json
 *.lock
-console.log
+debug.log
 error.log
