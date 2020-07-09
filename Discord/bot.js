@@ -10,12 +10,16 @@ const cfduel = require('./cfduel.js');
 const atcoder = require('./atcoder.js');
 const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
+const activity = require('./activity.js');
 
 function save(){
 }
 
 function command(args, msg){
   switch(args[0]){
+    case '^activity':
+      activity.run(bot, msg);
+    break;
     case '^send':
       if(msg.author.id != '455184547840262144'){
       return;
@@ -94,6 +98,7 @@ bot.on("ready", msg =>{
 })
 
 bot.on("message", msg => {
+  activity.add(msg);
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
       return;
