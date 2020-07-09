@@ -24,9 +24,13 @@ function compare(a, b) {
   return comparison;
 }
 
-async function printtop(bot, msg, arr){
+async function printtop(bot, msg, arr, lo, hi){
+  lo = Math.round(lo);
+  hi = Math.round(hi);
+  --lo;
+  --hi;
   var hasil = "";
-  for(var i = 0; i < arr.length; i++){
+  for(var i = Math.max(lo, 0); i < Math.min(arr.length, hi + 1); i++){
     let temp = await bot.users.fetch(arr[i].name);
     hasil += temp.username + ' ' + arr[i].point + '\n';
   }
@@ -46,13 +50,14 @@ module.exports = {
   run: function(bot, msg){
     var args = msg.content.split(' ');
     if(args[1] == 'top'){
+      if(args.length != 4 || isNaN(args[2]) || isNaN(args[3]))return;
       var temp = [];
       activity.forEach(function lol(key, value){
         temp[temp.length] = {name: value, point: key};
       });
       temp.sort(compare);
       console.log(temp);
-      printtop(bot, msg, temp);
+      printtop(bot, msg, temp, parseInt(args[2]), parseInt(args[3]));
       return;
     }
     if(args[1] == 'fetch'){
