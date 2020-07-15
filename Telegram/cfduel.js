@@ -626,7 +626,7 @@ module.exports = {
           var ratings = JSON.parse(coba.getBody()).result;
           var temp = {
             x: [],
-            y: [],
+            y: [],  
             name: contestants[i],
             type: "scatter"
           };

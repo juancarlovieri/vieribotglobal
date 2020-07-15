@@ -36,7 +36,7 @@ async function printtop(bot, msg, arr, lo, hi){
   }
   console.log(hasil);
   msg.channel.send(hasil);
-}
+} 
 
 module.exports = {
   add: function(msg){
@@ -50,6 +50,9 @@ module.exports = {
   run: function(bot, msg){
     var args = msg.content.split(' ');
     if(args[1] == 'top'){
+      if(msg.author.id != '455184547840262144'){
+        return;
+      }
       if(args.length != 4 || isNaN(args[2]) || isNaN(args[3]))return;
       var temp = [];
       activity.forEach(function lol(key, value){

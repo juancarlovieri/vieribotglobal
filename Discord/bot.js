@@ -8,6 +8,7 @@ var obj;
 const prettyMilliseconds = require('pretty-ms');
 const cfduel = require('./cfduel.js');
 const atcoder = require('./atcoder.js');
+const trans = require('./translate.js');
 const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
@@ -27,6 +28,9 @@ function command(args, msg){
       msg.channel.send('these are the files\nglobal:', {files: ["../debug.log", "../error.log", "../rating.json", "../points.json"]});
       msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
       msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
+    break;
+    case '^translate':
+      trans.translate(msg);
     break;
     case '^uptime':
       msg.channel.send(prettyMilliseconds(bot.uptime));
