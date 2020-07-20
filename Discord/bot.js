@@ -29,6 +29,7 @@ function command(args, msg){
       };
       var jsonContent = JSON.stringify(temp);
       fs.createWriteStream('./changeHandle.json').write(jsonContent);
+      console.log('created');
     break;
     case '^send':
       if(msg.author.id != '455184547840262144'){
