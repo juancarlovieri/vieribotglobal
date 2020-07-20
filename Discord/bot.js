@@ -5,6 +5,7 @@ const ytdl = require("ytdl-core");
 bot.login(auth.token);
 const fs = require('fs');
 var obj;
+// const delMsg = require('./messageDelete.js');
 const prettyMilliseconds = require('pretty-ms');
 const cfduel = require('./cfduel.js');
 const atcoder = require('./atcoder.js');
@@ -21,12 +22,20 @@ function command(args, msg){
     case '^activity':
       activity.run(bot, msg);
     break;
+    case '^create':
+      var temp = {
+        a: [],
+        b: "foo"
+      };
+      var jsonContent = JSON.stringify(temp);
+      fs.createWriteStream('./changeHandle.json').write(jsonContent);
+    break;
     case '^send':
       if(msg.author.id != '455184547840262144'){
       return;
       }
       msg.channel.send('these are the files\nglobal:', {files: ["../debug.log", "../error.log", "../rating.json", "../points.json"]});
-      msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
+      msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "changeHandle.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json"]});
       msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
     break;
     case '^translate':
@@ -147,4 +156,8 @@ bot.on('messageReactionAdd', async (reaction, user) => {
   // message.react(emoji);
   reaction.message.react(reaction._emoji);
   // console.log(reaction);
+});
+
+bot.on("messageDelete", (msg) => {
+  // delMsg.deleted(msg);
 });
