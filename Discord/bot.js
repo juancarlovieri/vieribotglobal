@@ -4,6 +4,7 @@ var auth = require('./auth.json');
 const ytdl = require("ytdl-core");
 bot.login(auth.token);
 const fs = require('fs');
+const isUp = require('is-up');
 var obj;
 const delMsg = require('./messageDelete.js');
 const prettyMilliseconds = require('pretty-ms');
@@ -19,6 +20,16 @@ function save(){
 
 function command(args, msg){
   switch(args[0]){
+    case '^isup':
+      (async () => {
+        if(await isUp('http://' + args[1])){
+          msg.channel.send(args[1] + ' is up');
+        } else{
+          msg.channel.send(args[1] + ' is down');
+        }
+        //=> true
+      })();
+    break;
     case '^activity':
       activity.run(bot, msg);
     break;
