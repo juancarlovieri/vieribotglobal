@@ -2,6 +2,17 @@ const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("activity.json", "utf8"));
 var activity = new Map(Object.entries(obj));
 
+var temporaryChange = new Map();
+
+activity.forEach(function lol(value, key){
+  var temp = [value];
+  temporaryChange.set(key, temp);
+});
+
+
+let schedule = require('node-schedule');
+
+
 function save(){
   var jsonObj = Object.fromEntries(activity);
   var jsonContent = JSON.stringify(jsonObj);
@@ -13,6 +24,21 @@ function save(){
     console.log("saved");
   });
 }
+
+activity = temporaryChange;
+
+save();
+
+schedule.scheduleJob('0 0 * * *', () => {
+  console.log('adding new array for activity;');
+  var temp = new Map();
+  activity.forEach(function lol(value, key){
+    value[value.length] = value[value.length - 1];
+    temp.set(key, value);
+  });
+  activity = temp;
+  save();
+});
 
 function compare(a, b) {
   let comparison = 0;
@@ -42,9 +68,10 @@ module.exports = {
   add: function(msg){
     if(msg.channel.id == '688608091855519801')return;
     if(msg.author.bot)return;
-    var point = 0;
+    var point = [0];
     if(activity.has(msg.author.id))point = activity.get(msg.author.id);
-    activity.set(msg.author.id, point + 1);
+    point[point.length - 1]++;
+    activity.set(msg.author.id, point);
     save();
   },
   run: function(bot, msg){
@@ -56,7 +83,7 @@ module.exports = {
       if(args.length != 4 || isNaN(args[2]) || isNaN(args[3]))return;
       var temp = [];
       activity.forEach(function lol(key, value){
-        temp[temp.length] = {name: value, point: key};
+        temp[temp.length] = {name: value, point: key[key.length - 1]};
       });
       temp.sort(compare);
       console.log(temp);
