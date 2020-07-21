@@ -1,6 +1,18 @@
+const auth = require('./auth.json');
+var plotly = require('plotly')('juancarlovieri', auth.plotly);
 const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("activity.json", "utf8"));
 var activity = new Map(Object.entries(obj));
+
+
+function download(uri, filename, callback){
+  const request = require('request');
+  request.head(uri, function(err, res, body){
+    console.log('content-type:', res.headers['content-type']);
+    console.log('content-length:', res.headers['content-length']);
+    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+  });
+}
 
 // var temporaryChange = new Map();
 
@@ -64,6 +76,42 @@ async function printtop(bot, msg, arr, lo, hi){
   msg.channel.send(hasil);
 } 
 
+async function printGraph(bot, msg, args){
+  var data = [];
+  var names = 'graph for';
+  for(var i = 2; i < args.length; i++){
+    if(activity.has(args[i]) == false)return;
+    var tempName = await bot.users.fetch(args[i])
+    tempName = tempName.username;
+    names += ' ' + tempName;
+    var temp = {
+      x: [],
+      y: [],
+      name: tempName,
+      type: "scatter"
+    };
+    temp.y = activity.get(args[i]);
+    for(var j = 0; j < temp.y.length; j++){
+      temp.x[temp.x.length] = j + 1;
+    }
+    console.log(temp);
+    data[data.length] = temp;
+  }
+  console.log(data);
+  var graphOptions = {filename: 'umum', fileopt: "overwrite"};
+  plotly.plot(data, graphOptions, function (err, mesg) {
+    console.log(mesg);
+    var request = require('request');
+    download(mesg.url + '.jpeg', 'display.png', function(){
+      msg.channel.send(names, {
+        files: [
+        "display.png"
+      ]
+    });
+    });
+  });
+}
+
 module.exports = {
   add: function(msg){
     if(msg.channel.id == '688608091855519801')return;
@@ -89,6 +137,11 @@ module.exports = {
       console.log(temp);
       printtop(bot, msg, temp, parseInt(args[2]), parseInt(args[3]));
       return;
+    }
+    if(args[1] == 'graph'){
+      if(msg.author.id != '455184547840262144')return;
+      if(args.length < 3)return;
+      printGraph(bot, msg, args);
     }
     if(args[1] == 'fetch'){
       if(msg.author.id != '455184547840262144'){
