@@ -30,6 +30,12 @@ function command(args, msg){
         //=> true
       })();
     break;
+    case '^clear':
+      if(msg.author.id != '455184547840262144'){
+        return;
+      }
+      delMsg.clear();
+    break;
     case '^activity':
       activity.run(bot, msg);
     break;
