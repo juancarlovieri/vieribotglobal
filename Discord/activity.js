@@ -2,12 +2,12 @@ const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("activity.json", "utf8"));
 var activity = new Map(Object.entries(obj));
 
-var temporaryChange = new Map();
+// var temporaryChange = new Map();
 
-activity.forEach(function lol(value, key){
-  var temp = [value];
-  temporaryChange.set(key, temp);
-});
+// activity.forEach(function lol(value, key){
+//   var temp = [value];
+//   temporaryChange.set(key, temp);
+// });
 
 
 let schedule = require('node-schedule');
@@ -25,9 +25,9 @@ function save(){
   });
 }
 
-activity = temporaryChange;
+// activity = temporaryChange;
 
-save();
+// save();
 
 schedule.scheduleJob('0 0 * * *', () => {
   console.log('adding new array for activity;');
