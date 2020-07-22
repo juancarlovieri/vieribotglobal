@@ -90,6 +90,7 @@ async function printGraph(bot, msg, args){
       x: [],
       y: [],
       name: tempName,
+      mode: "lines",
       type: "scatter"
     };
     temp.y = activity.get(args[i]);
@@ -99,6 +100,8 @@ async function printGraph(bot, msg, args){
       d.setUTCSeconds(utcSeconds);
       console.log(d);
       d = d.toString();
+      var arr = d.split(' ');
+      d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
       temp.x[j] = d;
     }
     console.log(temp);
@@ -107,6 +110,14 @@ async function printGraph(bot, msg, args){
   console.log(data);
   var layout = {
     title: names,
+    // xaxis: {
+    //   autorange: true,
+    //   type: 'date'
+    // },
+    // yaxis: {
+    //   autorange: true,
+    //   type: 'linear'
+    // }
   };
   var graphOptions = {filename: 'umum', fileopt: "overwrite", layout: layout};
   plotly.plot(data, graphOptions, function (err, mesg) {
