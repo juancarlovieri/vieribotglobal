@@ -146,6 +146,7 @@ bot.on("message", msg => {
     return;
   }
   var args = msg.content.split(" ");
+  lagrange.isAns(bot, msg);
   if(args[0][0] == '^'){
     var opts = {
       wait: 30000

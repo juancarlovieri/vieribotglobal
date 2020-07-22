@@ -1,5 +1,6 @@
 const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("ongoingLagrange.json", "utf8"));
+const lockFile = require('lockfile');
 var ongoing = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("challengeLagrange.json", "utf8"));
 var challenge = new Map(Object.entries(obj));
@@ -114,5 +115,35 @@ module.exports = {
         msg.channel.send('^| ch x l r to challenge user x with the range of l to r\n^| acc to accept a challenge\n^| dec to decline or cancel a challenge\n^| ans a b c d to answer a problem');
       break;
     }
+  },
+  isAns: function(bot, msg){
+    var args = msg.content.split(' ');
+    if(ongoing.has(msg.author.id) == false)return;
+    if(args.length != 4)return;
+    var res = 0;
+    for(var i = 0; i < 4; i++){
+      if(isNaN(args[i]))return;
+      res += parseInt(args[i]) * parseInt(args[i]);
+    }
+    var temp = ongoing.get(msg.author.id);
+    if(res != temp.problem){
+      msg.channel.send('wrong answer! integer is: **' + temp.problem + '**');
+      return;
+    }
+    ongoing.delete(msg.author.id);
+    ongoing.delete(temp.opp);
+    var opts = {
+      wait: 30000
+    }
+    lockFile.lock('../lock.lock', opts, function(error){
+      if(error != undefined){
+        console.log('busy');
+        console.error(error);
+        return;
+      }
+      save();
+      lockFile.unlockSync('../lock.lock');
+      msg.channel.send('<@' + msg.author.id + '> has beaten <@' + temp.opp + '> on a lagrange duel');
+    });
   }
 }
