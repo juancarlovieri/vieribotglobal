@@ -109,6 +109,9 @@ module.exports = {
         save();
         msg.channel.send('<@' + msg.author.id + '> has beaten <@' + temp.opp + '> on a lagrange duel');
       break;
+      case 'help':
+        msg.channel.send('^lagrange challenge x l r to challenge user x with the range of l to r\n^lagrange accept to accept a challenge\n^lagrange decline to decline or cancel a challenge\n^lagrange answer a b c d to answer a problem');
+      break;
     }
   }
 }
