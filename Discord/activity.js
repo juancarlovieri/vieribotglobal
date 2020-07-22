@@ -105,7 +105,10 @@ async function printGraph(bot, msg, args){
     data[data.length] = temp;
   }
   console.log(data);
-  var graphOptions = {filename: 'umum', fileopt: "overwrite"};
+  var layout = {
+    title: names,
+  };
+  var graphOptions = {filename: 'umum', fileopt: "overwrite", layout: layout};
   plotly.plot(data, graphOptions, function (err, mesg) {
     console.log(mesg);
     var request = require('request');
