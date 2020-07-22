@@ -3,6 +3,7 @@ var plotly = require('plotly')('juancarlovieri', auth.plotly);
 const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("activity.json", "utf8"));
 var activity = new Map(Object.entries(obj));
+var startDate = 1595264400;
 
 
 function download(uri, filename, callback){
@@ -76,6 +77,7 @@ async function printtop(bot, msg, arr, lo, hi){
   msg.channel.send(hasil);
 } 
 
+
 async function printGraph(bot, msg, args){
   var data = [];
   var names = 'graph for';
@@ -92,7 +94,12 @@ async function printGraph(bot, msg, args){
     };
     temp.y = activity.get(args[i]);
     for(var j = 0; j < temp.y.length; j++){
-      temp.x[temp.x.length] = j + 1;
+      var utcSeconds = startDate + j * 86400;
+      var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+      d.setUTCSeconds(utcSeconds);
+      console.log(d);
+      d = d.toString();
+      temp.x[j] = d;
     }
     console.log(temp);
     data[data.length] = temp;
