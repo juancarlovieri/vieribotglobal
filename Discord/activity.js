@@ -3,7 +3,7 @@ var plotly = require('plotly')('juancarlovieri', auth.plotly);
 const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("activity.json", "utf8"));
 var activity = new Map(Object.entries(obj));
-var startDate = 1595264400;
+var startDate = 1595304000;
 
 
 function download(uri, filename, callback){
