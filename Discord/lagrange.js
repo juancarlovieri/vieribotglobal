@@ -31,7 +31,7 @@ module.exports = {
   message: function(bot, msg){
     var args = msg.content.split(' ');
     switch (args[1]){
-      case 'challenge':
+      case 'ch':
         if(args.length != 5)return;
         if(ongoing.has(msg.author.id)){
           msg.channel.send('you are in a duel');
@@ -61,9 +61,10 @@ module.exports = {
         challenge.set(msg.author.id, temp);
         challenge.set(opp, temp);
         save();
+        console.log(args[2]);
         msg.channel.send('<@' + opp + '>, <@' + msg.author.id + '> is challenging you on a lagrange duel!');
       break;
-      case 'decline':
+      case 'dec':
         if(challenge.has(msg.author.id) == false)return;
         var temp = challenge.get(msg.author.id);
         challenge.delete(temp.challenger);
@@ -71,7 +72,7 @@ module.exports = {
         save();
         msg.channel.send('duel between <@' + temp.challenged + '> and <@' + temp.challenger + '> is cancelled');
       break;
-      case 'accept':
+      case 'acc':
         console.log('accept');
         if(challenge.has(msg.author.id) == false)return;
         if(challenge.get(msg.author.id).challenger == msg.author.id)return;
@@ -91,7 +92,7 @@ module.exports = {
         save();
         msg.channel.send('duel between <@' + msg.author.id + '> and <@' + ch.challenger + '> is starting!\n The integer is: **' + temp.problem + '**');
       break;
-      case 'answer':
+      case 'ans':
         if(ongoing.has(msg.author.id) == false)return;
         if(args.length != 6)return;
         var res = 0;
@@ -110,7 +111,7 @@ module.exports = {
         msg.channel.send('<@' + msg.author.id + '> has beaten <@' + temp.opp + '> on a lagrange duel');
       break;
       case 'help':
-        msg.channel.send('^lagrange challenge x l r to challenge user x with the range of l to r\n^lagrange accept to accept a challenge\n^lagrange decline to decline or cancel a challenge\n^lagrange answer a b c d to answer a problem');
+        msg.channel.send('^| ch x l r to challenge user x with the range of l to r\n^| acc to accept a challenge\n^| dec to decline or cancel a challenge\n^| ans a b c d to answer a problem');
       break;
     }
   }

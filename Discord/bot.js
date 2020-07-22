@@ -37,7 +37,7 @@ function command(args, msg){
       }
       delMsg.clear();
     break;
-    case '^lagrange':
+    case '^|':
       lagrange.message(bot, msg);
     break;
     case '^activity':
