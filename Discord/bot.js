@@ -6,6 +6,7 @@ bot.login(auth.token);
 const fs = require('fs');
 const isUp = require('is-up');
 var obj;
+const lagrange = require('./lagrange.js');
 const delMsg = require('./messageDelete.js');
 const prettyMilliseconds = require('pretty-ms');
 const cfduel = require('./cfduel.js');
@@ -35,6 +36,9 @@ function command(args, msg){
         return;
       }
       delMsg.clear();
+    break;
+    case '^lagrange':
+      lagrange.message(bot, msg);
     break;
     case '^activity':
       activity.run(bot, msg);

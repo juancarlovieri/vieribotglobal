@@ -102,6 +102,19 @@ async function printGraph(bot, msg, args){
       d = d.toString();
       var arr = d.split(' ');
       d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
+      var months = ['Jan', 'Feb', 'Mar', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var month = -1;
+      for(var i = 0; i < 12; i++){
+        if(arr[1] == months[i]){
+          month = i + 1;
+        }
+      }
+      if(month == -1){
+        console.log('month not found');
+        msg.channel.send('an error occured, contact developer');
+        return;
+      }
+      d = arr[3] + '-' + month + '-' + arr[2];
       temp.x[j] = d;
     }
     console.log(temp);
@@ -110,15 +123,17 @@ async function printGraph(bot, msg, args){
   console.log(data);
   var layout = {
     title: names,
-    // xaxis: {
-    //   autorange: true,
-    //   type: 'date'
-    // },
-    // yaxis: {
-    //   autorange: true,
-    //   type: 'linear'
-    // }
+    xaxis: {
+      autorange: true,
+      tickformat: '%b %d %Y',
+      type: 'date'
+    },
+    yaxis: {
+      autorange: true,
+      type: 'linear'
+    }
   };
+  console.log(layout);
   var graphOptions = {filename: 'umum', fileopt: "overwrite", layout: layout};
   plotly.plot(data, graphOptions, function (err, mesg) {
     console.log(mesg);

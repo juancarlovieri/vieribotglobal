@@ -4,7 +4,7 @@
   "description": "",
   "main": "bot.js",
   "dependencies": {
-    "@google-cloud/translate": "^6.0.1",
+    "@google-cloud/translate": "^6.0.2",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
@@ -28,7 +28,7 @@
     "url": "^0.11.0",
     "util": "^0.12.3",
     "wolfram-alpha-api": "https://products.wolframalpha.com/api/libraries/javascript/wolfram-alpha-api-1.0.0-rc.1.tgz",
-    "ytdl": "^1.3.2",
+    "ytdl": "^1.3.3",
     "ytdl-core": "^3.1.2"
   },
   "devDependencies": {},
