@@ -15,6 +15,7 @@ const trans = require('./translate.js');
 const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
+const status = "do not disturb";
 
 function save(){
 }
@@ -52,9 +53,15 @@ function command(args, msg){
     //   fs.createWriteStream('./changeHandle.json').write(jsonContent);
     //   console.log('created');
     // break;
+    case '^set':
+      if(msg.author.id != '455184547840262144'){
+        return;
+      }
+      status = args[1];
+    break;
     case '^send':
       if(msg.author.id != '455184547840262144'){
-      return;
+        return;
       }
       msg.channel.send('these are the files\nglobal:', {files: ["../debug.log", "../error.log", "../rating.json", "../points.json"]});
       msg.channel.send('discord:', {files: ["./handles.json", "./atcoderHandles.json", "changeHandle.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json", "./activity.json"]});
@@ -131,7 +138,7 @@ bot.on("ready", msg =>{
   play();
   play2();
   bot.user.setPresence({
-    status: "idle",  //You can show online, idle....
+    status: status,
     game: {
         name: "Using !help",  //The message shown
         type: "STREAMING" //PLAYING: WATCHING: LISTENING: STREAMING:
