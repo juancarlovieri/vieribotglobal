@@ -144,14 +144,10 @@ bot.on("ready", msg =>{
   console.log('ready'); 
   play();
   play2();
-  bot.setStatus("do not disturb", "lagrange");
-  // bot.user.setPresence({
-  //   status: status,
-  //   game: {
-  //       name: "Using !help",  //The message shown
-  //       type: "STREAMING" //PLAYING: WATCHING: LISTENING: STREAMING:
-  //   }
-  // });
+  // bot.user.setStatus("idle", "lagrange");
+  bot.user.setPresence({
+    status: 'idle'
+  });
 })
 
 bot.on("message", msg => {
