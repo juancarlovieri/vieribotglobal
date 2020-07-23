@@ -130,6 +130,13 @@ bot.on("ready", msg =>{
   console.log('ready'); 
   play();
   play2();
+  bot.user.setPresence({
+    status: "idle",  //You can show online, idle....
+    game: {
+        name: "Using !help",  //The message shown
+        type: "STREAMING" //PLAYING: WATCHING: LISTENING: STREAMING:
+    }
+});
 })
 
 bot.on("message", msg => {
