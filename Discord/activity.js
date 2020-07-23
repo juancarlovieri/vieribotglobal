@@ -81,7 +81,9 @@ async function printtop(bot, msg, arr, lo, hi){
 async function printGraph(bot, msg, args){
   var data = [];
   var names = 'graph for';
+  console.log(args.length);
   for(var i = 2; i < args.length; i++){
+    console.log(args[i]);
     if(activity.has(args[i]) == false)return;
     var tempName = await bot.users.fetch(args[i])
     tempName = tempName.username;
@@ -104,9 +106,9 @@ async function printGraph(bot, msg, args){
       d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
       var months = ['Jan', 'Feb', 'Mar', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       var month = -1;
-      for(var i = 0; i < 12; i++){
-        if(arr[1] == months[i]){
-          month = i + 1;
+      for(var k = 0; k < 12; k++){
+        if(arr[1] == months[k]){
+          month = k + 1;
         }
       }
       if(month == -1){
@@ -119,6 +121,7 @@ async function printGraph(bot, msg, args){
     }
     console.log(temp);
     data[data.length] = temp;
+    console.log(i);
   }
   console.log(data);
   var layout = {
