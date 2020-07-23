@@ -146,7 +146,7 @@ bot.on("ready", msg =>{
   play2();
   // bot.user.setStatus("idle", "lagrange");
   bot.user.setPresence({
-    status: 'idle'
+    status: 'dnd'
   });
 })
 
