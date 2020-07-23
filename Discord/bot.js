@@ -58,6 +58,13 @@ function command(args, msg){
         return;
       }
       status = args[1];
+      bot.user.setPresence({
+        status: status,
+        game: {
+            name: "Using !help",  //The message shown
+            type: "STREAMING" //PLAYING: WATCHING: LISTENING: STREAMING:
+        }
+      });
     break;
     case '^send':
       if(msg.author.id != '455184547840262144'){
@@ -143,7 +150,7 @@ bot.on("ready", msg =>{
         name: "Using !help",  //The message shown
         type: "STREAMING" //PLAYING: WATCHING: LISTENING: STREAMING:
     }
-});
+  });
 })
 
 bot.on("message", msg => {
