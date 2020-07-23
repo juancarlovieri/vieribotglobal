@@ -32,6 +32,10 @@ module.exports = {
   message: function(bot, msg){
     var args = msg.content.split(' ');
     switch (args[1]){
+      case 'resend':
+        if(ongoing.has(msg.author.id) == false)return;
+        msg.channel.send(ongoing.get(msg.author.id).problem);
+      break;
       case 'ch':
         if(args.length != 5)return;
         if(ongoing.has(msg.author.id)){
@@ -103,13 +107,16 @@ module.exports = {
         }
         var temp = ongoing.get(msg.author.id);
         if(res != temp.problem){
-          msg.channel.send('wrong answer!');
+          const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
+          msg.react(emoji);
           return;
         }
         ongoing.delete(msg.author.id);
         ongoing.delete(temp.opp);
         save();
-        msg.channel.send('<@' + msg.author.id + '> has beaten <@' + temp.opp + '> on a lagrange duel');
+        const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
+        msg.react(emoji);
+        // msg.channel.send('<@' + msg.author.id + '> has beaten <@' + temp.opp + '> on a lagrange duel');
       break;
       case 'help':
         msg.channel.send('^| ch x l r to challenge user x with the range of l to r\n^| acc to accept a challenge\n^| dec to decline or cancel a challenge\n^| ans a b c d to answer a problem');
@@ -127,7 +134,8 @@ module.exports = {
     }
     var temp = ongoing.get(msg.author.id);
     if(res != temp.problem){
-      msg.channel.send('wrong answer! integer is: **' + temp.problem + '**');
+      const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
+      msg.react(emoji);
       return;
     }
     ongoing.delete(msg.author.id);
@@ -143,7 +151,8 @@ module.exports = {
       }
       save();
       lockFile.unlockSync('../lock.lock');
-      msg.channel.send('<@' + msg.author.id + '> has beaten <@' + temp.opp + '> on a lagrange duel');
+      const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
+      msg.react(emoji);
     });
   }
 }
