@@ -12,6 +12,16 @@ function save(){
   });
 }
 
+function compare(a, b){
+  var comparison = 0;
+  if (a.time < b.time) {
+    comparison = 1;
+  } else {
+    comparison = -1;
+  }
+  return comparison;
+}
+
 function remind(l, r, bot){
   var arr = tests.a
   var temp = arr;
@@ -99,6 +109,7 @@ module.exports = {
         var arr = tests.a;
         var hasil = "list of tests:\n";
         console.log(arr);
+        arr.sort(compare);
         for(var i = 0; i < arr.length; i++){
           console.log(arr[i]);
           var utcSeconds = Math.round(arr[i].time / 1000) - 3600;
