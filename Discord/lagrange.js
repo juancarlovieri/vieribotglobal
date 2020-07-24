@@ -4,6 +4,7 @@ const lockFile = require('lockfile');
 var ongoing = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("challengeLagrange.json", "utf8"));
 var challenge = new Map(Object.entries(obj));
+var glob = -1;
 
 function save(){
   var jsonObj = Object.fromEntries(ongoing);
@@ -31,6 +32,16 @@ function save(){
 module.exports = {
   message: function(bot, msg){
     var args = msg.content.split(' ');
+    if(args.length == 3){
+      if(glob != -1)return;
+      if(isNaN(args[1]) || isNaN(args[2]))return;
+      if(parseInt(args[1]) > parseInt(args[2]))return;
+      var l = parseInt(args[1]), r = parseInt(args[2]);
+      if(l < 0)return;
+      glob = Math.floor(Math.random()*(r-l+1))+l;
+      msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+      return; 
+    }
     switch (args[1]){
       case 'resend':
         if(ongoing.has(msg.author.id) == false)return;
@@ -57,6 +68,7 @@ module.exports = {
         }
         if(isNaN(args[3]) || isNaN(args[4]))return;
         if(parseInt(args[3]) > parseInt(args[4]))return;
+        if(parseInt(args[3]) < 0)return;
         var temp = {
           challenger: msg.author.id,
           challenged: opp,
@@ -125,7 +137,6 @@ module.exports = {
   },
   isAns: function(bot, msg){
     var args = msg.content.split(' ');
-    if(ongoing.has(msg.author.id) == false)return;
     if(args.length != 4)return;
     var res = 0;
     for(var i = 0; i < 4; i++){
@@ -133,26 +144,39 @@ module.exports = {
       res += parseInt(args[i]) * parseInt(args[i]);
     }
     var temp = ongoing.get(msg.author.id);
-    if(res != temp.problem){
-      const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
-      msg.react(emoji);
-      return;
-    }
-    ongoing.delete(msg.author.id);
-    ongoing.delete(temp.opp);
-    var opts = {
-      wait: 30000
-    }
-    lockFile.lock('../lock.lock', opts, function(error){
-      if(error != undefined){
-        console.log('busy');
-        console.error(error);
+    if(ongoing.has(msg.author.id)){
+      if(res != temp.problem){
+        const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
+        msg.react(emoji);
         return;
       }
-      save();
-      lockFile.unlockSync('../lock.lock');
+      ongoing.delete(msg.author.id);
+      ongoing.delete(temp.opp);
+      var opts = {
+        wait: 30000
+      }
+      lockFile.lock('../lock.lock', opts, function(error){
+        if(error != undefined){
+          console.log('busy');
+          console.error(error);
+          return;
+        }
+        save();
+        lockFile.unlockSync('../lock.lock');
+        const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
+        msg.react(emoji);
+      });
+    }
+    if(glob == -1){
+      return;
+    }
+    if(res == glob){
+      glob = -1;
       const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
       msg.react(emoji);
-    });
+    } else{
+       const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
+      msg.react(emoji);
+    }
   }
 }
