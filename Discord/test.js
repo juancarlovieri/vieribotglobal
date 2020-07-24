@@ -110,7 +110,7 @@ module.exports = {
           res += ' ' + arrDate[2];
           res += ' ' + arrDate[3];
           res += ' ' + arrDate[4];
-          hasil += arr[i].name + ': ' + res + '\n';
+          hasil += '**' + arr[i].name + '**: ' + res + '\n';
         }
         msg.channel.send(hasil);
       break;
