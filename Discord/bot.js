@@ -21,6 +21,7 @@ const status = "do not disturb";
 function save(){
 }
 
+var utcSeconds = 1595667600 - 3600;
 
 function command(args, msg){
   switch(args[0]){

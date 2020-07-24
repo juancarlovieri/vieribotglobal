@@ -98,29 +98,21 @@ module.exports = {
       case 'list':
         var arr = tests.a;
         var hasil = "list of tests:\n";
+        console.log(arr);
         for(var i = 0; i < arr.length; i++){
-          var utcSeconds = arr[i].time;
+          console.log(arr[i]);
+          var utcSeconds = Math.round(arr[i].time / 1000);
           var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
           d.setUTCSeconds(utcSeconds);
-          console.log(d);
-          d = d.toString();
-          var temp = d.split(' ');
-          d = temp[1].concat(' ' + temp[2]).concat(' ' + temp[3]);
-          var months = ['Jan', 'Feb', 'Mar', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-          var month = -1;
-          for(var k = 0; k < 12; k++){
-            if(temp[1] == months[k]){
-              month = k + 1;
-            }
-          }
-          if(month == -1){
-            console.log('month not found');
-            msg.channel.send('an error occured, contact developer');
-            return;
-          }
-          d = temp[3] + '-' + month + '-' + temp[2];
-          hasil += '**' + arr[i].name + '**: ' + d;
+          var arrDate = d.toString().split(' ');
+          var res = arrDate[0];
+          res += ' ' + arrDate[1];
+          res += ' ' + arrDate[2];
+          res += ' ' + arrDate[3];
+          res += ' ' + arrDate[4];
+          hasil += arr[i].name + ': ' + res + '\n';
         }
+        msg.channel.send(hasil);
       break;
     }
   }

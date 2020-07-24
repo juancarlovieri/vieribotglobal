@@ -10,6 +10,7 @@
     "crypto": "^1.0.1",
     "discord.js": "^12.2.0",
     "encodeurl": "^1.0.2",
+    "epoch-timeago": "^1.1.9",
     "escape-html": "^1.0.3",
     "express": "^4.17.1",
     "ffmpeg": "0.0.4",
