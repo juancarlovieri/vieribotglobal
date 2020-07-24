@@ -27,7 +27,10 @@ function remind(l, r, bot){
       }, (arr[i].time - 3600000) - Date.now());
     } else{
       console.log('buang');
-       temp.splice(i - add, 1);
+      temp.splice(i - add, 1);
+      console.log(add);
+      add++;
+      continue;
     }
     if((arr[i].time - 43200000) - Date.now() >= 0){
       var name = arr[i];
@@ -42,6 +45,7 @@ function remind(l, r, bot){
       }, (arr[i].time - 86400000) - Date.now());
     }
   }
+  console.log(temp);
   var baru = {
     a: temp
   }
@@ -50,6 +54,9 @@ function remind(l, r, bot){
 }
 
 module.exports = {
+  run: function(bot){
+    remind(0, 1000, bot);
+  },
   message: function(bot, msg){
     var args = msg.content.split(' ');
     console.log(msg.content);
@@ -72,6 +79,20 @@ module.exports = {
         tests = temp;
         save();
         remind(arr.length - 1, arr.length - 1, bot);
+      break;
+      case 'rm':
+        if(msg.author.id != '455184547840262144'){
+          return;
+        }
+        if(args.length != 3)return;
+        if(isNaN(args[2]))return;
+        var arr = tests.a;
+        arr.splice(parseInt(args[2]), 1);
+        var temp = {
+          a: arr
+        }
+        tests = temp;
+        save();
       break;
       case 'list':
         var arr = tests.a;

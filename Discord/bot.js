@@ -6,7 +6,7 @@ bot.login(auth.token);
 const fs = require('fs');
 const isUp = require('is-up');
 var obj;
-// const test = require('./test.js');
+const test = require('./test.js');
 const lagrange = require('./lagrange.js');
 const delMsg = require('./messageDelete.js');
 const prettyMilliseconds = require('pretty-ms');
@@ -20,6 +20,7 @@ const status = "do not disturb";
 
 function save(){
 }
+
 
 function command(args, msg){
   switch(args[0]){
@@ -45,17 +46,17 @@ function command(args, msg){
     case '^activity':
       activity.run(bot, msg);
     break;
-    case '^create':
-      var temp = {
-        a: [],
-      };
-      var jsonContent = JSON.stringify(temp);
-      fs.createWriteStream('./tests.json').write(jsonContent);
-      console.log('created');
-    break;
+    // case '^create':
+    //   var temp = {
+    //     a: [],
+    //   };
+    //   var jsonContent = JSON.stringify(temp);
+    //   fs.createWriteStream('./tests.json').write(jsonContent);
+    //   console.log('created');
+    // break;
     case '^test':
-      if(msg.channel.guild.id != '733473838754693232')return;
-      // test.message(bot, msg);
+      // if(msg.channel.guild.id != '733473838754693232')return;
+      test.message(bot, msg);
     break;
     case '^set':
       if(msg.author.id != '455184547840262144'){
@@ -149,6 +150,7 @@ bot.on("ready", msg =>{
   play();
   play2();
   // bot.user.setStatus("idle", "lagrange");
+  test.run(bot);
   bot.user.setPresence({
     status: 'dnd'
   });
