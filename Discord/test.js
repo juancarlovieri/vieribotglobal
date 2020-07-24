@@ -18,12 +18,12 @@ function remind(l, r, bot){
   var add = 0;
   const channel = bot.channels.cache.get('736030942748999770');
   console.log(arr);
-  for(var i = l; i <= Math.min(r, arr.length); i++){
+  for(var i = l; i <= Math.min(r, arr.length - 1); i++){
     console.log(arr[i]);
     if((arr[i].time - 3600000) - Date.now() >= 0){
       var name = arr[i];
       setTimeout(function(){
-        channel.send(name.name + ' in an hour');
+        channel.send(name.name + ' in an hour ' + name.mention);
       }, (arr[i].time - 3600000) - Date.now());
     } else{
       console.log('buang');
@@ -35,13 +35,13 @@ function remind(l, r, bot){
     if((arr[i].time - 43200000) - Date.now() >= 0){
       var name = arr[i];
       setTimeout(function(){
-        channel.send(name.name + ' in 12 hours');
+        channel.send(name.name + ' in 12 hours ' + name.mention);
       }, (arr[i].time - 43200000) - Date.now());
     }
     if((arr[i].time - 86400000) - Date.now() >= 0){
       var name = arr[i];
       setTimeout(function(){
-        channel.send(name.name + ' tommorow');
+        channel.send(name.name + ' tommorow ' + name.mention);
       }, (arr[i].time - 86400000) - Date.now());
     }
   }
@@ -65,13 +65,14 @@ module.exports = {
         if(msg.author.id != '455184547840262144'){
           return;
         }
-        if(args.length != 4)return;
+        if(args.length != 5)return;
         if(isNaN(args[3]))return;
         var arr = tests.a;
         var tempTime = parseInt(args[3]);
         arr[arr.length] = {
           name: args[2],
-          time: tempTime
+          time: tempTime,
+          mention: args[4]
         };
         var temp = {
           a: arr
