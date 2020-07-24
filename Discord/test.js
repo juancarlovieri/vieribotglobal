@@ -42,6 +42,19 @@ function remind(l, r, bot){
       add++;
       continue;
     }
+
+    if((arr[i].time - 7200000) - Date.now() >= 0){
+      var name = arr[i];
+      setTimeout(function(){
+        channel.send(name.name + ' in 2 hours ' + name.mention);
+      }, (arr[i].time - 7200000) - Date.now());
+    }
+    if((arr[i].time - 21600000) - Date.now() >= 0){
+      var name = arr[i];
+      setTimeout(function(){
+        channel.send(name.name + ' in 6 hours ' + name.mention);
+      }, (arr[i].time - 21600000) - Date.now());
+    }
     if((arr[i].time - 43200000) - Date.now() >= 0){
       var name = arr[i];
       setTimeout(function(){
