@@ -32,6 +32,13 @@ function save(){
 module.exports = {
   message: function(bot, msg){
     var args = msg.content.split(' ');
+    if(args.length == 2 && !isNaN(args[1])){
+      if(glob != -1)return;
+      if(parseInt(args[1]) < 0)return;
+      var l = 0, r = parseInt(args[1]);
+      glob = Math.floor(Math.random()*(r-l+1))+l;
+      msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+    }
     if(args.length == 3){
       if(glob != -1)return;
       if(isNaN(args[1]) || isNaN(args[2]))return;
