@@ -1,0 +1,105 @@
+const fs = require('fs');
+var tests = JSON.parse(fs.readFileSync("tests.json", "utf8"));
+
+function save(){
+  var jsonContent = JSON.stringify(tests);
+  fs.writeFileSync("tests.json", jsonContent, "utf8", function(err) {
+    if (err) {
+      console.log("An errr occured while writing JSON jsonObj to File.");
+      return console.log(err);
+    }
+    console.log("saved");
+  });
+}
+
+function remind(l, r, bot){
+  var arr = tests.a
+  var temp = arr;
+  var add = 0;
+  const channel = bot.channels.cache.get('736030942748999770');
+  console.log(arr);
+  for(var i = l; i <= Math.min(r, arr.length); i++){
+    console.log(arr[i]);
+    if((arr[i].time - 3600000) - Date.now() >= 0){
+      var name = arr[i];
+      setTimeout(function(){
+        channel.send(name.name + ' in an hour');
+      }, (arr[i].time - 3600000) - Date.now());
+    } else{
+      console.log('buang');
+       temp.splice(i - add, 1);
+    }
+    if((arr[i].time - 43200000) - Date.now() >= 0){
+      var name = arr[i];
+      setTimeout(function(){
+        channel.send(name.name + ' in 12 hours');
+      }, (arr[i].time - 43200000) - Date.now());
+    }
+    if((arr[i].time - 86400000) - Date.now() >= 0){
+      var name = arr[i];
+      setTimeout(function(){
+        channel.send(name.name + ' tommorow');
+      }, (arr[i].time - 86400000) - Date.now());
+    }
+  }
+  var baru = {
+    a: temp
+  }
+  tests = baru;
+  save();
+}
+
+module.exports = {
+  message: function(bot, msg){
+    var args = msg.content.split(' ');
+    console.log(msg.content);
+    switch(args[1]){
+      case 'new':
+        if(msg.author.id != '455184547840262144'){
+          return;
+        }
+        if(args.length != 4)return;
+        if(isNaN(args[3]))return;
+        var arr = tests.a;
+        var tempTime = parseInt(args[3]);
+        arr[arr.length] = {
+          name: args[2],
+          time: tempTime
+        };
+        var temp = {
+          a: arr
+        }
+        tests = temp;
+        save();
+        remind(arr.length - 1, arr.length - 1, bot);
+      break;
+      case 'list':
+        var arr = tests.a;
+        var hasil = "list of tests:\n";
+        for(var i = 0; i < arr.length; i++){
+          var utcSeconds = arr[i].time;
+          var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+          d.setUTCSeconds(utcSeconds);
+          console.log(d);
+          d = d.toString();
+          var temp = d.split(' ');
+          d = temp[1].concat(' ' + temp[2]).concat(' ' + temp[3]);
+          var months = ['Jan', 'Feb', 'Mar', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          var month = -1;
+          for(var k = 0; k < 12; k++){
+            if(temp[1] == months[k]){
+              month = k + 1;
+            }
+          }
+          if(month == -1){
+            console.log('month not found');
+            msg.channel.send('an error occured, contact developer');
+            return;
+          }
+          d = temp[3] + '-' + month + '-' + temp[2];
+          hasil += '**' + arr[i].name + '**: ' + d;
+        }
+      break;
+    }
+  }
+}
