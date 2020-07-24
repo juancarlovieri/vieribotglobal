@@ -119,6 +119,7 @@ module.exports = {
         var hasil = "list of tests:\n";
         console.log(arr);
         arr.sort(compare);
+        save();
         for(var i = 0; i < arr.length; i++){
           console.log(arr[i]);
           var utcSeconds = Math.round(arr[i].time / 1000) - 3600;
