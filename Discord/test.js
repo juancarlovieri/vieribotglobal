@@ -22,6 +22,13 @@ function compare(a, b){
   return comparison;
 }
 
+async function timer(time, channel, message){
+  const msg = message;
+  setTimeout(function(){
+    channel.send(msg);
+  }, time);
+}
+
 function remind(l, r, bot){
   var arr = tests.a
   var temp = arr;
@@ -32,9 +39,7 @@ function remind(l, r, bot){
     console.log(arr[i]);
     if((arr[i].time - 3600000) - Date.now() >= 0){
       var name = arr[i];
-      setTimeout(function(){
-        channel.send(name.name + ' in an hour ' + name.mention);
-      }, (arr[i].time - 3600000) - Date.now());
+      timer((arr[i].time - 3600000) - Date.now(), channel, name.name + ' in an hour ' + name.mention);
     } else{
       console.log('buang');
       temp.splice(i - add, 1);
@@ -42,30 +47,21 @@ function remind(l, r, bot){
       add++;
       continue;
     }
-
     if((arr[i].time - 7200000) - Date.now() >= 0){
       var name = arr[i];
-      setTimeout(function(){
-        channel.send(name.name + ' in 2 hours ' + name.mention);
-      }, (arr[i].time - 7200000) - Date.now());
+      timer((arr[i].time - 7200000) - Date.now(), channel, name.name + ' in 2 hours ' + name.mention);
     }
     if((arr[i].time - 21600000) - Date.now() >= 0){
       var name = arr[i];
-      setTimeout(function(){
-        channel.send(name.name + ' in 6 hours ' + name.mention);
-      }, (arr[i].time - 21600000) - Date.now());
+      timer((arr[i].time - 21600000) - Date.now(), channel, name.name + ' in 6 hours ' + name.mention);
     }
     if((arr[i].time - 43200000) - Date.now() >= 0){
       var name = arr[i];
-      setTimeout(function(){
-        channel.send(name.name + ' in 12 hours ' + name.mention);
-      }, (arr[i].time - 43200000) - Date.now());
+      timer((arr[i].time - 43200000) - Date.now(), channel, name.name + ' in 12 hours ' + name.mention);
     }
     if((arr[i].time - 86400000) - Date.now() >= 0){
       var name = arr[i];
-      setTimeout(function(){
-        channel.send(name.name + ' tommorow ' + name.mention);
-      }, (arr[i].time - 86400000) - Date.now());
+      timer((arr[i].time - 86400000) - Date.now(), channel, name.name + ' tommorow ' + name.mention);
     }
   }
   console.log(temp);

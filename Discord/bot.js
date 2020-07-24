@@ -56,7 +56,7 @@ function command(args, msg){
     //   console.log('created');
     // break;
     case '^test':
-      if(msg.channel.guild.id != '733473838754693232')return;
+      // if(msg.channel.guild.id != '733473838754693232')return;
       test.message(bot, msg);
     break;
     case '^set':
