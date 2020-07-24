@@ -14,7 +14,7 @@ function save(){
 
 function compare(a, b){
   var comparison = 0;
-  if (a.time < b.time) {
+  if (a.time > b.time) {
     comparison = 1;
   } else {
     comparison = -1;
