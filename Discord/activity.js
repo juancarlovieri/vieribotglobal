@@ -153,6 +153,7 @@ async function printGraph(bot, msg, args){
 
 module.exports = {
   add: function(msg){
+    if(msg.channel.guild.id != '688018099584237610')return;
     if(msg.channel.id == '688608091855519801')return;
     if(msg.author.bot)return;
     var point = [0];
