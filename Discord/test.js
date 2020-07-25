@@ -77,7 +77,7 @@ function remind(l, r, bot){
     }
     if((arr[i].time - 86400000) - Date.now() >= 0){
       var name = arr[i];
-      timer((arr[i].time - 86400000) - Date.now(), channel, name.name + ' tommorow ' + name.mention);
+      timer((arr[i].time - 86400000) - Date.now(), channel, name.name + ' tomorrow ' + name.mention);
     }
   }
   console.log(temp);
