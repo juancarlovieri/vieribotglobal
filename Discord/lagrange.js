@@ -88,6 +88,36 @@ module.exports = {
         console.log(args[2]);
         msg.channel.send('<@' + opp + '>, <@' + msg.author.id + '> is challenging you on a lagrange duel!');
       break;
+      case 'reveal':
+        if(glob == -1){msg.channel.send('no ongoing');return;}
+        if(glob > 1000000){
+          msg.channel.send('integer too big, cannot solve');
+          return;
+        }
+        var ansa = -1, ansb = -1, ansc = -1, ansd = -1;
+        for(var a = 0; a <= 1000; a++){
+          for(var b = 0; b <= 1000; b++){
+            for(var c = 0; c <= 1000; c++){
+              var possible = Math.round(Math.sqrt(glob - a * a - b * b));
+              if(possible * possible + a * a + b * b == glob){
+                ansa = a;
+                ansb = b;
+                ansc = c;
+                ansd = possible;
+                break;
+              }
+            }
+            if(ansa != -1)break;
+          }
+          if(ansa != -1)break;
+        }
+        if(ansa == -1){
+          msg.channel.send('internal error, contact developer');
+          return;
+        }
+        glob = -1;
+        msg.channel.send(ansa + ' ' + ansb + ' ' + ansc);
+      break;
       case 'dec':
         if(challenge.has(msg.author.id) == false)return;
         var temp = challenge.get(msg.author.id);
