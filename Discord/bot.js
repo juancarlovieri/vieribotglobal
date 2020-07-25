@@ -6,7 +6,7 @@ bot.login(auth.token);
 const fs = require('fs');
 const isUp = require('is-up');
 var obj;
-// const link = require('./link.js');
+const link = require('./link.js');
 const test = require('./test.js');
 const lagrange = require('./lagrange.js');
 const delMsg = require('./messageDelete.js');
@@ -50,16 +50,16 @@ function command(args, msg){
     break;
     case '^link':
       if(msg.channel.guild.id != '733473838754693232')return;
-      // link.run(bot, msg);
+      link.run(bot, msg);
     break;
-    case '^create':
-      var temp = {
-        a: [],
-      };
-      var jsonContent = JSON.stringify(temp);
-      fs.createWriteStream('./links.json').write(jsonContent);
-      console.log('created');
-    break;
+    // case '^create':
+    //   var temp = {
+    //     a: [],
+    //   };
+    //   var jsonContent = JSON.stringify(temp);
+    //   fs.createWriteStream('./links.json').write(jsonContent);
+    //   console.log('created');
+    // break;
     case '^test':
       if(msg.channel.guild.id != '733473838754693232')return;
       test.message(bot, msg);
