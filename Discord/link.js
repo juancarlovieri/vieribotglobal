@@ -18,6 +18,15 @@ module.exports = {
   run: function(bot, msg){
     var args = msg.content.split(' ');
     switch(args[1]){
+      case 'rm':
+        if(args.length != 3)return;
+        if(links.has(args[2]) == false){
+          msg.channel.send('not found');
+          return;
+        }
+        links.delete(args[2]);
+        msg.channel.send('deleted!');
+      break;
       case 'set':
         if(args.length != 4)return;
         links.set(args[2], args[3]);
