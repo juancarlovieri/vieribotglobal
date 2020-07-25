@@ -1,10 +1,13 @@
 const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("ongoingLagrange.json", "utf8"));
+var cancelList = new Map();
 const lockFile = require('lockfile');
 var ongoing = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("challengeLagrange.json", "utf8"));
 var challenge = new Map(Object.entries(obj));
 var glob = -1;
+var canceler = 0;
+var prevSolver = 0;
 
 function save(){
   var jsonObj = Object.fromEntries(ongoing);
@@ -96,8 +99,16 @@ module.exports = {
       break;
       case 'reveal':
         if(glob == -1){msg.channel.send('no ongoing');return;}
+        if(cancelList.has(msg.author.id) == false)canceler++;
+        cancelList.set(msg.author.id, 1);
+        console.log(cancelList);
+        if(canceler < 3 && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
+        cancelList.clear();
+        console.log(cancelList);
+        canceler = 0;
         if(glob > 1000000){
           msg.channel.send('integer too big, cannot solve');
+          glob = -1;
           return;
         }
         var ansa = -1, ansb = -1, ansc = -1, ansd = -1;
@@ -120,11 +131,7 @@ module.exports = {
         if(ansa == -1){
           msg.channel.send('internal error, contact developer');
           return;
-        }
-        glob = -1;
-        msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
-      break;
-      case 'cancel':
+        } else msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
         glob = -1;
       break;
       case 'dec':
@@ -218,6 +225,7 @@ module.exports = {
     }
     if(res == glob){
       glob = -1;
+      prevSolver = msg.author.id;
       const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
       msg.react(emoji);
     } else{

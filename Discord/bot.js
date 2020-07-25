@@ -164,6 +164,7 @@ bot.on("ready", msg =>{
 })
 
 bot.on("message", msg => {
+  if(msg.author.bot == true)return;
   activity.add(msg);
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
