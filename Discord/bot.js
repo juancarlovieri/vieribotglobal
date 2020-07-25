@@ -82,7 +82,8 @@ function command(args, msg){
         return;
       }
       msg.channel.send('these are the files\nglobal:', {files: ["../debug.log", "../error.log", "../rating.json", "../points.json"]});
-      msg.channel.send('discord:', {files: ["./links.json", "./tests.json", "./handles.json", "./atcoderHandles.json", "changeHandle.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json", "./activity.json"]});
+      msg.channel.send('discord part 1:', {files: ["changeHandle.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json", "./activity.json"]});
+      msg.channel.send('discord part 2: ', {files: ["./links.json", "./tests.json", "./handles.json", "./atcoderHandles.json"]});
       msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
     break;
     case '^translate':
