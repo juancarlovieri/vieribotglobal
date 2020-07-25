@@ -22,11 +22,15 @@ function compare(a, b){
   return comparison;
 }
 
-    var lockFile = require('lockfile');
+var lockFile = require('lockfile');
 
 async function timer(time, channel, message){
   const msg = message;
+
   setTimeout(function(){
+    var opts = {
+      wait: 30000
+    }
     channel.send(msg);
     lockFile.lock('../lock.lock', opts, function(error){
       if(error != undefined){
