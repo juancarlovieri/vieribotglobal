@@ -26,6 +26,7 @@ module.exports = {
         }
         links.delete(args[2]);
         msg.channel.send('deleted!');
+        save();
       break;
       case 'set':
         if(args.length != 4)return;
