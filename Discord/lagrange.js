@@ -116,7 +116,7 @@ module.exports = {
           return;
         }
         glob = -1;
-        msg.channel.send(ansa + ' ' + ansb + ' ' + ansc);
+        msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
       break;
       case 'dec':
         if(challenge.has(msg.author.id) == false)return;
