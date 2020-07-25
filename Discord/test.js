@@ -22,10 +22,22 @@ function compare(a, b){
   return comparison;
 }
 
+    var lockFile = require('lockfile');
+
 async function timer(time, channel, message){
   const msg = message;
   setTimeout(function(){
     channel.send(msg);
+    lockFile.lock('../lock.lock', opts, function(error){
+      if(error != undefined){
+        console.log('busy on restart to reset test reminder');
+        console.log(error);
+        return;
+      }
+      lockFile.unlockSync('../lock.lock');
+      console.log('restarting to reset test reminder');
+      process.exit(0);
+    });
   }, time);
 }
 
