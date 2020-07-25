@@ -118,6 +118,9 @@ module.exports = {
         glob = -1;
         msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
       break;
+      case 'cancel':
+        glob = -1;
+      break;
       case 'dec':
         if(challenge.has(msg.author.id) == false)return;
         var temp = challenge.get(msg.author.id);
