@@ -22,7 +22,25 @@ function compare(a, b){
   return comparison;
 }
 
-var lockFile = require('lockfile');
+function clear(){
+  var arr = tests.a;
+  var temp = arr;
+  var add = 0;
+  for(var i = 0; i <=  arr.length - 1; i++){
+    if(arr[i].time < Date.now()){
+      console.log('buang');
+      temp.splice(i - add, 1);
+      console.log(add);
+      add++;
+      continue;
+    }
+  }
+  var baru = {
+    a: temp
+  }
+  tests = baru;
+  save();
+}
 
 async function timer(time, channel, message){
   const msg = message;
@@ -32,16 +50,6 @@ async function timer(time, channel, message){
       wait: 30000
     }
     channel.send(msg);
-    lockFile.lock('../lock.lock', opts, function(error){
-      if(error != undefined){
-        console.log('busy on restart to reset test reminder');
-        console.log(error);
-        return;
-      }
-      lockFile.unlockSync('../lock.lock');
-      console.log('restarting to reset test reminder');
-      process.exit(0);
-    });
   }, time);
 }
 
@@ -53,15 +61,12 @@ function remind(l, r, bot){
   console.log(arr);
   for(var i = l; i <= Math.min(r, arr.length - 1); i++){
     console.log(arr[i]);
+    setTimeout(function(){
+      clear();
+    }, arr[i].time - Date.now() + 100);
     if((arr[i].time - 3600000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 3600000) - Date.now(), channel, name.name + ' in an hour ' + name.mention);
-    } else{
-      console.log('buang');
-      temp.splice(i - add, 1);
-      console.log(add);
-      add++;
-      continue;
     }
     if((arr[i].time - 7200000) - Date.now() >= 0){
       var name = arr[i];
@@ -80,12 +85,12 @@ function remind(l, r, bot){
       timer((arr[i].time - 86400000) - Date.now(), channel, name.name + ' tomorrow ' + name.mention);
     }
   }
-  console.log(temp);
-  var baru = {
-    a: temp
-  }
-  tests = baru;
-  save();
+  // console.log(temp);
+  // var baru = {
+  //   a: temp
+  // }
+  // tests = baru;
+  // save();
 }
 
 module.exports = {
