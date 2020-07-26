@@ -84,6 +84,10 @@ function remind(l, r, bot){
       var name = arr[i];
       timer((arr[i].time - 86400000) - Date.now(), channel, name.name + ' tomorrow ' + name.mention);
     }
+    if((arr[i].time - 172800000) - Date.now() >= 0){
+      var name = arr[i];
+      timer((arr[i].time - 172800000) - Date.now(), channel, name.name + ' in 2 days ' + name.mention);
+    }
   }
   // console.log(temp);
   // var baru = {
