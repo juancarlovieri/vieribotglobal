@@ -102,6 +102,7 @@ module.exports = {
         if(cancelList.has(msg.author.id) == false)canceler++;
         cancelList.set(msg.author.id, 1);
         console.log(cancelList);
+        console.log(canceler);
         if(canceler < 3 && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
         cancelList.clear();
         console.log(cancelList);

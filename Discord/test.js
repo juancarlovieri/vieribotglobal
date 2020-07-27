@@ -32,7 +32,6 @@ function clear(){
       temp.splice(i - add, 1);
       console.log(add);
       add++;
-      continue;
     }
   }
   var baru = {
@@ -79,7 +78,7 @@ function remind(l, r, bot){
     if((arr[i].time - 43200000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 43200000) - Date.now(), channel, name.name + ' in 12 hours ' + name.mention);
-    }
+    } 
     if((arr[i].time - 86400000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 86400000) - Date.now(), channel, name.name + ' tomorrow ' + name.mention);
@@ -106,9 +105,6 @@ module.exports = {
     console.log(msg.content);
     switch(args[1]){
       case 'new':
-        if(msg.author.id != '455184547840262144'){
-          return;
-        }
         if(args.length != 5)return;
         if(isNaN(args[3]))return;
         var arr = tests.a;
