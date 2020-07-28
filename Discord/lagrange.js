@@ -103,7 +103,7 @@ module.exports = {
         cancelList.set(msg.author.id, 1);
         console.log(cancelList);
         console.log(canceler);
-        if(canceler < 3 && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
+        if(canceler < 1 && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
         cancelList.clear();
         console.log(cancelList);
         canceler = 0;
@@ -112,28 +112,42 @@ module.exports = {
           glob = -1;
           return;
         }
-        var ansa = -1, ansb = -1, ansc = -1, ansd = -1;
-        for(var a = 0; a <= 1000; a++){
-          for(var b = 0; b <= 1000; b++){
-            for(var c = 0; c <= 1000; c++){
-              var possible = Math.round(Math.sqrt(glob - a * a - b * b));
-              if(possible * possible + a * a + b * b == glob){
-                ansa = a;
-                ansb = b;
-                ansc = c;
-                ansd = possible;
-                break;
-              }
-            }
-            if(ansa != -1)break;
+        // var ansa = -1, ansb = -1, ansc = -1, ansd = -1;
+        // for(var a = 0; a <= 1000; a++){
+        //   for(var b = 0; b <= 1000; b++){
+        //     for(var c = 0; c <= 1000; c++){
+        //       var possible = Math.round(Math.sqrt(glob - a * a - b * b));
+        //       if(possible * possible + a * a + b * b == glob){
+        //         ansa = a;
+        //         ansb = b;
+        //         ansc = c;
+        //         ansd = possible;
+        //         break;
+        //       }
+        //     }
+        //     if(ansa != -1)break;
+        //   }
+        //   if(ansa != -1)break;
+        // }
+        // if(ansa == -1){
+        //   msg.channel.send('internal error, contact developer');
+        // } else msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
+        var spawn = require('child_process').spawn;
+        var child = spawn('python', ['lagrange reveal.py']);
+        child.stdout.on('data', function(data){
+          console.log(data);
+          var res = JSON.parse(data.toString());
+          msg.channel.send(res);
+          glob = -1;
+        });
+        child.on('close', function(code){
+          if(code != 0){
+            msg.channel.send('internal error, contact developer');
+            console.log('python crashed');
           }
-          if(ansa != -1)break;
-        }
-        if(ansa == -1){
-          msg.channel.send('internal error, contact developer');
-          return;
-        } else msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
-        glob = -1;
+        });
+        child.stdin.write(glob.toString());
+        child.stdin.end();
       break;
       case 'dec':
         if(challenge.has(msg.author.id) == false)return;

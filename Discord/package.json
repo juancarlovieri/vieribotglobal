@@ -7,6 +7,7 @@
     "@google-cloud/translate": "^6.0.2",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
+    "child_process": "^1.0.2",
     "crypto": "^1.0.1",
     "discord.js": "^12.2.0",
     "encodeurl": "^1.0.2",
