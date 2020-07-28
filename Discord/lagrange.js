@@ -134,7 +134,7 @@ module.exports = {
         // } else msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
         console.log(glob);
         var spawn = require('child_process').spawn;
-        var child = spawn('python', ['lagrange reveal.py']);
+        var child = spawn('python3', ['lagrange reveal.py']);
         child.stdout.on('data', function(data){
           console.log(data);
           var res = JSON.parse(data.toString());
