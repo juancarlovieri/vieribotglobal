@@ -132,6 +132,7 @@ module.exports = {
         // if(ansa == -1){
         //   msg.channel.send('internal error, contact developer');
         // } else msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
+        console.log(glob);
         var spawn = require('child_process').spawn;
         var child = spawn('python', ['lagrange reveal.py']);
         child.stdout.on('data', function(data){
