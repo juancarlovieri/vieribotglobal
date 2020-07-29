@@ -62,6 +62,7 @@ function remind(l, r, bot){
     console.log(arr[i]);
     setTimeout(function(){
       clear();
+      save();
     }, arr[i].time - Date.now() + 100);
     if((arr[i].time - 3600000) - Date.now() >= 0){
       var name = arr[i];
@@ -136,6 +137,8 @@ module.exports = {
         save();
       break;
       case 'list':
+        clear();
+        save();
         var arr = tests.a;
         var hasil = "list of tests:\n";
         console.log(arr);
