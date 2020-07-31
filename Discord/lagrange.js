@@ -103,15 +103,15 @@ module.exports = {
         cancelList.set(msg.author.id, 1);
         console.log(cancelList);
         console.log(canceler);
-        if(canceler < 3 && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
+        if(canceler < 1 && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
         cancelList.clear();
         console.log(cancelList);
         canceler = 0;
-        if(glob > 1000000){
-          msg.channel.send('integer too big, cannot solve');
-          glob = -1;
-          return;
-        }
+        // if(glob > 1000000){
+        //   msg.channel.send('integer too big, cannot solve');
+        //   glob = -1;
+        //   return;
+        // }
         // var ansa = -1, ansb = -1, ansc = -1, ansd = -1;
         // for(var a = 0; a <= 1000; a++){
         //   for(var b = 0; b <= 1000; b++){
@@ -134,7 +134,7 @@ module.exports = {
         // } else msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
         console.log(glob);
         var spawn = require('child_process').spawn;
-        var child = spawn('python3', ['lagrange reveal.py']);
+        var child = spawn('python3', ['lagrange reveal fast.py']);
         child.stdout.on('data', function(data){
           console.log(data);
           var res = JSON.parse(data.toString());
