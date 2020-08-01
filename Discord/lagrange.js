@@ -8,6 +8,7 @@ var challenge = new Map(Object.entries(obj));
 var glob = -1;
 var canceler = 0;
 var prevSolver = 0;
+var prevL = -1, prevR = -1;
 
 function save(){
   var jsonObj = Object.fromEntries(ongoing);
@@ -53,6 +54,7 @@ module.exports = {
         return;
       }
       var l = parseInt(args[1]), r = parseInt(args[2]);
+      prevL = l, prevR = r;
       if(l < 0)return;
       glob = Math.floor(Math.random()*(r-l+1))+l;
       msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
@@ -103,7 +105,7 @@ module.exports = {
         cancelList.set(msg.author.id, 1);
         console.log(cancelList);
         console.log(canceler);
-        if(canceler < 3 && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
+        if(canceler < 3  && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
         cancelList.clear();
         console.log(cancelList);
         canceler = 0;
@@ -140,6 +142,8 @@ module.exports = {
           var res = JSON.parse(data.toString());
           msg.channel.send(res);
           glob = -1;
+          msg.react('🔁');
+          lastId = msg.id;
         });
         child.on('close', function(code){
           if(code != 0){
@@ -244,9 +248,22 @@ module.exports = {
       prevSolver = msg.author.id;
       const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
       msg.react(emoji);
+      msg.react('🔁');
+      lastId = msg.id;
     } else{
        const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
       msg.react(emoji);
     }
+  },
+  repeat: function(msg, emoji){
+    if(lastId != msg.id || emoji.name != '🔁'){
+      return;
+    }
+    lastId = -1;
+    if(glob != -1){msg.channel.send('thre is an ongoing');return;}
+    msg.channel.send('repeating');
+    var l = prevL, r = prevR;
+    glob = Math.floor(Math.random()*(r-l+1))+l;
+    msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
   }
 }

@@ -164,6 +164,7 @@ bot.on("ready", msg =>{
 })
 
 bot.on("message", msg => {
+  // console.log(msg);
   if(msg.author.bot == true)return;
   activity.add(msg);
   if(msg.content == '^restart'){
@@ -196,9 +197,11 @@ bot.on("message", msg => {
 });
 
 bot.on('messageReactionAdd', async (reaction, user) => {
-  if(reaction.message.author.bot == true)return;
   if(user.bot == true)return;
   if(user.id == '724954396147974194')return;
+  lagrange.repeat(reaction.message, reaction.emoji);
+  // console.log(reaction.emoji);
+  if(reaction.message.author.bot == true)return;
   console.log('reacted');
   if (reaction.partial) {
     try {
