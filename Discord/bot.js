@@ -42,6 +42,11 @@ function command(args, msg){
       }
       delMsg.clear();
     break;
+    case '^coinflip':
+      if(Math.random() > 0.5){
+        msg.channel.send('heads');
+      } else msg.channel.send('tails');
+    break;
     case '^lag':
       lagrange.message(bot, msg);
     break;
