@@ -79,9 +79,9 @@ function reveal(msg, id){
   child.stdout.on('data', function(data){
     console.log(data);
     var res = JSON.parse(data.toString());
-    msg.channel.send(res);
+    var temp = msg.channel.send(res);
     glob = -1;
-    msg.react('🔁');
+    temp.react('🔁');
     lastId = msg.id;
   });
   child.on('close', function(code){
