@@ -106,7 +106,7 @@ function command(args, msg){
       cfduel.duel(bot, msg);
     break; 
     case '^ask':
-      wolfram.ask(bot, msg);
+      // wolfram.ask(bot, msg);
     break;
   }
 }
