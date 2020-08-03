@@ -61,7 +61,7 @@ async function newGlobalRepeat(msg){
   chal.react('🤷‍♀️');
 }
 
-function reveal(msg, id){
+async function reveal(msg, id){
   console.log(id);
   if(glob == -1){msg.channel.send('no ongoing');return;}
   if(cancelList.has(id) == false)canceler++;
@@ -79,7 +79,7 @@ function reveal(msg, id){
   child.stdout.on('data', function(data){
     console.log(data);
     var res = JSON.parse(data.toString());
-    var temp = msg.channel.send(res);
+    var temp = await msg.channel.send(res);
     glob = -1;
     temp.react('🔁');
     lastId = msg.id;
