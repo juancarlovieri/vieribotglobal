@@ -204,7 +204,7 @@ bot.on("message", msg => {
 bot.on('messageReactionAdd', async (reaction, user) => {
   if(user.bot == true)return;
   if(user.id == '724954396147974194')return;
-  lagrange.repeat(reaction.message, reaction.emoji);
+  lagrange.repeat(reaction.message, reaction.emoji, user);
   // console.log(reaction.emoji);
   if(reaction.message.author.bot == true)return;
   console.log('reacted');

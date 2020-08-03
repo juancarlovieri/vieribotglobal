@@ -9,6 +9,10 @@ var glob = -1;
 var canceler = 0;
 var prevSolver = 0;
 var prevL = -1, prevR = -1;
+var lastId = -1;
+var chal = {
+  id: -1
+};
 
 function save(){
   var jsonObj = Object.fromEntries(ongoing);
@@ -33,6 +37,63 @@ function save(){
   });
 }
 
+async function newGlobal(args, msg){
+  if(isNaN(args[1]) || isNaN(args[2]))return;
+  if(parseInt(args[1]) > parseInt(args[2]))return;
+  if(glob != -1){
+    msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
+    return;
+  }
+  var l = parseInt(args[1]), r = parseInt(args[2]);
+  prevL = l, prevR = r;
+  if(l < 0)return;
+  glob = Math.floor(Math.random()*(r-l+1))+l;
+  chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+  // console.log(chal);
+  chal.react('🤷‍♀️');
+}
+
+async function newGlobalRepeat(msg){
+  msg.channel.send('repeating');
+  var l = prevL, r = prevR;
+  glob = Math.floor(Math.random()*(r-l+1))+l;
+  chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+  chal.react('🤷‍♀️');
+}
+
+function reveal(msg, id){
+  console.log(id);
+  if(glob == -1){msg.channel.send('no ongoing');return;}
+  if(cancelList.has(id) == false)canceler++;
+  cancelList.set(id, 1);
+  console.log(cancelList);
+  console.log(canceler);
+  console.log(prevSolver);
+  if(canceler < 3  && id != prevSolver){msg.channel.send('not enough people to cancel');return;}
+  cancelList.clear();
+  console.log(cancelList);
+  canceler = 0;
+  console.log(glob);
+  var spawn = require('child_process').spawn;
+  var child = spawn('python3', ['lagrange reveal fast.py']);
+  child.stdout.on('data', function(data){
+    console.log(data);
+    var res = JSON.parse(data.toString());
+    msg.channel.send(res);
+    glob = -1;
+    msg.react('🔁');
+    lastId = msg.id;
+  });
+  child.on('close', function(code){
+    if(code != 0){
+      msg.channel.send('internal error, contact developer');
+      console.log('python crashed');
+    }
+  });
+  child.stdin.write(glob.toString());
+  child.stdin.end();
+}
+
 module.exports = {
   message: function(bot, msg){
     var args = msg.content.split(' ');
@@ -47,17 +108,7 @@ module.exports = {
       msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
     }
     if(args.length == 3){
-      if(isNaN(args[1]) || isNaN(args[2]))return;
-      if(parseInt(args[1]) > parseInt(args[2]))return;
-      if(glob != -1){
-        msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
-        return;
-      }
-      var l = parseInt(args[1]), r = parseInt(args[2]);
-      prevL = l, prevR = r;
-      if(l < 0)return;
-      glob = Math.floor(Math.random()*(r-l+1))+l;
-      msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+      newGlobal(args, msg);
       return; 
     }
     switch (args[1]){
@@ -100,59 +151,7 @@ module.exports = {
         msg.channel.send('<@' + opp + '>, <@' + msg.author.id + '> is challenging you on a lagrange duel!');
       break;
       case 'reveal':
-        if(glob == -1){msg.channel.send('no ongoing');return;}
-        if(cancelList.has(msg.author.id) == false)canceler++;
-        cancelList.set(msg.author.id, 1);
-        console.log(cancelList);
-        console.log(canceler);
-        if(canceler < 3  && msg.author.id != prevSolver){msg.channel.send('not enough people to cancel');return;}
-        cancelList.clear();
-        console.log(cancelList);
-        canceler = 0;
-        // if(glob > 1000000){
-        //   msg.channel.send('integer too big, cannot solve');
-        //   glob = -1;
-        //   return;
-        // }
-        // var ansa = -1, ansb = -1, ansc = -1, ansd = -1;
-        // for(var a = 0; a <= 1000; a++){
-        //   for(var b = 0; b <= 1000; b++){
-        //     for(var c = 0; c <= 1000; c++){
-        //       var possible = Math.round(Math.sqrt(glob - a * a - b * b));
-        //       if(possible * possible + a * a + b * b == glob){
-        //         ansa = a;
-        //         ansb = b;
-        //         ansc = c;
-        //         ansd = possible;
-        //         break;
-        //       }
-        //     }
-        //     if(ansa != -1)break;
-        //   }
-        //   if(ansa != -1)break;
-        // }
-        // if(ansa == -1){
-        //   msg.channel.send('internal error, contact developer');
-        // } else msg.channel.send(ansa + ' ' + ansb + ' ' + ansc + ' ' + ansd);
-        console.log(glob);
-        var spawn = require('child_process').spawn;
-        var child = spawn('python3', ['lagrange reveal fast.py']);
-        child.stdout.on('data', function(data){
-          console.log(data);
-          var res = JSON.parse(data.toString());
-          msg.channel.send(res);
-          glob = -1;
-          msg.react('🔁');
-          lastId = msg.id;
-        });
-        child.on('close', function(code){
-          if(code != 0){
-            msg.channel.send('internal error, contact developer');
-            console.log('python crashed');
-          }
-        });
-        child.stdin.write(glob.toString());
-        child.stdin.end();
+        reveal(msg, msg.author.id);
       break;
       case 'dec':
         if(challenge.has(msg.author.id) == false)return;
@@ -255,15 +254,15 @@ module.exports = {
       msg.react(emoji);
     }
   },
-  repeat: function(msg, emoji){
+  repeat: function(msg, emoji, user){
+    if(chal.id == msg.id && emoji.name == '🤷‍♀️' && glob != -1){
+      reveal(msg, user.id);
+    }
     if(lastId != msg.id || emoji.name != '🔁'){
       return;
     }
     lastId = -1;
     if(glob != -1){msg.channel.send('thre is an ongoing');return;}
-    msg.channel.send('repeating');
-    var l = prevL, r = prevR;
-    glob = Math.floor(Math.random()*(r-l+1))+l;
-    msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+    newGlobalRepeat(msg);
   }
 }
