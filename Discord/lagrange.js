@@ -4,8 +4,12 @@ var cancelList = new Map();
 const lockFile = require('lockfile');
 var ongoing = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("challengeLagrange.json", "utf8"));
+var Discord = require("discord.js");
 var challenge = new Map(Object.entries(obj));
+obj = JSON.parse(fs.readFileSync("../lagrange rank.json", "utf8"));
+var rank = new Map(Object.entries(obj));
 var glob = -1;
+var ranked = false;
 var canceler = 0;
 var prevSolver = 0;
 var prevL = -1, prevR = -1;
@@ -13,6 +17,56 @@ var lastId = -1;
 var chal = {
   id: -1
 };
+
+async function printRank(msg, bot){
+  var list = [];
+  rank.forEach(function lol(value, key){
+    list[list.length] = {
+      name: key,
+      value: value
+    }
+  });
+  // [
+  //   {
+  //     name: "tim A: " + nama[0],
+  //     value: arr[0]
+  //   },
+  //   {
+  //     name: "tim B: " + nama[1],
+  //     value: arr[1]
+  //   }
+  // ]
+  list.sort(cmp);
+  for(var i = 0; i < list.length; i++){
+    let temp = await bot.users.fetch(list[i].name);
+    list[i].name =  (i + 1) + '. ' + temp.username;
+  }
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
+  msg.channel.send({files: [vieri], embed: {
+    color: 16764006,
+    author: {
+      name: 'lagrange',
+      icon_url: "attachment://viericorp.png"
+    },
+    title: 'top of the leaderboard',
+    fields: list,
+    timestamp: new Date(),
+    footer: {
+      text: "By Vieri Corp.™ All Rights Reserved"
+    }
+  }
+  });
+}
+
+function cmp(a, b){
+  let comparison = 0;
+  if (a.value < b.value) {
+    comparison = 1;
+  } else {
+    comparison = -1;
+  }
+  return comparison;
+}
 
 function save(){
   var jsonObj = Object.fromEntries(ongoing);
@@ -35,6 +89,16 @@ function save(){
     }
     console.log("saved");
   });
+  jsonObj = Object.fromEntries(rank);
+  console.log(jsonObj);
+  jsonContent = JSON.stringify(jsonObj);
+  fs.writeFileSync("../lagrange rank.json", jsonContent, "utf8", function(err) {
+    if (err) {
+      console.log("An errr occured while writing JSON jsonObj to File.");
+      return console.log(err);
+    }
+    console.log("saved");
+  });
 }
 
 async function newGlobal(args, msg){
@@ -50,11 +114,13 @@ async function newGlobal(args, msg){
   glob = Math.floor(Math.random()*(r-l+1))+l;
   chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
   // console.log(chal);
+  ranked = false;
   chal.react('🤷‍♀️');
 }
 
 async function newGlobalRepeat(msg){
-  msg.channel.send('repeating');
+  if(ranked) msg.channel.send('repeating, previous range was: ranked');
+  else msg.channel.send('repeating, previous range was: ' + prevL + ' and ' + prevR);
   var l = prevL, r = prevR;
   glob = Math.floor(Math.random()*(r-l+1))+l;
   chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
@@ -79,7 +145,7 @@ function reveal(msg, id){
   child.stdout.on('data', function(data){
     console.log(data);
     var res = JSON.parse(data.toString());
-    msg.channel.send(res);
+      msg.channel.send(res);
     glob = -1;
     msg.react('🔁');
     lastId = msg.id;
@@ -104,6 +170,8 @@ module.exports = {
       }
       if(parseInt(args[1]) < 0)return;
       var l = 0, r = parseInt(args[1]);
+      prevL = l, prevR = r;
+      ranked = false;
       glob = Math.floor(Math.random()*(r-l+1))+l;
       msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
     }
@@ -115,6 +183,20 @@ module.exports = {
       case 'resend':
         if(ongoing.has(msg.author.id) == false)return;
         msg.channel.send(ongoing.get(msg.author.id).problem);
+      break;
+      case 'ranked':
+        if(glob != -1){
+          msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
+          return;
+        }
+        var l = 1000, r = 9999;
+        prevL = l, prevR = r;
+        ranked = true;
+        glob = Math.floor(Math.random() * (r - l + 1)) + l;
+        msg.channel.send('global ranked duel is starting!\n integer is: **' + glob + '**');
+      break;
+      case 'rank':
+        printRank(msg, bot);        
       break;
       case 'ch':
         if(args.length != 5)return;
@@ -249,6 +331,14 @@ module.exports = {
       msg.react(emoji);
       msg.react('🔁');
       lastId = msg.id;
+      if(ranked){
+        var prevRank = 10;
+        if(rank.has(msg.author.id)){
+          prevRank = rank.get(msg.author.id) + 10;
+        }
+        rank.set(msg.author.id, prevRank);
+        save();
+      }
     } else{
        const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
       msg.react(emoji);
