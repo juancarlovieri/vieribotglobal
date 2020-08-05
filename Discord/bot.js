@@ -88,7 +88,7 @@ function command(args, msg){
           console.log( 'CPU free (%): ' + Math.round(v * 10000) / 100 );
       });
       os.cpuUsage(function(v){
-          msg.channel.send('**CPU usage:** ' + Math.round(v * 10000) / 100  + '%\n**Number of cores:** ' + os.cpuCount() + '\n**RAM Usage**: ' + Math.round((os.totalmem() - os.freemem()) * 100) / 100 + ' mb /' + os.totalmem() + ' mb');
+          msg.channel.send('**CPU usage:** ' + Math.round(v * 10000) / 100  + '%\n**Number of cores:** ' + os.cpuCount() + '\n**RAM Usage**: ' + Math.round((os.totalmem() - os.freemem()) * 100) / 100 + ' mb /' + Math.round(os.totalmem() * 100) / 100 + ' mb');
       });
       console.log(os.cpuCount());
     break;
