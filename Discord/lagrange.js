@@ -101,6 +101,15 @@ function save(){
   });
 }
 
+async function newRanked(msg){
+  var l = 1000, r = 9999;
+  prevL = l, prevR = r;
+  ranked = true;
+  glob = Math.floor(Math.random() * (r - l + 1)) + l;
+  chal = await msg.channel.send('global ranked duel is starting!\n integer is: **' + glob + '**');
+  chal.react('🤷‍♀️');
+}
+
 async function newGlobal(args, msg){
   if(isNaN(args[1]) || isNaN(args[2]))return;
   if(parseInt(args[1]) > parseInt(args[2]))return;
@@ -189,11 +198,7 @@ module.exports = {
           msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
           return;
         }
-        var l = 1000, r = 9999;
-        prevL = l, prevR = r;
-        ranked = true;
-        glob = Math.floor(Math.random() * (r - l + 1)) + l;
-        msg.channel.send('global ranked duel is starting!\n integer is: **' + glob + '**');
+        newRanked(msg);
       break;
       case 'rank':
         printRank(msg, bot);        
