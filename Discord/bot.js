@@ -88,8 +88,9 @@ function command(args, msg){
           console.log( 'CPU free (%): ' + Math.round(v * 10000) / 100 );
       });
       os.cpuUsage(function(v){
-          msg.channel.send('cpu usage: ' + Math.round(v * 10000) / 100  + '%');
+          msg.channel.send('**CPU usage:** ' + Math.round(v * 10000) / 100  + '%\n**Number of cores:** ' + os.cpuCount() + '\n**RAM Usage**: ' + Math.round((os.totalmem() - os.freemem()) * 100) / 100 + ' mb /' + os.totalmem() + ' mb');
       });
+      console.log(os.cpuCount());
     break;
     case '^send':
       if(msg.author.id != '455184547840262144'){
