@@ -92,7 +92,7 @@ function save(){
   jsonObj = Object.fromEntries(rank);
   console.log(jsonObj);
   jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("../lagrange rank.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync("../lagrange_rank.json", jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
