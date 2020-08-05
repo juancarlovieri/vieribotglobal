@@ -82,6 +82,15 @@ function command(args, msg){
         }
       });
     break;
+    case '^freemems':
+      var os = require('os-utils');
+      os.cpuFree(function(v){
+          console.log( 'CPU free (%): ' + Math.round(v * 100) );
+      });
+      os.cpuUsage(function(v){
+          msg.channel.send('cpu usage: ' + Math.round(v * 100)  + '%');
+      });
+    break;
     case '^send':
       if(msg.author.id != '455184547840262144'){
         return;

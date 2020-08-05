@@ -1,6 +1,7 @@
 const fs = require('fs');
 var obj = JSON.parse(fs.readFileSync("ongoingLagrange.json", "utf8"));
 var cancelList = new Map();
+var startTime = 0;
 const lockFile = require('lockfile');
 var ongoing = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("challengeLagrange.json", "utf8"));
@@ -105,6 +106,7 @@ async function newRanked(msg){
   var l = 1000, r = 9999;
   prevL = l, prevR = r;
   ranked = true;
+  startTime = Date.now();
   glob = Math.floor(Math.random() * (r - l + 1)) + l;
   chal = await msg.channel.send('global ranked duel is starting!\n integer is: **' + glob + '**');
   chal.react('🤷‍♀️');
@@ -131,6 +133,7 @@ async function newGlobalRepeat(msg){
   if(ranked) msg.channel.send('repeating, previous range was: ranked');
   else msg.channel.send('repeating, previous range was: ' + prevL + ' and ' + prevR);
   var l = prevL, r = prevR;
+  startTime = Date.now();
   glob = Math.floor(Math.random()*(r-l+1))+l;
   chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
   chal.react('🤷‍♀️');
