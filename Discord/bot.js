@@ -85,10 +85,10 @@ function command(args, msg){
     case '^freemems':
       var os = require('os-utils');
       os.cpuFree(function(v){
-          console.log( 'CPU free (%): ' + Math.round(v * 100) );
+          console.log( 'CPU free (%): ' + Math.round(v * 10000) / 100 );
       });
       os.cpuUsage(function(v){
-          msg.channel.send('cpu usage: ' + Math.round(v * 100)  + '%');
+          msg.channel.send('cpu usage: ' + Math.round(v * 10000) / 100  + '%');
       });
     break;
     case '^send':
