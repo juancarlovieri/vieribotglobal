@@ -20,6 +20,11 @@ module.exports = {
         bot.sendMessage(-1001265467717, list[indx].name + ' is about to start in 1 hour!');
       }, (list[indx].startTimeSeconds - 3600) * 1000 - Date.now());
     }
+    if((list[indx].startTimeSeconds - 86400) * 1000 - Date.now() >= 0){
+      setTimeout(function(){
+        bot.sendMessage(-1001265467717, list[indx].name + ' is about to start in 1 day!');
+      }, (list[indx].startTimeSeconds - 86400) * 1000 - Date.now());
+    }
     setTimeout(function(){
       var opts = {
         wait: 30000
