@@ -167,10 +167,25 @@ function play2(){
   });
 }
 
+function play3(){
+  const channel = bot.channels.cache.get("733540840017887263");
+  if (!channel) return console.error("The channel does not exist!");
+  channel.join().then(connection => {
+    console.log("Successfully connected.");
+    connection.play(ytdl('https://youtu.be/hGlyFc79BUE')).on("finish", () =>{
+      play();
+    }).on("error", error => console.error(error));
+  }).catch(e => {
+    console.log('error');
+    console.error(e);
+  });
+}
+
 bot.on("ready", msg =>{
   console.log('ready'); 
   play();
   play2();
+  play3();
   // bot.user.setStatus("idle", "lagrange");
   test.run(bot);
   bot.user.setPresence({
