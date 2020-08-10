@@ -29,6 +29,7 @@ module.exports = {
         save();
       break;
       case 'set':
+        if(msg.author.id != 576022362642841621 && msg.author.id != 455184547840262144)return;
         if(args.length != 4)return;
         links.set(args[2], args[3]);
         save();
