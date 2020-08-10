@@ -26,6 +26,25 @@ var utcSeconds = 1595667600 - 3600;
 
 function command(args, msg){
   switch(args[0]){
+    case '^bigmoji':
+      var alr = 0;
+      var indx = -1;
+      for(var i = 0; i < args[1].length; i++){
+        if(args[1][i] == ':'){
+          ++alr;
+          if(alr == 2){
+            indx = i + 1;
+            break;
+          }
+        }
+      }
+      if(indx == -1){
+        msg.channel.send('internal error, contact developer');
+        return;
+      }
+      console.log(args[1]);
+      msg.channel.send('https://cdn.discordapp.com/emojis/' + args[1].substr(indx, args[1].length - indx - 1) + '.png');
+    break;
     case '^isup':
       (async () => {
         if(await isUp('http://' + args[1])){
@@ -227,6 +246,7 @@ bot.on("message", msg => {
 });
 
 bot.on('messageReactionAdd', async (reaction, user) => {
+  // console.log(reaction);
   if(user.bot == true)return;
   if(user.id == '724954396147974194')return;
   lagrange.repeat(reaction.message, reaction.emoji, user);
