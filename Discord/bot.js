@@ -19,6 +19,8 @@ const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
 const status = "do not disturb";
 
+// console.log((1599715800000 - 3600000) - Date.now());
+
 function save(){
 }
 

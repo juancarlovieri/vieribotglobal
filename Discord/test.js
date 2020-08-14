@@ -41,15 +41,25 @@ function clear(){
   save();
 }
 
+function runAtDate(date, func) {
+  var diff = Math.max((date - Date.now()), 0);
+  if (diff > 0x7FFFFFFF)
+    setTimeout(function() {runAtDate(date, func);}, 0x7FFFFFFF);
+  else
+    setTimeout(func, diff);
+}
+
 async function timer(time, channel, message){
   const msg = message;
-
-  setTimeout(function(){
-    var opts = {
-      wait: 30000
-    }
+  runAtDate(time, function(){
     channel.send(msg);
-  }, time);
+  });
+  // setTimeout(function(){
+  //   var opts = {
+  //     wait: 30000
+  //   }
+  //   channel.send(msg);
+  // }, time);
 }
 
 function remind(l, r, bot){
@@ -60,33 +70,37 @@ function remind(l, r, bot){
   console.log(arr);
   for(var i = l; i <= Math.min(r, arr.length - 1); i++){
     console.log(arr[i]);
-    setTimeout(function(){
+    runAtDate(arr[i].time + 100, function(){
       clear();
       save();
-    }, arr[i].time - Date.now() + 100);
+    });
+    // setTimeout(function(){
+    //   clear();
+    //   save();
+    // }, arr[i].time - Date.now() + 100);
     if((arr[i].time - 3600000) - Date.now() >= 0){
       var name = arr[i];
-      timer((arr[i].time - 3600000) - Date.now(), channel, name.name + ' in an hour ' + name.mention);
+      timer((arr[i].time - 3600000), channel, name.name + ' in an hour ' + name.mention);
     }
-    if((arr[i].time - 7200000) - Date.now() >= 0){
+    if((arr[i].time - 7200000) >= 0){
       var name = arr[i];
-      timer((arr[i].time - 7200000) - Date.now(), channel, name.name + ' in 2 hours ' + name.mention);
+      timer((arr[i].time - 7200000), channel, name.name + ' in 2 hours ' + name.mention);
     }
-    if((arr[i].time - 21600000) - Date.now() >= 0){
+    if((arr[i].time - 21600000) >= 0){
       var name = arr[i];
-      timer((arr[i].time - 21600000) - Date.now(), channel, name.name + ' in 6 hours ' + name.mention);
+      timer((arr[i].time - 21600000), channel, name.name + ' in 6 hours ' + name.mention);
     }
-    if((arr[i].time - 43200000) - Date.now() >= 0){
+    if((arr[i].time - 43200000) >= 0){
       var name = arr[i];
-      timer((arr[i].time - 43200000) - Date.now(), channel, name.name + ' in 12 hours ' + name.mention);
+      timer((arr[i].time - 43200000), channel, name.name + ' in 12 hours ' + name.mention);
     } 
-    if((arr[i].time - 86400000) - Date.now() >= 0){
+    if((arr[i].time - 86400000) >= 0){
       var name = arr[i];
-      timer((arr[i].time - 86400000) - Date.now(), channel, name.name + ' tomorrow ' + name.mention);
+      timer((arr[i].time - 86400000), channel, name.name + ' tomorrow ' + name.mention);
     }
-    if((arr[i].time - 172800000) - Date.now() >= 0){
+    if((arr[i].time - 172800000) >= 0){
       var name = arr[i];
-      timer((arr[i].time - 172800000) - Date.now(), channel, name.name + ' in 2 days ' + name.mention);
+      timer((arr[i].time - 172800000), channel, name.name + ' in 2 days ' + name.mention);
     }
   }
   // console.log(temp);
