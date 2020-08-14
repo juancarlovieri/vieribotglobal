@@ -173,7 +173,7 @@ module.exports = {
           // hasil += '**' + arr[i].name + '**: ' + res + '\n';
           hasil[hasil.length] = {
             name: arr[i].name,
-            value: res
+            value: '\u200b \u200b \u200b \u200b \u200b \u200b' + res
           }
         }
         var vieri = new Discord.MessageAttachment('../viericorp.png');
