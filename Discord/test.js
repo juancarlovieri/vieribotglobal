@@ -151,7 +151,72 @@ module.exports = {
         tests = temp;
         save();
       break;
+      case 'filter':
+        clear();
+        save();
+        var arr = tests.a;
+        var hasil =[];
+        console.log(arr);
+        arr.sort(compare);
+        save();
+        var lists = [];
+        for(var i = 2; i < args.length; i++){
+          // if(msg.channel.guild.roles.find(r => r.name == args[i])){
+          //     //Rest of your code
+          //     console.log(msg.channel.guild.rolesfind(r => r.name == args[i]));
+          // }
+          var role = msg.channel.guild.roles.cache;
+          var id = -1;
+          role.forEach(function lol(value, key){
+            if(value.name == args[i]){
+              id = key;
+              return;
+            }
+          });
+          console.log(id);
+          console.log(i);
+          for(var j = 0; j < arr.length; j++){
+            if(arr[j].mention == '<@&' + id + '>'){
+              console.log(arr[j]);
+              lists[lists.length] = arr[j];
+            }
+          }
+        }
+        lists.sort(compare);
+        for(var i = 0; i < lists.length; i++){
+          var utcSeconds = Math.round(lists[i].time / 1000) - 3600;
+          var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+          d.setUTCSeconds(utcSeconds);
+          var arrDate = d.toString().split(' ');
+          var res = arrDate[0];
+          res += ' ' + arrDate[1];
+          res += ' ' + arrDate[2];
+          res += ' ' + arrDate[3];
+          res += ' ' + arrDate[4];
+          // hasil += '**' + arr[i].name + '**: ' + res + '\n';
+          hasil[hasil.length] = {
+            name: lists[i].name,
+            value: '\u200b \u200b \u200b \u200b \u200b \u200b' + res + '\n\u200b'
+          }
+        }
+        var vieri = new Discord.MessageAttachment('../viericorp.png');
+        msg.channel.send({files: [vieri], embed: {
+          color: 16764006,
+          author: {
+            name: 'Tests',
+            icon_url: "attachment://viericorp.png"
+          },
+          title: 'list of tests',
+          fields: hasil,
+          timestamp: new Date(),
+          footer: {
+            text: "By Vieri Corp.™ All Rights Reserved"
+          }
+        }
+        });
+      break;
       case 'list':
+      console.log(msg.content);
         clear();
         save();
         var arr = tests.a;
