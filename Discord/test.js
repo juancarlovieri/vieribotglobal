@@ -1,4 +1,5 @@
 const fs = require('fs');
+const Discord = require('discord.js');
 var tests = JSON.parse(fs.readFileSync("tests.json", "utf8"));
 
 function save(){
@@ -154,7 +155,7 @@ module.exports = {
         clear();
         save();
         var arr = tests.a;
-        var hasil = "list of tests:\n";
+        var hasil =[];
         console.log(arr);
         arr.sort(compare);
         save();
@@ -169,9 +170,28 @@ module.exports = {
           res += ' ' + arrDate[2];
           res += ' ' + arrDate[3];
           res += ' ' + arrDate[4];
-          hasil += '**' + arr[i].name + '**: ' + res + '\n';
+          // hasil += '**' + arr[i].name + '**: ' + res + '\n';
+          hasil[hasil.length] = {
+            name: arr[i].name,
+            value: res
+          }
         }
-        msg.channel.send(hasil);
+        var vieri = new Discord.MessageAttachment('../viericorp.png');
+        msg.channel.send({files: [vieri], embed: {
+          color: 16764006,
+          author: {
+            name: 'Tests',
+            icon_url: "attachment://viericorp.png"
+          },
+          title: 'list of tests',
+          fields: hasil,
+          timestamp: new Date(),
+          footer: {
+            text: "By Vieri Corp.™ All Rights Reserved"
+          }
+        }
+        });
+        // msg.channel.send(hasil);
       break;
     }
   }
