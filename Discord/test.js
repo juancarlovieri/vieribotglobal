@@ -160,7 +160,24 @@ module.exports = {
         arr.sort(compare);
         save();
         var lists = [];
+        var start = false;
+        var temp = "";
         for(var i = 2; i < args.length; i++){
+          if(args[i][0] == '"' && !start){
+            start = true;
+            temp += args[i].substr(1, args[i].length - 1);
+            continue;
+          }
+          // console.log(start);
+          if(args[i][args[i].length - 1] == '"' && start){
+            temp += ' ' + args[i].substr(0, args[i].length - 1);
+            start = false;
+          } else if(start){
+            temp += ' ' + args[i];
+            continue;
+          } else{
+            temp = args[i];
+          }
           // if(msg.channel.guild.roles.find(r => r.name == args[i])){
           //     //Rest of your code
           //     console.log(msg.channel.guild.rolesfind(r => r.name == args[i]));
@@ -168,7 +185,7 @@ module.exports = {
           var role = msg.channel.guild.roles.cache;
           var id = -1;
           role.forEach(function lol(value, key){
-            if(value.name == args[i]){
+            if(value.name == temp){
               id = key;
               return;
             }
