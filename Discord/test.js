@@ -82,23 +82,23 @@ function remind(l, r, bot){
       var name = arr[i];
       timer((arr[i].time - 3600000), channel, name.name + ' in an hour ' + name.mention);
     }
-    if((arr[i].time - 7200000) >= 0){
+    if((arr[i].time - 7200000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 7200000), channel, name.name + ' in 2 hours ' + name.mention);
     }
-    if((arr[i].time - 21600000) >= 0){
+    if((arr[i].time - 21600000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 21600000), channel, name.name + ' in 6 hours ' + name.mention);
     }
-    if((arr[i].time - 43200000) >= 0){
+    if((arr[i].time - 43200000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 43200000), channel, name.name + ' in 12 hours ' + name.mention);
     } 
-    if((arr[i].time - 86400000) >= 0){
+    if((arr[i].time - 86400000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 86400000), channel, name.name + ' tomorrow ' + name.mention);
     }
-    if((arr[i].time - 172800000) >= 0){
+    if((arr[i].time - 172800000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 172800000), channel, name.name + ' in 2 days ' + name.mention);
     }
