@@ -165,7 +165,7 @@ module.exports = {
         for(var i = 2; i < args.length; i++){
           if(args[i][0] == '"' && !start){
             start = true;
-            temp += args[i].substr(1, args[i].length - 1);
+            temp = args[i].substr(1, args[i].length - 1);
             continue;
           }
           // console.log(start);
