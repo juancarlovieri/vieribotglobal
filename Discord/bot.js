@@ -57,10 +57,10 @@ function command(args, msg){
       console.log(args.length);
       if(args.length != 3)return;
       ping(args[1], parseInt(args[2]), { protocolVersion: 498, connectTimeout: 1000 * 10 }).then((response) => {
-        // if (error){
-        //   msg.channel.send('server not found');
-        //   throw error;
-        // }
+        if (error){
+          msg.channel.send('server not found');
+          throw error;
+        }
         var hasil = response.descriptionText + '\n';
         hasil += 'version: ' + response.version + '\n';
         hasil += 'online players: ' + response.onlinePlayers + '\n';
