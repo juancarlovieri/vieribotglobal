@@ -53,6 +53,7 @@ function command(args, msg){
       msg.channel.send('https://cdn.discordapp.com/emojis/' + args[1].substr(indx, args[1].length - indx - 1) + '.png');
     break;
     case '^mc':
+      console.log(args.length);
       if(args.length != 3)return;
       ping(args[1], parseInt(args[2]), { protocolVersion: 498, connectTimeout: 1000 * 10 }).then((response) => {
         // if (error){
