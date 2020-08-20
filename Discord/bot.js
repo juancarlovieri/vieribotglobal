@@ -32,6 +32,7 @@ function save(){
 var utcSeconds = 1595667600 - 3600;
 
 function command(args, msg){
+  console.log(args[0]);
   switch(args[0]){
     case '^bigmoji':
       var alr = 0;
@@ -66,9 +67,9 @@ function command(args, msg){
         hasil += 'max players: ' + response.maxPlayers + '\n';
         msg.channel.send(hasil);
         console.log(response);
-    }).catch((error) => {
-        throw error;
-    });;
+      }).catch((error) => {
+          throw error;
+      });;
     break;
     case '^isup':
       (async () => {
