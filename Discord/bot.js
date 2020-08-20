@@ -59,7 +59,7 @@ function command(args, msg){
         //   msg.channel.send('server not found');
         //   throw error;
         // }
-        var hasil = response.descriptionText; + '\n';
+        var hasil = response.descriptionText + '\n';
         hasil += 'version: ' + response.version + '\n';
         hasil += 'online players: ' + response.onlinePlayers + '\n';
         hasil += 'max players: ' + response.maxPlayers + '\n';
