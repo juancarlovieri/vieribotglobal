@@ -18,6 +18,11 @@ const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
 const status = "do not disturb";
+const ping = require('minecraft-server-util');
+
+// import ping from 'minecraft-server-util';
+ 
+
 
 // console.log((1599715800000 - 3600000) - Date.now());
 
@@ -46,6 +51,23 @@ function command(args, msg){
       }
       console.log(args[1]);
       msg.channel.send('https://cdn.discordapp.com/emojis/' + args[1].substr(indx, args[1].length - indx - 1) + '.png');
+    break;
+    case '^mc':
+      if(args.length != 3)return;
+      ping(args[1], parseInt(args[2]), { protocolVersion: 498, connectTimeout: 1000 * 10 }).then((response) => {
+        // if (error){
+        //   msg.channel.send('server not found');
+        //   throw error;
+        // }
+        var hasil = response.descriptionText; + '\n';
+        hasil += 'version: ' + response.version + '\n';
+        hasil += 'online players: ' + response.onlinePlayers + '\n';
+        hasil += 'max players: ' + response.maxPlayers + '\n';
+        msg.channel.send(hasil);
+        console.log(response);
+    }).catch((error) => {
+        throw error;
+    });;
     break;
     case '^isup':
       (async () => {
