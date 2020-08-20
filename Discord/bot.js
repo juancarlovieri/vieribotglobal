@@ -56,7 +56,7 @@ function command(args, msg){
     case '^mc':
       console.log(args.length);
       if(args.length != 3)return;
-      ping(args[1], parseInt(args[2]), { protocolVersion: 498, connectTimeout: 1000 * 10 }).then((response) => {
+      ping(args[1], parseInt(args[2]), (error, response) => {
         if (error){
           msg.channel.send('server not found');
           throw error;
@@ -66,10 +66,22 @@ function command(args, msg){
         hasil += 'online players: ' + response.onlinePlayers + '\n';
         hasil += 'max players: ' + response.maxPlayers + '\n';
         msg.channel.send(hasil);
-        console.log(response);
-      }).catch((error) => {
-          throw error;
-      });;
+          console.log(response);
+      });
+      // ping(, { protocolVersion: 498, connectTimeout: 1000 * 10 }).then((response) => {
+      //   if (error){
+      //     msg.channel.send('server not found');
+      //     throw error;
+      //   }
+      //   var hasil = response.descriptionText + '\n';
+      //   hasil += 'version: ' + response.version + '\n';
+      //   hasil += 'online players: ' + response.onlinePlayers + '\n';
+      //   hasil += 'max players: ' + response.maxPlayers + '\n';
+      //   msg.channel.send(hasil);
+      //   console.log(response);
+      // }).catch((error) => {
+      //     throw error;
+      // });;
     break;
     case '^isup':
       (async () => {
