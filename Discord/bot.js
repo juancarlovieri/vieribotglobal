@@ -240,6 +240,12 @@ bot.on("message", msg => {
   // console.log(msg);
   if(msg.author.bot == true)return;
   activity.add(msg);
+  if(msg.content == '^unlock'){
+    if(msg.author.id != '455184547840262144'){
+      return;
+    }
+    lockFile.unlockSync('../lock.lock');
+  }
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
       return;
