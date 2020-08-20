@@ -57,9 +57,10 @@ function command(args, msg){
       console.log(args.length);
       if(args.length != 3)return;
       ping(args[1], parseInt(args[2]), (error, response) => {
+        console.error(error);
         if (error){
           msg.channel.send('server not found');
-          throw error;
+          // throw error;
         }
         var hasil = response.descriptionText + '\n';
         hasil += 'version: ' + response.version + '\n';
