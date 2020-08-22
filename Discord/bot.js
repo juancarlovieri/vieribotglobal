@@ -52,6 +52,10 @@ function command(args, msg){
           }
         }
       }
+      if(rating.length == 0){
+        msg.channel.send('contest not found');
+        return;
+      }
       // msg.channel.send(hasil);
       var vieri = new Discord.MessageAttachment('../viericorp.png');
       msg.channel.send({files: [vieri], embed: {
