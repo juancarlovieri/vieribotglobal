@@ -34,6 +34,41 @@ var utcSeconds = 1595667600 - 3600;
 function command(args, msg){
   console.log(args[0]);
   switch(args[0]){
+    case '^ratings':
+      var request = require('sync-request');
+      var list = request('GET', 'http://codeforces.com/api/problemset.problems');
+      var problems = JSON.parse(list.getBody()).result.problems;
+      var rating = [];
+      for(var i = problems.length - 1; i >= 0; i--){
+        if(problems[i].contestId == args[1]){
+          if(problems[i].rating){
+            rating[rating.length] =  {
+              name:'\u200b',
+              value: '**' + problems[i].index + '**: ' + problems[i].rating
+            }
+          } else{
+            msg.channel.send('ratings not yet published');
+            return;
+          }
+        }
+      }
+      // msg.channel.send(hasil);
+      var vieri = new Discord.MessageAttachment('../viericorp.png');
+      msg.channel.send({files: [vieri], embed: {
+        color: 16764006,
+        author: {
+          name: 'lagrange',
+          icon_url: "attachment://viericorp.png"
+        },
+        title: 'problem rating for: ' + args[1],
+        fields: rating,
+        timestamp: new Date(),
+        footer: {
+          text: "By Vieri Corp.™ All Rights Reserved"
+        }
+      }
+      });
+    break;
     case '^bigmoji':
       var alr = 0;
       var indx = -1;
@@ -61,6 +96,7 @@ function command(args, msg){
         if (error){
           msg.channel.send('server not found');
           // throw error;
+          return;
         }
         var hasil = response.descriptionText + '\n';
         hasil += 'version: ' + response.version + '\n';

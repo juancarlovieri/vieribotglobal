@@ -1,3 +1,4 @@
+const Discord = require('discord.js');
 const fs = require("fs");
 var crypto = require('crypto');
 var obj = JSON.parse(fs.readFileSync("handles.json", "utf8"));
