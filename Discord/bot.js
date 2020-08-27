@@ -19,6 +19,9 @@ const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
 const status = "do not disturb";
 const ping = require('minecraft-server-util');
+const si = require('systeminformation');
+
+// si.cpu().then(data => console.log(data)).catch  (error => console.error(error));
 
 // import ping from 'minecraft-server-util';
  
@@ -72,6 +75,15 @@ function command(args, msg){
         }
       }
       });
+    break;
+    case '^specs':
+      si.cpu().then(data =>{
+        var hasil = "";
+        hasil += 'Processor: ' + data.processors + 'x ' + data.manufacturer + ' ' + data.brand + '\n';
+        hasil += 'Cores: ' + data.cores;
+        msg.channel.send(hasil);
+      }).catch  (error => console.error(error));
+
     break;
     case '^bigmoji':
       var alr = 0;
