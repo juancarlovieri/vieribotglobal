@@ -80,8 +80,17 @@ function command(args, msg){
       si.cpu().then(data =>{
         var hasil = "";
         hasil += 'Processor: ' + data.processors + 'x ' + data.manufacturer + ' ' + data.brand + '\n';
-        hasil += 'Cores: ' + data.cores;
-        msg.channel.send(hasil);
+        hasil += 'Cores: ' + data.cores + '\n';
+        si.graphics().then(data =>{
+          console.log(data.controllers);
+            hasil += 'Graphics card: ' + '\n';
+          for(var i = 0; i < data.controllers.length; i++){
+            hasil += '   ' + data.controllers[i].model + '; vram: ' + data.controllers[i].vram + '\n';
+          }
+          // hasil += 'Graphics card: ' + data.controllers.model + '\n';
+          // hasil += 'Vram: ' + data.controllers.vram + 'mb';
+          msg.channel.send(hasil);
+        })
       }).catch  (error => console.error(error));
 
     break;
