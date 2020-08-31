@@ -152,13 +152,13 @@ function reveal(msg, id){
   console.log(cancelList);
   canceler = 0;
   console.log(glob);
+  glob = -1;
   var spawn = require('child_process').spawn;
   var child = spawn('python3', ['lagrange reveal fast.py']);
   child.stdout.on('data', function(data){
     console.log(data);
     var res = JSON.parse(data.toString());
       msg.channel.send(res);
-    glob = -1;
     msg.react('🔁');
     lastId = msg.id;
   });
