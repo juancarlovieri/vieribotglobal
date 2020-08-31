@@ -152,7 +152,6 @@ function reveal(msg, id){
   console.log(cancelList);
   canceler = 0;
   console.log(glob);
-  glob = -1;
   var spawn = require('child_process').spawn;
   var child = spawn('python3', ['lagrange reveal fast.py']);
   child.stdout.on('data', function(data){
@@ -169,6 +168,7 @@ function reveal(msg, id){
     }
   });
   child.stdin.write(glob.toString());
+  glob = -1;
   child.stdin.end();
 }
 
