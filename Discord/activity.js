@@ -42,11 +42,44 @@ function save(){
 
 // save();
 
+function organize(){
+  console.log('organizing');
+  var temp = new Map();
+  var maks = -1;
+  activity.forEach(function lol(value, key){
+    maks = Math.max(value.length, maks);
+  });
+  activity.forEach(function lol(value, key){
+    var cur = value.length;
+    var tambah = [];
+    for(var i = 0; i < maks - cur; i++){
+      tambah[tambah.length] = 0;
+    }
+    value = tambah.concat(value);
+    temp.set(key, value);
+  });
+  activity = temp;
+  save();
+}
+
 schedule.scheduleJob('0 0 * * *', () => {
   console.log('adding new array for activity;');
   var temp = new Map();
+  var maks = -1;
   activity.forEach(function lol(value, key){
     value[value.length] = value[value.length - 1];
+    maks = Math.max(value.length, maks);
+    temp.set(key, value);
+  });
+  activity = temp;
+  temp = new Map();
+  activity.forEach(function lol(value, key){
+    var cur = value.length;
+    var tambah = [];
+    for(var i = 0; i < maks - cur; i++){
+      tambah[tambah.length] = 0;
+    }
+    value = tambah.concat(value);
     temp.set(key, value);
   });
   activity = temp;
@@ -176,6 +209,10 @@ module.exports = {
       temp.sort(compare);
       console.log(temp);
       printtop(bot, msg, temp, parseInt(args[2]), parseInt(args[3]));
+      return;
+    }
+    if(args[1] == 'organize'){
+      organize();
       return;
     }
     if(args[1] == 'graph'){
