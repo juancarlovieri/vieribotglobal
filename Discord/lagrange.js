@@ -18,13 +18,35 @@ var lastId = -1;
 var chal = {
   id: -1
 };
+let schedule = require('node-schedule');
+
+schedule.scheduleJob('0 0 * * *', () => {
+  console.log('adding new array for activity;');
+  var newRank = new Map();
+  rank.forEach(function lol(value, key){
+    value[value.length] = value[value.length - 1];
+    newRank.set(key, value);
+  });
+  rank = newRank;
+  lockFile.lock('../lock.lock', opts, function(error){
+    if(error != undefined){
+      console.log('busy');
+      console.error(error);
+      return;
+    }
+    save();
+    lockFile.unlockSync('../lock.lock');
+    const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
+    msg.react(emoji);
+  });
+});
 
 async function printRank(msg, bot){
   var list = [];
   rank.forEach(function lol(value, key){
     list[list.length] = {
       name: key,
-      value: value
+      value: value[value.length - 1]
     }
   });
   // [
@@ -295,6 +317,23 @@ module.exports = {
       case 'help':
         msg.channel.send('lagrange is a game where you are given a number and you should find four integers where the sum of their square equals to the number you are given\n^| ch x l r to challenge user x with the range of l to r\n^| acc to accept a challenge\n^| dec to decline or cancel a challenge\n^| ans a b c d to answer a problem\n^| resend to resend the problem');
       break;
+      case 'change':
+        var newRank = new Map();
+        rank.forEach(function lol(value, key){
+          newRank.set(key, [value]);
+        });
+        rank = newRank;
+        lockFile.lock('../lock.lock', opts, function(error){
+        if(error != undefined){
+          console.log('busy');
+          console.error(error);
+          return;
+        }
+        save();
+        lockFile.unlockSync('../lock.lock');
+      });
+    break;
+
     }
   },
   isAns: function(bot, msg){
@@ -340,9 +379,10 @@ module.exports = {
       msg.react('🔁');
       lastId = msg.id;
       if(ranked){
-        var prevRank = 10;
+        var prevRank = [10];
         if(rank.has(msg.author.id)){
-          prevRank = rank.get(msg.author.id) + 10;
+          prevRank = rank.get(msg.author.id);
+          prevRank[prevRank.length - 1] += 10;
         }
         rank.set(msg.author.id, prevRank);
         save();
@@ -360,7 +400,7 @@ module.exports = {
       return;
     }
     lastId = -1;
-    if(glob != -1){msg.channel.send('thre is an ongoing');return;}
+    if(glob != -1){msg.channel.send('there is an ongoing');return;}
     newGlobalRepeat(msg);
   }
 }
