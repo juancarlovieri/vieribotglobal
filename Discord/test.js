@@ -79,10 +79,22 @@ function remind(l, r, bot){
     //   clear();
     //   save();
     // }, arr[i].time - Date.now() + 100);
+    // if((arr[i].time - 3600000) - Date.now() >= 0){
+    //   var name = arr[i];
+    //   timer((arr[i].time - 3600000), channel, name.name + ' in an hour ' + name.mention);
+    // }
     if((arr[i].time - 7200000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 7200000), channel, name.name + ' in 2 hours ' + name.mention);
     }
+    // if((arr[i].time - 21600000) - Date.now() >= 0){
+    //   var name = arr[i];
+    //   timer((arr[i].time - 21600000), channel, name.name + ' in 6 hours ' + name.mention);
+    // }
+    // if((arr[i].time - 43200000) - Date.now() >= 0){
+    //   var name = arr[i];
+    //   timer((arr[i].time - 43200000), channel, name.name + ' in 12 hours ' + name.mention);
+    // } 
     if((arr[i].time - 86400000) - Date.now() >= 0){
       var name = arr[i];
       timer((arr[i].time - 86400000), channel, name.name + ' tomorrow ' + name.mention);
