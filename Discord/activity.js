@@ -128,7 +128,6 @@ async function printAll(bot, msg, args){
       var utcSeconds = startDate + j * 86400;
       var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
       d.setUTCSeconds(utcSeconds);
-      console.log(d);
       d = d.toString();
       var arr = d.split(' ');
       d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
