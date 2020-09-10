@@ -336,6 +336,7 @@ bot.on("message", msg => {
     }
     maint = (maint + 1) % 2;
     msg.channel.send('set maint to ' + maint);
+    return;
   }
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
