@@ -182,15 +182,102 @@ async function printAll(bot, msg, args){
   });
 }
 
+async function printGraphTop(bot, msg, args){
+  if(args.length < 5)return;
+  if(isNaN(args[3]))return;
+  if(isNaN(args[4]))return;
+  var arrTemp = [];
+  activity.forEach(function lol(key, value){
+    arrTemp[arrTemp.length] = {name: value, point: key[key.length - 1]};
+  });
+  arrTemp.sort(compare);
+  var l = parseInt(args[3]), r = parseInt(args[4]);
+  var data = [];
+  var names = 'graph for';
+  console.log(args.length);
+  l = Math.round(l), r = Math.round(r);
+  l--;r--;
+  for(var i = Math.max(l, 0); i < Math.min(r, arrTemp.length); i++){
+    console.log(arrTemp[i]);
+    var tempName = await bot.users.fetch(arrTemp[i].name)
+    tempName = tempName.username;
+    names += ' ' + tempName;
+    var temp = {
+      x: [],
+      y: [],
+      name: tempName,
+      mode: "lines",
+      type: "scatter"
+    };
+    temp.y = activity.get(arrTemp[i].name);
+    for(var j = 0; j < temp.y.length; j++){
+      var utcSeconds = startDate + j * 86400;
+      var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+      d.setUTCSeconds(utcSeconds);
+      console.log(d);
+      d = d.toString();
+      var arr = d.split(' ');
+      d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var month = -1;
+      for(var k = 0; k < 12; k++){
+        if(arr[1] == months[k]){
+          month = k + 1;
+        }
+      }
+      if(month == -1){
+        console.log('month not found');
+        msg.channel.send('an error occured, contact developer');
+        return;
+      }
+      d = arr[3] + '-' + month + '-' + arr[2];
+      temp.x[j] = d;
+    }
+    console.log(temp);
+    data[data.length] = temp;
+    console.log(i);
+  }
+  console.log(data);
+  var layout = {
+    title: names,
+    xaxis: {
+      autorange: true,
+      tickformat: '%b %d %Y',
+      type: 'date'
+    },
+    yaxis: {
+      autorange: true,
+      type: 'linear'
+    }
+  };
+  console.log(layout);
+  var graphOptions = {filename: 'umum', fileopt: "overwrite", layout: layout};
+  plotly.plot(data, graphOptions, function (err, mesg) {
+    console.log(mesg);
+    var request = require('request');
+    download(mesg.url + '.jpeg', 'display.png', function(){
+      msg.channel.send(names, {
+        files: [
+        "display.png"
+      ]
+    });
+    });
+  });
+}
+
 
 async function printGraph(bot, msg, args){
   var data = [];
   var names = 'graph for';
   console.log(args.length);
   if(args[2] == "all"){printAll(bot, msg, args);return;}
+  if(args[2] == "top"){
+    printGraphTop(bot, msg, args);
+    return;
+  }
   for(var i = 2; i < args.length; i++){
     console.log(args[i]);
-    if(activity.has(args[i]) == false)continue;
+    if(activity.has(args[i]) == false)return;
     var tempName = await bot.users.fetch(args[i])
     tempName = tempName.username;
     names += ' ' + tempName;
