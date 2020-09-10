@@ -6,10 +6,13 @@ const lockFile = require('lockfile');
 var ongoing = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("challengeLagrange.json", "utf8"));
 var Discord = require("discord.js");
+var auth = require('./auth.json');
+var plotly = require('plotly')('juancarlovieri', auth.plotly);
 var challenge = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("../lagrange_rank.json", "utf8"));
 var rank = new Map(Object.entries(obj));
 var glob = -1;
+var startDate = 1599710400;
 var ranked = false;
 var canceler = 0;
 var prevSolver = 0;
@@ -19,6 +22,15 @@ var chal = {
   id: -1
 };
 let schedule = require('node-schedule');
+
+function download(uri, filename, callback){
+  const request = require('request');
+  request.head(uri, function(err, res, body){
+    console.log('content-type:', res.headers['content-type']);
+    console.log('content-length:', res.headers['content-length']);
+    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+  });
+}
 
 schedule.scheduleJob('0 0 * * *', () => {
   console.log('adding new array for activity;');
@@ -197,6 +209,84 @@ function reveal(msg, id){
   child.stdin.end();
 }
 
+async function printGraph(bot, msg, args){
+  var data = [];
+  var names = 'graph for';
+  console.log(args.length);
+  if(args[2] == "all"){printAll(bot, msg, args);return;}
+  if(args[2] == "top"){
+    printGraphTop(bot, msg, args);
+    return;
+  }
+  for(var i = 2; i < args.length; i++){
+    console.log(args[i]);
+    if(rank.has(args[i]) == false)return;
+    var tempName = await bot.users.fetch(args[i])
+    tempName = tempName.username;
+    names += ' ' + tempName;
+    var temp = {
+      x: [],
+      y: [],
+      name: tempName,
+      mode: "lines",
+      type: "scatter"
+    };
+    temp.y = rank.get(args[i]);
+    for(var j = 0; j < temp.y.length; j++){
+      var utcSeconds = startDate + j * 86400;
+      var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+      d.setUTCSeconds(utcSeconds);
+      console.log(d);
+      d = d.toString();
+      var arr = d.split(' ');
+      d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var month = -1;
+      for(var k = 0; k < 12; k++){
+        if(arr[1] == months[k]){
+          month = k + 1;
+        }
+      }
+      if(month == -1){
+        console.log('month not found');
+        msg.channel.send('an error occured, contact developer');
+        return;
+      }
+      d = arr[3] + '-' + month + '-' + arr[2];
+      temp.x[j] = d;
+    }
+    console.log(temp);
+    data[data.length] = temp;
+    console.log(i);
+  }
+  console.log(data);
+  var layout = {
+    title: names,
+    xaxis: {
+      autorange: true,
+      tickformat: '%b %d %Y',
+      type: 'date'
+    },
+    yaxis: {
+      autorange: true,
+      type: 'linear'
+    }
+  };
+  console.log(layout);
+  var graphOptions = {filename: 'umum', fileopt: "overwrite", layout: layout};
+  plotly.plot(data, graphOptions, function (err, mesg) {
+    console.log(mesg);
+    var request = require('request');
+    download(mesg.url + '.jpeg', 'display.png', function(){
+      msg.channel.send(names, {
+        files: [
+        "display.png"
+      ]
+    });
+    });
+  });
+}
+
 module.exports = {
   message: function(bot, msg){
     var args = msg.content.split(' ');
@@ -212,11 +302,19 @@ module.exports = {
       glob = Math.floor(Math.random()*(r-l+1))+l;
       msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
     }
-    if(args.length == 3){
+    if(args.length == 3 && !isNaN(args[1]) && !isNaN(args[2])){
       newGlobal(args, msg);
       return; 
     }
+    console.log(args[1]);
     switch (args[1]){
+      case 'graph':
+        console.log('tes');
+        printGraph(bot, msg, args);
+        // if(args[2] == 'top')printGraphTop(bot, msg, args);
+        // else if(args[2] == 'all')printGraphAll(bot, msg, args);
+        // else printGraph(bot, msg, args);
+      break;
       case 'resend':
         if(ongoing.has(msg.author.id) == false)return;
         msg.channel.send(ongoing.get(msg.author.id).problem);
