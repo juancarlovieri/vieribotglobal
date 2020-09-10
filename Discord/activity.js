@@ -110,14 +110,88 @@ async function printtop(bot, msg, arr, lo, hi){
   msg.channel.send(hasil);
 } 
 
+async function printAll(bot, msg, args){
+  var data = [];
+  var names = 'graph for all';
+  console.log(args.length);
+  activity.forEach(function lol(value, key){
+    tempName = key;
+    var temp = {
+      x: [],
+      y: [],
+      name: tempName,
+      mode: "lines",
+      type: "scatter"
+    };
+    temp.y = activity.get(key);
+    for(var j = 0; j < temp.y.length; j++){
+      var utcSeconds = startDate + j * 86400;
+      var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+      d.setUTCSeconds(utcSeconds);
+      console.log(d);
+      d = d.toString();
+      var arr = d.split(' ');
+      d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var month = -1;
+      for(var k = 0; k < 12; k++){
+        if(arr[1] == months[k]){
+          month = k + 1;
+        }
+      }
+      if(month == -1){
+        console.log('month not found');
+        msg.channel.send('an error occured, contact developer');
+        return;
+      }
+      d = arr[3] + '-' + month + '-' + arr[2];
+      temp.x[j] = d;
+    }
+    // console.log(temp);
+    data[data.length] = temp;
+    // console.log(i);
+  });
+  console.log(data);
+  for(var i = 0; i < data.length; i++){
+    var tempName = await bot.users.fetch(data[i].name);
+    data[i].name = tempName.username;
+  }
+  var layout = {
+    title: names,
+    xaxis: {
+      autorange: true,
+      tickformat: '%b %d %Y',
+      type: 'date'
+    },
+    yaxis: {
+      autorange: true,
+      type: 'linear'
+    }
+  };
+  console.log(layout);
+  var graphOptions = {filename: 'umum', fileopt: "overwrite", layout: layout};
+  plotly.plot(data, graphOptions, function (err, mesg) {
+    console.log(mesg);
+    var request = require('request');
+    download(mesg.url + '.jpeg', 'display.png', function(){
+      msg.channel.send(names, {
+        files: [
+        "display.png"
+      ]
+    });
+    });
+  });
+}
+
 
 async function printGraph(bot, msg, args){
   var data = [];
   var names = 'graph for';
   console.log(args.length);
+  if(args[2] == "all"){printAll(bot, msg, args);return;}
   for(var i = 2; i < args.length; i++){
     console.log(args[i]);
-    if(activity.has(args[i]) == false)return;
+    if(activity.has(args[i]) == false)continue;
     var tempName = await bot.users.fetch(args[i])
     tempName = tempName.username;
     names += ' ' + tempName;
