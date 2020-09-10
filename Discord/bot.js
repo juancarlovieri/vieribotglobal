@@ -34,6 +34,8 @@ function save(){
 
 var utcSeconds = 1595667600 - 3600;
 
+var maint = 0;
+
 function command(args, msg){
   console.log(args[0]);
   switch(args[0]){
@@ -322,6 +324,13 @@ bot.on("message", msg => {
     }
     lockFile.unlockSync('../lock.lock');
   }
+  if(msg.content ==  '^maintenance'){
+    if(msg.author.id != '455184547840262144'){
+      return;
+    }
+    maint = (maint + 1) % 2;
+    msg.channel.send('set maint to ' + maint);
+  }
   if(msg.content == '^restart'){
     if(msg.author.id != '455184547840262144'){
       return;
@@ -334,8 +343,12 @@ bot.on("message", msg => {
     return;
   }
   var args = msg.content.split(" ");
-  lagrange.isAns(bot, msg);
+  if(!maint)lagrange.isAns(bot, msg);
   if(args[0][0] == '^'){
+    if(maint){
+      msg.channel.send('bot in maintenance, please wait');
+      return;
+    }
     var opts = {
       wait: 30000
     }

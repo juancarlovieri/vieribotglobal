@@ -28,6 +28,9 @@ schedule.scheduleJob('0 0 * * *', () => {
     newRank.set(key, value);
   });
   rank = newRank;
+  var opts = {
+    wait: 30000
+  }
   lockFile.lock('../lock.lock', opts, function(error){
     if(error != undefined){
       console.log('busy');
@@ -323,6 +326,9 @@ module.exports = {
           newRank.set(key, [value]);
         });
         rank = newRank;
+        var opts = {
+          wait: 30000
+        }
         lockFile.lock('../lock.lock', opts, function(error){
         if(error != undefined){
           console.log('busy');
