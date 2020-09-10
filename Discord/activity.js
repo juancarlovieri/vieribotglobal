@@ -137,7 +137,7 @@ async function printGraph(bot, msg, args){
       d = d.toString();
       var arr = d.split(' ');
       d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
-      var months = ['Jan', 'Feb', 'Mar', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var months = ['Jan', 'Feb', 'Mar', 'April', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       var month = -1;
       for(var k = 0; k < 12; k++){
         if(arr[1] == months[k]){
