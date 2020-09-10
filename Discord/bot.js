@@ -318,6 +318,12 @@ bot.on("message", msg => {
   // console.log(msg);
   if(msg.author.bot == true)return;
   activity.add(msg);
+  if(msg.content == '^maint?'){
+    if(maint == 0){
+      msg.channel.send('bot is not in maintenance');
+    } else msg.channel.send('bot is in maintenance');
+    return;
+  }
   if(msg.content == '^unlock'){
     if(msg.author.id != '455184547840262144'){
       return;
