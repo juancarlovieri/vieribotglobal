@@ -320,25 +320,25 @@ module.exports = {
       case 'help':
         msg.channel.send('lagrange is a game where you are given a number and you should find four integers where the sum of their square equals to the number you are given\n^| ch x l r to challenge user x with the range of l to r\n^| acc to accept a challenge\n^| dec to decline or cancel a challenge\n^| ans a b c d to answer a problem\n^| resend to resend the problem');
       break;
-      case 'change':
-        var newRank = new Map();
-        rank.forEach(function lol(value, key){
-          newRank.set(key, [value]);
-        });
-        rank = newRank;
-        var opts = {
-          wait: 30000
-        }
-        lockFile.lock('../lock.lock', opts, function(error){
-        if(error != undefined){
-          console.log('busy');
-          console.error(error);
-          return;
-        }
-        save();
-        lockFile.unlockSync('../lock.lock');
-      });
-    break;
+      // case 'change':
+      //   var newRank = new Map();
+      //   rank.forEach(function lol(value, key){
+      //     newRank.set(key, [value]);
+      //   });
+      //   rank = newRank;
+      //   var opts = {
+      //     wait: 30000
+      //   }
+      //   lockFile.lock('../lock.lock', opts, function(error){
+      //     if(error != undefined){
+      //       console.log('busy');
+      //       console.error(error);
+      //       return;
+      //     }
+      //     save();
+      //     lockFile.unlockSync('../lock.lock');
+      //   });
+      // break;
 
     }
   },
