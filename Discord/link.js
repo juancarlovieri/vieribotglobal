@@ -37,11 +37,25 @@ module.exports = {
       break;
       case 'get':
         if(args.length != 3)return;
-        if(links.has(args[2]) == false){
+        // if(links.has(args[2]) == false){
+        //   msg.channel.send('not found!');
+        //   return;
+        // }
+        var indx = -1;
+        var name = -1;
+        links.forEach(function lol(value, key){
+          if(key.toLowerCase().indexOf(args[2].toLowerCase()) != -1){
+            console.log('found');
+            indx = value;
+            name = key;
+            return;
+          }
+        });
+        if(indx === -1){
           msg.channel.send('not found!');
           return;
         }
-        msg.channel.send('link for ' + args[2] + ': <' + links.get(args[2]) + '>');
+        msg.channel.send('link for ' + name + ': <' + indx + '>');
       break;
       case 'list':
         var hasil = "";
