@@ -14,6 +14,7 @@ const prettyMilliseconds = require('pretty-ms');
 const cfduel = require('./cfduel.js');
 const atcoder = require('./atcoder.js');
 const trans = require('./translate.js');
+const spam = require('./spam.js');
 const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
@@ -39,6 +40,9 @@ var maint = 0;
 function command(args, msg){
   console.log(args[0]);
   switch(args[0]){
+    case '^spam':
+      spam.msg(bot, msg, args);
+    break;
     case '^ratings':
       var request = require('sync-request');
       var list = request('GET', 'http://codeforces.com/api/problemset.problems');
