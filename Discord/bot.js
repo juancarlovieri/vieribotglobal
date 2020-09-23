@@ -82,6 +82,23 @@ function command(args, msg){
       }
       });
     break;
+    case '^idler':
+      if(args.length != 2)return;
+      if(msg.author.id != '455184547840262144')return;
+      var spawn = require('child_process');
+      var child = spawn.spawn('python3', ['./idler.py']);
+      child.stdout.on('data', function(data){
+        console.log(data);
+      });
+      child.on('close', function(code){
+        if(code != 0){
+          console.log('python crashed');
+          console.log(code);
+        }
+      });
+      child.stdin.write(args[1]);
+      child.stdin.end();
+    break;
     case '^specs':
       si.cpu().then(data =>{
         var hasil = "";
