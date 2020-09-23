@@ -14,7 +14,7 @@ function save(){
   });
 }
 
-function editDist(str1, str2, m, n) { 
+function editDist(string str1, string str2, int m, int n) { 
     if (m == 0) 
         return n; 
     if (n == 0) 
@@ -58,12 +58,11 @@ module.exports = {
         var name = -1;
         var mini = 1000000000;
         links.forEach(function lol(value, key){
-          var temp = editDist(key.toLowerCase(), args[2].toLowerCase(), key.length, args[2].length);
-          if(temp < mini){
+          if(key.toLowerCase().indexOf(args[2].toLowerCase()) != -1){
             console.log('found');
-            mini = temp;
             indx = value;
             name = key;
+            return;
           }
         });
         if(indx === -1){
