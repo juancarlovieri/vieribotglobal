@@ -360,7 +360,7 @@ bot.on("message", msg => {
     return;
   }
   if(msg.content == '^restart'){
-    if(msg.author.id != '455184547840262144'){
+    if(msg.author.id != '455184547840262144' && msg.author.id != '758191365065670687'){
       return;
     }
     console.log('restarting');
