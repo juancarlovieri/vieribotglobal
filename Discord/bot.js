@@ -84,7 +84,7 @@ function command(args, msg){
     break;
     case '^idler':
       if(args.length != 2)return;
-      if(msg.author.id != '455184547840262144')return;
+      if(msg.author.id != '455184547840262144' && msg.author.id != '758191365065670687')return;
       var spawn = require('child_process');
       var child = spawn.spawn('python3', ['./idler.py']);
       child.stdout.on('data', function(data){
@@ -360,7 +360,7 @@ bot.on("message", msg => {
     return;
   }
   if(msg.content == '^restart'){
-    if(msg.author.id != '455184547840262144' && msg.author.id != '758191365065670687'){
+    if(msg.author.id != '455184547840262144'){
       return;
     }
     console.log('restarting');
