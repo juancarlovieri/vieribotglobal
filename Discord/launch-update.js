@@ -22,7 +22,6 @@ async function init(){
   var request = require('sync-request');
   var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
   console.log('downloaded');
-  list[0].sort_date = 1601394300;
   for(var i = 0; i < list.length; i++){
     var cur = list[i];
     var time = cur.sort_date;
