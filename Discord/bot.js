@@ -4,6 +4,7 @@ var auth = require('./auth.json');
 const ytdl = require("ytdl-core");
 bot.login(auth.token);
 const fs = require('fs');
+const launch = require('./launch-update.js');
 const isUp = require('is-up');
 var obj;
 const link = require('./link.js');
@@ -341,6 +342,7 @@ bot.on("ready", msg =>{
   bot.user.setPresence({
     status: 'dnd'
   });
+  launch.new(bot);
 })
 
 bot.on("message", msg => {
