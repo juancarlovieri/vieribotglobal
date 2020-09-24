@@ -12,6 +12,7 @@ function timer(time, embed, file){
   const channel = bot.channels.cache.get('758646515983712287');
   console.log(time);
   runAtDate(time, function print(){
+    channel.send("<@&758716095141642282>");
     channel.send({files: [file], embed: embed});
   });
 }
