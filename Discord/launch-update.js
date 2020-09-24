@@ -10,10 +10,12 @@ function runAtDate(date, func) {
 }
 function timer(time, embed, file){
   const channel = bot.channels.cache.get('758646515983712287');
+  const channel2 = bot.channels.cache.get('576623116394954762');
   console.log(time);
   runAtDate(time, function print(){
     channel.send("<@&758716095141642282>");
     channel.send({files: [file], embed: embed});
+    channel2.send({files: [file], embed: embed});
   });
 }
 
@@ -31,6 +33,7 @@ async function init(){
     if(diff < 0)continue;
     for(var j = 0; j < jarak.length; j++){
       if(diff < jarak[j])continue;
+      console.log(diff);
       if(diff - 3600000 < jarak[j]){
         console.log('new remind');
         var payload = "unknown";
