@@ -62,5 +62,20 @@ module.exports = {
         arr[arr.length - 1].child.stdin.end();
       break;
     }
+  },
+  fox:function(bot, msg, args){
+    var spawn = require('child_process');
+    child = spawn.spawn('python3', ['./fox.py']);
+    child.stdout.on('data', function(data){
+      console.log(data);
+    });
+    child.on('close', function(code){
+      if(code != 0){
+        console.log('python crashed');
+        console.log(code);
+      }
+    });
+    child.stdin.write(args[1]);
+    child.stdin.end();
   }
 }

@@ -33,6 +33,9 @@ const si = require('systeminformation');
 function save(){
 }
 
+
+
+
 var utcSeconds = 1595667600 - 3600;
 
 var maint = 0;
@@ -172,12 +175,17 @@ function command(args, msg){
       (async () => {
         if(await isUp('http://' + args[1])){
           msg.channel.send(args[1] + ' is up');
-        } else{0
+        } else{
           msg.channel.send(args[1] + ' is down');
         }
         //=> true
       })();
     break;
+    case '^fox':
+      if(msg.author.id != '455184547840262144'){
+        return;
+      }
+      spam.fox(bot, msg, args);
     case '^clear':
       if(msg.author.id != '455184547840262144'){
         return;
