@@ -449,20 +449,25 @@ async function printGraph(bot, msg, args){
   });
 }
 
+async function newGlobalOneInt(bot, msg, args){
+  if(glob != -1){
+    msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
+    return;
+  }
+  if(parseInt(args[1]) < 0)return;
+  var l = 0, r = parseInt(args[1]);
+  prevL = l, prevR = r;
+  ranked = false;
+  glob = Math.floor(Math.random()*(r-l+1))+l;
+  chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+  chal.react('🤷‍♀️');
+}
+
 module.exports = {
   message: function(bot, msg){
     var args = msg.content.split(' ');
     if(args.length == 2 && !isNaN(args[1])){
-      if(glob != -1){
-        msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
-        return;
-      }
-      if(parseInt(args[1]) < 0)return;
-      var l = 0, r = parseInt(args[1]);
-      prevL = l, prevR = r;
-      ranked = false;
-      glob = Math.floor(Math.random()*(r-l+1))+l;
-      msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+      newGlobalOneInt(bot, msg, args);
     }
     if(args.length == 3 && !isNaN(args[1]) && !isNaN(args[2])){
       newGlobal(args, msg);
