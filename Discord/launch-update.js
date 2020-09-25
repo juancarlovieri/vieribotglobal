@@ -1,5 +1,30 @@
 const Discord=  require('discord.js');
 var bot;
+const fs = require('fs')
+
+const path = 'published.json'
+
+var published = new Map();
+
+try {
+  if (fs.existsSync(path)) {
+    var obj = JSON.parse(fs.readFileSync("published.json", "utf8"));
+    published = new Map(Object.entries(obj));
+  }
+} catch(err) {
+  console.log('new map');
+}
+
+function save(){
+  var jsonObj = Object.fromEntries(published);
+  var jsonContent = JSON.stringify(jsonObj);
+  fs.writeFileSync("published.json", jsonContent, "utf8", function(err) {
+    if (err) {
+      console.log("An errr occured while writing JSON jsonObj to File.");
+      return console.log(err);
+    }
+  });
+}
 
 function runAtDate(date, func) {
   var diff = Math.max((date - Date.now()), 0);
@@ -24,7 +49,7 @@ async function init(){
   var message = ["T - 10 minutes", "T - 30 minutes", "T - 1 hour", "T - 6 hours", "T - 1 day", "T - 2 days", "T - 5 days"]
   var request = require('sync-request');
   var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
-  console.log('downloaded');
+  console.log('downloaded launches');  
   for(var i = 0; i < list.length; i++){
     var cur = list[i];
     var time = cur.sort_date;
@@ -95,13 +120,61 @@ async function init(){
   }
 }
 
+function news(){
+  var request = require('sync-request');
+  var list = JSON.parse(request('GET', 'https://spaceflightnewsapi.net/api/v1/articles/').getBody()).docs;
+  console.log('downloaded news');
+  for(var i = 0; i < list.length; i++){
+    if(published.has(list[i]._id))continue;
+    var tags = "";
+    for(var j = 0; j < list[i].tags.length; j++){
+      tags += list[i].tags[j];
+      if(j != list[i].tags.length - 1)tags += ', ';
+    }
+    var vieri = new Discord.MessageAttachment('../viericorp.png');
+    var embed = {
+      color: 16764006,
+      author: {
+        name: "Hot News",
+        icon_url: "attachment://viericorp.png"
+      },
+      title: list[i].title,
+      fields: [
+        {
+          name: "tags ",
+          value: tags
+        },
+        {
+          name:"\u200b",
+          value:"[link](" + list[i].url + ')'
+        }
+      ],
+      image:{
+        url: list[i].featured_image
+      },  
+      timestamp: new Date(),
+      footer: {
+        text: "By Vieri Corp.™ All Rights Reserved"
+      }
+    }
+    const channel = bot.channels.cache.get('758646515983712287');
+    channel.send("<@&758716095141642282>");
+    channel.send({files: [vieri], embed: embed});
+    const channel2 = bot.channels.cache.get('576623116394954762');
+    channel2.send({files: [vieri], embed: embed});
+    published.set(list[i]._id, 1);
+    save();
+  }
+}
+
 module.exports = {
   new: function(bott){
     bot = bott;
     // console.log('tes');
     init();
     setInterval(init, 3600000); 
-
-  }
+    news();
+    setInterval(news, 3600000)
+  },
 }
 
