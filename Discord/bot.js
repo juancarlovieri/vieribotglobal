@@ -249,7 +249,7 @@ function command(args, msg){
       }
       msg.channel.send('these are the files\nglobal:', {files: ["../debug.log", "../error.log", "../rating.json", "../points.json"]});
       msg.channel.send('discord part 1:', {files: ["changeHandle.json", "./ongoing.json", "./ongoingAtcoder.json", "./ongoingTeam.json", "./teamChallenge.json", "./problems.json", "./activity.json"]});
-      msg.channel.send('discord part 2: ', {files: ["./bot.js", "../lagrange_rank.json", "./links.json", "./tests.json", "./handles.json", "./atcoderHandles.json"]});
+      msg.channel.send('discord part 2: ', {files: ["./bot.js", "../lagrange_rank.json", "./links.json", "./tests.json", "./handles.json", "./atcoderHandles.json", "./published.json"]});
       msg.channel.send('telegram:', {files: ["../Telegram/handles.json", "../Telegram/ongoing.json", "../Telegram/problems.json"]});
     break;
     case '^translate':
@@ -257,6 +257,9 @@ function command(args, msg){
     break;
     case '^uptime':
       msg.channel.send(prettyMilliseconds(bot.uptime));
+    break;
+    case '^launches':
+      launch.upcoming(bot, msg);
     break;
     case '^atcoder':
       if(atcoder.duel(bot, msg) != 0){

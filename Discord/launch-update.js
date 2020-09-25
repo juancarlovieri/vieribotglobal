@@ -6,6 +6,17 @@ const path = 'published.json'
 
 var published = new Map();
 
+
+function compare(a, b){
+  var comparison = 0;
+  if (a.time > b.time) {
+    comparison = 1;
+  } else {
+    comparison = -1;
+  }
+  return comparison;
+}
+
 try {
   if (fs.existsSync(path)) {
     var obj = JSON.parse(fs.readFileSync("published.json", "utf8"));
@@ -167,7 +178,53 @@ function news(){
   }
 }
 
+async function printUpcoming(bot, msg){
+  var request = require('sync-request');
+  var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+  var arr = [];
+  for(var i = 0; i < list.length; i++){
+    var utcSeconds = Math.round(list[i].sort_date / 1000);
+    var dateStr = new Date(0);
+    await dateStr.setUTCSeconds(utcSeconds - 3600);
+    // console.log(dateStr.toString());
+    dateStr = dateStr.toString();
+    var pos = dateStr.indexOf('GMT');
+    if(pos == -1){
+      console.error(' \'GMT\' not found');
+      return;
+    }
+    dateStr = dateStr.substr(0, pos);
+    dateStr += 'Western Indonesia Time';
+    console.log(dateStr);
+    arr[i] = {
+      name: list[i].provider.name + ' ' + list[i].vehicle.name,
+      value: dateStr,
+      time: list[i].sort_date
+    }
+  }
+  console.log(arr);
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
+  arr.sort(compare);
+  var embed = {
+    color: 16764006,
+    author: {
+      name: "Upcoming launches",
+      icon_url: "attachment://viericorp.png"
+    },
+    title: '\u200b',
+    fields: arr,
+    timestamp: new Date(),
+    footer: {
+      text: "By Vieri Corp.™ All Rights Reserved"
+    }
+  }
+  msg.channel.send({files: [vieri], embed: embed});
+}
+
 module.exports = {
+  upcoming: function(bot, msg){
+    printUpcoming(bot, msg);
+  },
   new: function(bott){
     bot = bott;
     // console.log('tes');
