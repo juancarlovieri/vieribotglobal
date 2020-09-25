@@ -2,9 +2,17 @@ const fs = require("fs");
 var obj = JSON.parse(fs.readFileSync("changeHandle.json", "utf8"));
 
 module.exports = {
-  deleted: function(msg){
+  deleted: function(msg, bot){
     console.log(msg.author.username + msg.author.discriminator + ' ' + msg.createdTimestamp + ' ' + msg.content);
     var arr = obj.a;
+    if(msg.channel.guild.id == '758565620907245599'){
+      if(msg.author.id == '724954396147974194'){
+        msg.channel.send(msg.content);
+        return;
+      }
+      const channel = bot.channels.cache.get('758941261703938058');
+      channel.send(msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content);
+    }
     arr[arr.length] = msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.createdTimestamp + ' ' + msg.content;
     var temp = {
       a: arr,

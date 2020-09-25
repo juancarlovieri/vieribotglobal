@@ -438,5 +438,5 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 });
 
 bot.on("messageDelete", (msg) => {
-  delMsg.deleted(msg);
+  delMsg.deleted(msg, bot);
 });
