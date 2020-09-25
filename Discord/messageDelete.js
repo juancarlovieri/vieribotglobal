@@ -4,13 +4,13 @@ var obj = JSON.parse(fs.readFileSync("changeHandle.json", "utf8"));
 module.exports = {
   edited: function(msg, bot){
     if(msg.channel.guild.id == '758565620907245599'){
-      const channel = bot.channels.cache.get('758941261703938058');
+      var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
         channel.send("***EDITED*** " + msg.content);
         return;
       }
       if(msg.author.bot)return;
-      const channel = bot.channels.cache.get('758941261703938058');
+      var channel = bot.channels.cache.get('758941261703938058');
       channel.send("***DELETED*** " + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content);
     }
   },
@@ -18,7 +18,7 @@ module.exports = {
     console.log(msg.author.username + msg.author.discriminator + ' ' + msg.createdTimestamp + ' ' + msg.content);
     var arr = obj.a;
     if(msg.channel.guild.id == '758565620907245599'){
-      const channel = bot.channels.cache.get('758941261703938058');
+      var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
         channel.send("***DELETED*** " + msg.content);
         return;
