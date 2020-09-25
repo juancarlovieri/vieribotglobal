@@ -136,10 +136,8 @@ function news(){
   var list = JSON.parse(request('GET', 'https://spaceflightnewsapi.net/api/v1/articles/').getBody()).docs;
   console.log('downloaded news');
   for(var i = 0; i < list.length; i++){
-    if(list[i]._id != "5f6dcf4a96c53b1fb5340bfa"){
-      if(published.has(list[i]._id))continue;
-      if(published.has("all"))continue;
-    }
+    if(published.has(list[i]._id))continue;
+    if(published.has("all"))continue;
     var tags = "";
     for(var j = 0; j < list[i].tags.length; j++){
       tags += list[i].tags[j];
