@@ -261,6 +261,9 @@ function command(args, msg){
     case '^launches':
       launch.upcoming(bot, msg);
     break;
+    case '^launch':
+      launch.view(bot, msg);
+    break;
     case '^atcoder':
       if(atcoder.duel(bot, msg) != 0){
 

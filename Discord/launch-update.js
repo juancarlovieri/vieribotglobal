@@ -137,6 +137,7 @@ function news(){
   console.log('downloaded news');
   for(var i = 0; i < list.length; i++){
     if(published.has(list[i]._id))continue;
+    if(published.has("all"))continue;
     var tags = "";
     for(var j = 0; j < list[i].tags.length; j++){
       tags += list[i].tags[j];
@@ -183,7 +184,7 @@ async function printUpcoming(bot, msg){
   var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
   var arr = [];
   for(var i = 0; i < list.length; i++){
-    var utcSeconds = Math.round(list[i].sort_date / 1000);
+    var utcSeconds = Math.round(list[i].sort_date);
     var dateStr = new Date(0);
     await dateStr.setUTCSeconds(utcSeconds - 3600);
     // console.log(dateStr.toString());
@@ -224,6 +225,9 @@ async function printUpcoming(bot, msg){
 module.exports = {
   upcoming: function(bot, msg){
     printUpcoming(bot, msg);
+  },
+  view: function(bot, msg){
+
   },
   new: function(bott){
     bot = bott;
