@@ -37,9 +37,9 @@ async function init(){
       if(diff - 3600000 < jarak[j]){
         console.log('new remind');
         var payload = "unknown";
-        for(var i = 0; i < cur.tags.length; i++){
-          if(!cur.tags[i].text)continue;
-          payload = cur.tags[i].text;
+        for(var k = 0; k < cur.tags.length; k++){
+          if(!cur.tags[k].text)continue;
+          payload = cur.tags[k].text;
         }
         var utcSeconds = Math.round(time / 1000);
         var dateStr = new Date(0);
@@ -88,6 +88,7 @@ async function init(){
             text: "By Vieri Corp.™ All Rights Reserved"
           }
         }
+        console.log('new timer');
         timer(time -  jarak[j], embed, vieri);
       }
     }
