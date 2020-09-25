@@ -441,6 +441,6 @@ bot.on("messageDelete", (msg) => {
   delMsg.deleted(msg, bot);
 });
 
-client.on('messageUpdate', (oldMessage, newMessage) => {
+bot.on('messageUpdate', (oldMessage, newMessage) => {
   delMsg.deleted(oldMessage, bot);
-}
+});
