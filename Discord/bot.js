@@ -442,5 +442,5 @@ bot.on("messageDelete", (msg) => {
 });
 
 bot.on('messageUpdate', (oldMessage, newMessage) => {
-  delMsg.deleted(oldMessage, bot);
+  delMsg.edited(oldMessage, bot);
 });
