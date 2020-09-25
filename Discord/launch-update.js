@@ -33,7 +33,6 @@ async function init(){
     if(diff < 0)continue;
     for(var j = 0; j < jarak.length; j++){
       if(diff < jarak[j])continue;
-      console.log(diff);
       if(diff - 3600000 < jarak[j]){
         console.log('new remind');
         var payload = "unknown";
