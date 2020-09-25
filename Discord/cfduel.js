@@ -50,7 +50,6 @@ function save(){
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
     }
-    console.log("saved");
   });
   jsonObj = Object.fromEntries(problem);
   console.log(jsonObj);

@@ -222,12 +222,87 @@ async function printUpcoming(bot, msg){
   msg.channel.send({files: [vieri], embed: embed});
 }
 
+async function printView(bot, msg, args){
+  var indx = parseInt(args[1]);
+  indx--;
+  var request = require('sync-request');
+  var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+  if(indx < 0 || indx >= list.length)return;
+  var arr = [];
+  for(var i = 0; i < list.length; i++){
+    arr[i] = {
+      time: list[i].sort_date,
+      indx: i
+    }
+  }
+  arr.sort(compare);
+  var cur = list[arr[indx].indx];
+  var payload = "unknown";
+  for(var k = 0; k < cur.tags.length; k++){
+    if(!cur.tags[k].text)continue;
+    payload = cur.tags[k].text;
+  }
+  var utcSeconds = Math.round(cur.sort_date);
+  var dateStr = new Date(0);
+  await dateStr.setUTCSeconds(utcSeconds - 3600);
+  // console.log(dateStr.toString());
+  dateStr = dateStr.toString();
+  var pos = dateStr.indexOf('GMT');
+  if(pos == -1){
+    console.error(' \'GMT\' not found');
+    return;
+  }
+  dateStr = dateStr.substr(0, pos);
+  dateStr += 'Western Indonesia Time';
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
+  var embed = {
+    color: 16764006,
+    author: {
+      name: "launch view",
+      icon_url: "attachment://viericorp.png"
+    },
+    title: "Misssion Overview",
+    fields: [
+      {
+        name: "Provider",
+        value:cur.provider.name
+      },
+      {
+        name: "Vehicle",
+        value:cur.vehicle.name
+      },
+      {
+        name:"Date",
+        value:dateStr
+      },
+      {
+        name: "Location",
+        value:cur.pad.location.name + ", " + cur.pad.location.statename + ", " + cur.pad.location.country
+      },
+      {
+        name: "Payload",
+        value: payload
+      }
+    ],
+    timestamp: new Date(),
+    footer: {
+      text: "By Vieri Corp.™ All Rights Reserved"
+    }
+  }
+  msg.channel.send({files: [vieri], embed: embed});
+}
+
 module.exports = {
   upcoming: function(bot, msg){
     printUpcoming(bot, msg);
   },
   view: function(bot, msg){
-
+    var args = msg.content.split(" ");
+    if(args.length == 0){
+      return;
+    }
+    if(isNaN(args[1]))return;
+    printView(bot, msg, args);
   },
   new: function(bott){
     bot = bott;
