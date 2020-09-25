@@ -51,6 +51,7 @@ async function init(){
           return;
         }
         dateStr = dateStr.substr(0, pos);
+        dateStr += 'Western Indonesia Time';
         console.log(dateStr);
         var vieri = new Discord.MessageAttachment('../viericorp.png');
         var embed = {
