@@ -87,7 +87,6 @@ async function init(){
           return;
         }
         dateStr = dateStr.substr(0, pos);
-        dateStr += 'Western Indonesia Time';
         console.log(dateStr);
         var vieri = new Discord.MessageAttachment('../viericorp.png');
         var embed = {
@@ -196,7 +195,6 @@ async function printUpcoming(bot, msg){
       return;
     }
     dateStr = dateStr.substr(0, pos);
-    dateStr += 'Western Indonesia Time';
     console.log(dateStr);
     arr[i] = {
       name: list[i].provider.name + ' ' + list[i].vehicle.name,
@@ -254,7 +252,6 @@ async function printView(bot, msg, args){
     return;
   }
   dateStr = dateStr.substr(0, pos);
-  dateStr += 'Western Indonesia Time';
   var vieri = new Discord.MessageAttachment('../viericorp.png');
   var embed = {
     color: 16764006,
