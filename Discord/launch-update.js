@@ -112,7 +112,7 @@ async function init(){
             },
             {
               name: "Location",
-              value:cur.pad.location.name + ", " + cur.pad.location.statename + ", " + cur.pad.location.country
+              value: cur.pad.name + ", " + cur.pad.location.name + ", " + cur.pad.location.statename + ", " + cur.pad.location.country
             },
             {
               name: "Payload",
@@ -278,7 +278,7 @@ async function printView(bot, msg, args){
       },
       {
         name: "Location",
-        value:cur.pad.location.name + ", " + cur.pad.location.statename + ", " + cur.pad.location.country
+        value: cur.pad.name + ", " + cur.pad.location.name + ", " + cur.pad.location.statename + ", " + cur.pad.location.country
       },
       {
         name: "Payload",
