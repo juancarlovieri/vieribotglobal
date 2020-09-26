@@ -12,7 +12,7 @@ module.exports = {
       }
       if(msg.author.bot)return;
       var channel = bot.channels.cache.get('758941261703938058');
-      channel.send("***DELETED*** " + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content);
+      channel.send("***EDITED*** " + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content);
     }
   },
   deleted: function(msg, bot){
