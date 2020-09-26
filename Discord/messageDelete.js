@@ -3,6 +3,7 @@ var obj = JSON.parse(fs.readFileSync("changeHandle.json", "utf8"));
 
 module.exports = {
   edited: function(msg, bot){
+    if(msg.embeds.length != 0)return;
     if(msg.channel.guild.id == '758565620907245599'){
       if(msg.content == "")return;
       var channel = bot.channels.cache.get('758941261703938058');
@@ -16,6 +17,7 @@ module.exports = {
     }
   },
   deleted: function(msg, bot){
+    if(msg.embeds.length != 0)return;
     var arr = obj.a;
     if(msg.channel.guild.id == '758565620907245599'){
       if(msg.content == "")return;

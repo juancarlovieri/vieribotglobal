@@ -444,10 +444,11 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 });
 
 bot.on("messageDelete", (msg) => {
-  console.log(msg);
+  // console.log(msg);
   delMsg.deleted(msg, bot);
 });
 
 bot.on('messageUpdate', (oldMessage, newMessage) => {
+  // console.log(oldMessage);
   delMsg.edited(oldMessage, bot);
 });
