@@ -6,7 +6,7 @@ import time
 import random
 
 token = input()
-bot = commands.Bot(command_prefix='{')
+bot = commands.Bot(command_prefix='\\')
 
 @bot.command()
 async def stop(ctx):
