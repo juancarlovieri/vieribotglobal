@@ -4,30 +4,30 @@ var obj = JSON.parse(fs.readFileSync("changeHandle.json", "utf8"));
 module.exports = {
   edited: function(msg, bot){
     // if(msg.embeds.length != 0)return;
-    if(msg.channel.guild.id == '758565620907245599'){
+    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232'){
       if(msg.content == "")return;
       var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
-        channel.send("***EDITED*** " + msg.content);
+        channel.send(msg.content);
         return;
       }
       if(msg.author.bot)return;
       var channel = bot.channels.cache.get('758941261703938058');
-      channel.send("***EDITED*** " + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp);
+      channel.send("***EDITED*** #" + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp);
     }
   },
   deleted: function(msg, bot){
     // if(msg.embeds.length != 0)return;
     var arr = obj.a;
-    if(msg.channel.guild.id == '758565620907245599'){
+    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232'){
       if(msg.content == "")return;
       var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
-        channel.send("***DELETED*** " + msg.content);
+        channel.send(msg.content);
         return;
       }
       if(msg.author.bot)return;
-      channel.send("***DELETED*** " + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp);
+      channel.send("***DELETED*** #" + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp);
     }
     arr[arr.length] = msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.createdTimestamp + ' ' + msg.content;
     var temp = {
