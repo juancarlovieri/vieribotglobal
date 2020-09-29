@@ -257,6 +257,7 @@ module.exports = {
             if(submission[i].creationTimeSeconds * 1000 < time)continue;
             var ada = 0;
             for(var j = 0; j < allowed.length; j++){
+              if(allowed[j] == 'all')ada = 1;
               if(submission[i].problem.rating == allowed[j])ada = 1;
             }
             if(!ada)continue;
