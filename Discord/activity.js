@@ -150,7 +150,6 @@ async function printAll(bot, msg, args){
     data[data.length] = temp;
     // console.log(i);
   });
-  console.log(data);
   for(var i = 0; i < data.length; i++){
     var tempName = await bot.users.fetch(data[i].name);
     data[i].name = tempName.username;

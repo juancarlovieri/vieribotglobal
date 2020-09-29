@@ -231,6 +231,86 @@ module.exports = {
     }
     var args = msg.content.split(" ");
     switch(args[1]){
+      case 'solved':
+        console.log('solve graph');
+        var request = require('sync-request');
+        if(isNaN(args[3]))return;
+        var submissions = request('GET', 'http://codeforces.com/api/user.status?handle=' + args[2] + '&from=1&count=1000000&handle=' + map.get(msg.author.id));
+        var submission = JSON.parse(submissions.getBody()).result;
+        var time = parseInt(args[3]);
+        var alr = new Map();
+        var data = [];
+        for(var rate = 4; rate < args.length; rate++){
+          var allowed = args[rate].split('-');
+          var counter = 0;
+          var temp = {
+            x: [],
+            y: [],
+            name: 'solve graph for ' + args[2],
+            mode: "lines",
+            type: "scatter"
+          };
+          for(var i = submission.length - 1; i >= 0; i--){
+            if(submission[i].verdict != 'OK')continue;
+            var name = submission[i].problem.contestId + submission[i].problem.index;
+            if(alr.has(name))continue;
+            if(submission[i].creationTimeSeconds * 1000 < time)continue;
+            var ada = 0;
+            for(var j = 0; j < allowed.length; j++){
+              if(submission[i].problem.rating == allowed[j])ada = 1;
+            }
+            if(!ada)continue;
+            var utcSeconds = submission[i].creationTimeSeconds;
+            var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
+            d.setUTCSeconds(utcSeconds);
+            d = d.toString();
+            var arr = d.split(' ');
+            d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var month = -1;
+            for(var k = 0; k < 12; k++){
+              if(arr[1] == months[k]){
+                month = k + 1;
+              }
+            }
+            if(month == -1){
+              console.log('month not found');
+              msg.channel.send('an error occured, contact developer');
+              return;
+            }
+            d = arr[3] + '-' + month + '-' + arr[2];
+            counter++;
+            temp.x[temp.x.length] = counter;
+            temp.y[temp.y.length] = d;
+          }
+          temp.y = [temp.x, temp.x = temp.y][0];
+          data[data.length] = temp;
+        }
+        var layout = {
+          title: names,
+          xaxis: {
+            autorange: true,
+            tickformat: '%b %d %Y',
+            type: 'date'
+          },
+          yaxis: {
+            autorange: true,
+            type: 'linear'
+          }
+        };
+        var graphOptions = {filename: 'umum', fileopt: "overwrite", layout: layout};
+        plotly.plot(data, graphOptions, function (err, mesg) {
+          console.log(mesg);
+          var request = require('request');
+          download(mesg.url + '.jpeg', 'display.png', function(){
+            msg.channel.send(names, {
+              files: [
+              "display.png"
+            ]
+          });
+          });
+        });
+      break;
       case 'cfrating':
         if(map.has(msg.author.id) == false){
           msg.channel.send('Register your handle first!');
