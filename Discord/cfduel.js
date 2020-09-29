@@ -246,7 +246,7 @@ module.exports = {
           var temp = {
             x: [],
             y: [],
-            name: 'solve graph for ' + args[2],
+            name: args[rate],
             mode: "lines",
             type: "scatter"
           };
