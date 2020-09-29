@@ -235,6 +235,12 @@ module.exports = {
         console.log('solve graph');
         var request = require('sync-request');
         if(isNaN(args[3]))return;
+        const coba = request('GET', 'http://codeforces.com/api/user.rating?handle=' + args[2]);
+        if(coba.statusCode >= 300){
+          console.log('handle not found');
+          msg.channel.send(args[2] + ' not found');
+          return;
+        }
         var submissions = request('GET', 'http://codeforces.com/api/user.status?handle=' + args[2] + '&from=1&count=1000000&handle=' + map.get(msg.author.id));
         var submission = JSON.parse(submissions.getBody()).result;
         var time = parseInt(args[3]);
@@ -281,6 +287,7 @@ module.exports = {
             }
             d = arr[3] + '-' + month + '-' + arr[2];
             counter++;
+            alr.set(name, 1);
             temp.x[temp.x.length] = counter;
             temp.y[temp.y.length] = d;
           }
