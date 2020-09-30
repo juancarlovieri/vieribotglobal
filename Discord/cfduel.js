@@ -241,7 +241,7 @@ module.exports = {
           msg.channel.send(args[2] + ' not found');
           return;
         }
-        var submissions = request('GET', 'http://codeforces.com/api/user.status?handle=' + args[2] + '&from=1&count=1000000&handle=' + map.get(msg.author.id));
+        var submissions = request('GET', 'http://codeforces.com/api/user.status?handle=' + args[2] + '&from=1&count=1000000000&handle=' + map.get(msg.author.id));
         var submission = JSON.parse(submissions.getBody()).result;
         var time = parseInt(args[3]);
         var alr = new Map();
