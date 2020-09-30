@@ -288,8 +288,12 @@ module.exports = {
             d = arr[3] + '-' + month + '-' + arr[2];
             counter++;
             alr.set(name, 1);
-            temp.x[temp.x.length] = counter;
-            temp.y[temp.y.length] = d;
+            if(temp.y.length == 0 || temp.y[temp.y.length - 1] != d){
+              temp.x[temp.x.length] = counter;
+              temp.y[temp.y.length] = d; 
+            } else{
+              temp.x[temp.x.length - 1] = counter;
+            }
           }
           console.log(counter);
           temp.y = [temp.x, temp.x = temp.y][0];
