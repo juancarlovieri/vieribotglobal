@@ -267,7 +267,7 @@ module.exports = {
               if(submission[i].problem.rating == allowed[j])ada = 1;
             }
             if(!ada)continue;
-            var utcSeconds = submission[i].creationTimeSeconds;
+            var utcSeconds = submission[i].creationTimeSeconds - 3600;
             var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
             d.setUTCSeconds(utcSeconds);
             d = d.toString();
