@@ -258,7 +258,7 @@ module.exports = {
           };
           for(var i = submission.length - 1; i >= 0; i--){
             if(submission[i].verdict != 'OK')continue;
-            var name = submission[i].problem.contestId + submission[i].problem.index;
+            var name = submission[i].problem.name;
             if(alr.has(name))continue;
             if(submission[i].creationTimeSeconds * 1000 < time)continue;
             var ada = 0;
@@ -291,11 +291,12 @@ module.exports = {
             temp.x[temp.x.length] = counter;
             temp.y[temp.y.length] = d;
           }
+          console.log(counter);
           temp.y = [temp.x, temp.x = temp.y][0];
           data[data.length] = temp;
         }
         var layout = {
-          title: names,
+          title: args[2],
           xaxis: {
             autorange: true,
             tickformat: '%b %d %Y',
