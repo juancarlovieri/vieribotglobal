@@ -295,7 +295,6 @@ module.exports = {
               temp.x[temp.x.length - 1] = counter;
             }
           }
-          console.log(counter);
           temp.y = [temp.x, temp.x = temp.y][0];
           data[data.length] = temp;
         }
