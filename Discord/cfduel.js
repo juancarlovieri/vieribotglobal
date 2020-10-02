@@ -223,6 +223,29 @@ function sort(s) {
   return s;
 }
 
+function convertTime(time){
+  var utcSeconds = time - 3600;
+  var d = new Date(0);  
+  d.setUTCSeconds(utcSeconds);
+  d = d.toString();
+  var arr = d.split(' ');
+  d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
+  var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var month = -1;
+  for(var k = 0; k < 12; k++){
+    if(arr[1] == months[k]){
+      month = k + 1;
+    }
+  }
+  if(month == -1){
+    console.log('month not found');
+    msg.channel.send('an error occured, contact developer');
+    return;
+  }
+  d = arr[3] + '-' + month + '-' + arr[2];
+  return d;
+}
+
 module.exports = {
   duel: function(bot, msg){
     if(init() == 0){
@@ -252,6 +275,7 @@ module.exports = {
           var temp = {
             x: [],
             y: [],
+            submitTime: [],
             name: args[rate],
             mode: "lines",
             type: "scatter"
@@ -267,30 +291,27 @@ module.exports = {
               if(submission[i].problem.rating == allowed[j])ada = 1;
             }
             if(!ada)continue;
-            var utcSeconds = submission[i].creationTimeSeconds - 3600;
-            var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
-            d.setUTCSeconds(utcSeconds);
-            d = d.toString();
-            var arr = d.split(' ');
-            d = arr[1].concat(' ' + arr[2]).concat(' ' + arr[3]);
-            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            var month = -1;
-            for(var k = 0; k < 12; k++){
-              if(arr[1] == months[k]){
-                month = k + 1;
-              }
-            }
-            if(month == -1){
-              console.log('month not found');
-              msg.channel.send('an error occured, contact developer');
-              return;
-            }
-            d = arr[3] + '-' + month + '-' + arr[2];
+            var d = convertTime(submission[i].creationTimeSeconds);
             counter++;
             alr.set(name, 1);
             if(temp.y.length == 0 || temp.y[temp.y.length - 1] != d){
+              if(temp.y.length == 0){
+                temp.x[temp.x.length] = counter;
+                temp.y[temp.y.length] = d;
+                temp.submitTime[temp.submitTime.length] = submission[i].creationTimeSeconds;
+                continue;
+              }
+              while(convertTime(temp.submitTime[temp.submitTime.length - 1] + 86400) != d){
+                var backx = temp.x[temp.x.length - 1];
+                var backy = temp.y[temp.y.length - 1];
+                var backt = temp.submitTime[temp.submitTime.length - 1];
+                temp.x[temp.x.length] = backx;
+                temp.y[temp.y.length] = convertTime(backt + 86400);
+                temp.submitTime[temp.submitTime.length] = backt + 86400;
+              }
               temp.x[temp.x.length] = counter;
-              temp.y[temp.y.length] = d; 
+              temp.y[temp.y.length] = d;
+              temp.submitTime[temp.submitTime.length] = submission[i].creationTimeSeconds;
             } else{
               temp.x[temp.x.length - 1] = counter;
             }
