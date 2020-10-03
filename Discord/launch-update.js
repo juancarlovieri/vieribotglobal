@@ -169,7 +169,7 @@ function news(){
         text: "By Vieri Corp.™ All Rights Reserved"
       }
     }
-    const channel = bot.channels.cache.get('758646515983712287');
+    const channel = bot.channels.cache.get('761766016807469057');
     channel.send("<@&758716095141642282>");
     channel.send({files: [vieri], embed: embed});
     const channel2 = bot.channels.cache.get('576623116394954762');
