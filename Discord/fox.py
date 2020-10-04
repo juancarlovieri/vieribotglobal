@@ -19,6 +19,13 @@ async def on_ready():
     await channel.send('s?fox')
     time.sleep(5 + random.random())
 
+@bot.command(pass_context = True)
+async def join(ctx):
+  author = ctx.message.author
+  channel = author.voice.channel
+  print(channel)
+  await channel.connect()
+
 @bot.command()
 async def stop(ctx):
   exit()
