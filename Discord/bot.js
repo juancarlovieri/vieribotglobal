@@ -352,7 +352,7 @@ function play4(){
 }
 
 function play5(){
-  const channel = bot.channels.cache.get('626412169751166996');
+  const channel = bot.channels.cache.get('766640533664825364');
   if (!channel) return console.error("The channel does not exist!");
   channel.join().then(connection => {
     console.log("Successfully connected.");
