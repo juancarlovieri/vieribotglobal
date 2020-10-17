@@ -4,7 +4,7 @@ var obj = JSON.parse(fs.readFileSync("changeHandle.json", "utf8"));
 module.exports = {
   edited: function(msg, bot){
     // if(msg.embeds.length != 0)return;
-    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232'){
+    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232' || msg.channel.guild.it == '626412169751166996'){
       if(msg.content == "")return;
       var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
@@ -19,7 +19,7 @@ module.exports = {
   deleted: function(msg, bot){
     // if(msg.embeds.length != 0)return;
     var arr = obj.a;
-    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232'){
+    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232 '  || msg.channel.guild.it == '626412169751166996'){
       if(msg.content == "")return;
       var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
