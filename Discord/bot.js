@@ -20,12 +20,8 @@ const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
 const status = "do not disturb";
-const ping = require('minecraft-server-util');
 const si = require('systeminformation');
-
-// si.cpu().then(data => console.log(data)).catch  (error => console.error(error));
-
-// import ping from 'minecraft-server-util';
+const mc = require('minecraft-server-util');
  
 
 
@@ -143,34 +139,28 @@ function command(args, msg){
     case '^mc':
       console.log(args.length);
       if(args.length != 3)return;
-      ping(args[1], parseInt(args[2]), (error, response) => {
-        console.error(error);
-        if (error){
-          msg.channel.send('server not found');
-          // throw error;
-          return;
-        }
-        var hasil = response.descriptionText + '\n';
-        hasil += 'version: ' + response.version + '\n';
-        hasil += 'online players: ' + response.onlinePlayers + '\n';
-        hasil += 'max players: ' + response.maxPlayers + '\n';
-        msg.channel.send(hasil);
+      mc.status(args[1], { port: parseInt(args[2]) })
+        .then((response) => {
+          var hasil = response.description.descriptionText + '\n';
+          hasil += 'version: ' + response.version + '\n';
+          hasil += 'online players: ' + response.onlinePlayers + '\n';
+          hasil += 'max players: ' + response.maxPlayers + '\n';
+          msg.channel.send(hasil);
           console.log(response);
+        })
+        .catch((error) => {
+          console.error(error);
+          msg.channel.send('server not found');
+          return;
       });
-      // ping(, { protocolVersion: 498, connectTimeout: 1000 * 10 }).then((response) => {
+      // ping(args[1], parseInt(args[2]), (error, response) => {
+      //   console.error(error);
       //   if (error){
       //     msg.channel.send('server not found');
-      //     throw error;
+      //     // throw error;
+      //     return;
       //   }
-      //   var hasil = response.descriptionText + '\n';
-      //   hasil += 'version: ' + response.version + '\n';
-      //   hasil += 'online players: ' + response.onlinePlayers + '\n';
-      //   hasil += 'max players: ' + response.maxPlayers + '\n';
-      //   msg.channel.send(hasil);
-      //   console.log(response);
-      // }).catch((error) => {
-      //     throw error;
-      // });;
+      // });
     break;
     case '^isup':
       (async () => {

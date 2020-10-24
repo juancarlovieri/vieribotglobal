@@ -24,7 +24,7 @@ async def join(ctx):
   author = ctx.message.author
   channel = author.voice.channel
   print(channel)
-  await channel.connect()
+  await channel.connect() 
 
 @bot.command()
 async def stop(ctx):
