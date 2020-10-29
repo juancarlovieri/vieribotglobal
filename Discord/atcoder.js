@@ -42,6 +42,9 @@ module.exports = {
   duel: function(bot, msg){
     var args = msg.content.split(" ");
     switch(args[1]){
+      case 'help':
+        msg.channel.send('to register handle: ``^atcoder regis <your handle>``\n to verify your handle: ``^atcoder regisdone``\n to get a random problem: ``^atcoder problems <category> <problem index>``\n to challenge someone: ``^atcoder challenge <category> <user>``\n to accept an incoming challenge: ``^atcoder accept``\n to decline an incoming challenge: ``^atcoder decline``\n to update the score of an ongoing match: ``^atcoder update``');
+      break;
       case 'regis':
         if(args.length != 3){
           msg.channel.send('that is not a valid thing');

@@ -335,6 +335,7 @@ module.exports = {
         plotly.plot(data, graphOptions, function (err, mesg) {
           console.log(mesg);
           var request = require('request');
+          console.log(mesg.url);
           download(mesg.url + '.jpeg', 'display.png', function(){
             msg.channel.send(names, {
               files: [
