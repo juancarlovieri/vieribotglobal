@@ -259,7 +259,7 @@ function command(args, msg){
 
       }
     break;
-    case '^duel':
+    case '^cf':
       cfduel.duel(bot, msg);
     break; 
     case '^ask':

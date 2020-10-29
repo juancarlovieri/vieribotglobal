@@ -254,6 +254,50 @@ module.exports = {
     }
     var args = msg.content.split(" ");
     switch(args[1]){
+      case 'help':
+        if(args[2] == 'solve'){
+          msg.channel.send('``^cf solved <handle> <start time in epoch(ms)> <ratings>``\nthe rating must be in format: use \"-\" to combine multiple ratings into one line. Use spaces to seperate group of ratings into multiple lines.\nFor example: `` 1700-1800-1900 1400 800-900``\n there will be 3 lines, line 1 with rating ``1700, 1800, 1900.`` Line two with ``1400``. Line three with ``800 and 900``');
+        } else msg.channel.send('to register handle: ``^cf regis <your handle>``\n to verify your handle: ``^cf regisdone``\n to get a random problem: ``^cfudel problem <rating/\"myrating\">``\n after solving the problem given: ``^cf probdone``\n to view the number of solve for a specific person from a specific time: ``^cf help solve``\n ');
+      break;
+      case 'regis':
+        console.log('register');
+        if(map.has(msg.author.id)){
+          msg.channel.send('you are reregistering!');
+        }
+        var args = msg.content.split(" ");
+        if(args.length != 3){
+          msg.channel.send('that\'s not a valid thing');
+          break;
+        }
+        regisTemp.set(msg.author.id, args[2]);
+        msg.channel.send('submit ' + crypto.createHash('sha256').update(msg.author.id).digest('base64') + '  to any problem');
+      break;
+      case 'regisdone':
+        if(regisTemp.has(msg.author.id) == false){
+          msg.channel.send('you are not registering');
+          break;
+        }
+        console.log(regisTemp.get(msg.author.id));
+        var request = require('request');
+        request('http://codeforces.com/api/user.status?handle=' + regisTemp.get(msg.author.id) + '&from=1&count=1', function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+            var submission = JSON.parse(body);
+            var request2 = require('request'); 
+            request2('http://codeforces.com/contest/' + submission.result[0].contestId + '/submission/' + submission.result[0].id, function(error, response, body){
+              var indx = body.indexOf(crypto.createHash('sha256').update(msg.author.id).digest('base64'));
+              if(indx < 0 || Date.now() - 3600000 > submission.result[0].creationTimeSeconds * 1000){
+                msg.channel.send('submit ' + crypto.createHash('sha256').update(msg.author.id).digest('base64') + '  to any problem');
+                return 1;
+              } else{
+                map.set(msg.author.id, regisTemp.get(msg.author.id));
+                regisTemp.delete(msg.author.id);
+                save();
+                msg.channel.send('registered!');
+              }
+            });
+          }
+        });
+        break;
       case 'solved':
         console.log('solve graph');
         var request = require('sync-request');
@@ -351,19 +395,6 @@ module.exports = {
           return 1;
         }
         msg.channel.send(takeRating(map.get(msg.author.id)));
-      break;
-      case 'regis':
-        console.log('register');
-        if(map.has(msg.author.id)){
-          msg.channel.send('you are reregistering!');
-        }
-        var args = msg.content.split(" ");
-        if(args.length != 3){
-          msg.channel.send('that\'s not a valid thing');
-          break;
-        }
-        regisTemp.set(msg.author.id, args[2]);
-        msg.channel.send('submit ' + crypto.createHash('sha256').update(msg.author.id).digest('base64') + '  to any problem');
       break;
       case 'handles':
         var hasil = "```";
@@ -1168,33 +1199,7 @@ module.exports = {
         }
         console.log(indx);
         msg.channel.send('recommended contest for ' + names + ': https://codeforces.com/contest/' + contests[indx].id);
-      break;
-      case 'regisdone':
-        if(regisTemp.has(msg.author.id) == false){
-          msg.channel.send('you are not registering');
-          break;
-        }
-        console.log(regisTemp.get(msg.author.id));
-        var request = require('request');
-        request('http://codeforces.com/api/user.status?handle=' + regisTemp.get(msg.author.id) + '&from=1&count=1', function (error, response, body) {
-          if (!error && response.statusCode == 200) {
-            var submission = JSON.parse(body);
-            var request2 = require('request'); 
-            request2('http://codeforces.com/contest/' + submission.result[0].contestId + '/submission/' + submission.result[0].id, function(error, response, body){
-              var indx = body.indexOf(crypto.createHash('sha256').update(msg.author.id).digest('base64'));
-              if(indx < 0 || Date.now() - 3600000 > submission.result[0].creationTimeSeconds * 1000){
-                msg.channel.send('submit ' + crypto.createHash('sha256').update(msg.author.id).digest('base64') + '  to any problem');
-                return 1;
-              } else{
-                map.set(msg.author.id, regisTemp.get(msg.author.id));
-                regisTemp.delete(msg.author.id);
-                save();
-                msg.channel.send('registered!');
-              }
-            });
-          }
-        });
-      break;
+        break;
     }
     return 1;
   }
