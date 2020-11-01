@@ -11,7 +11,7 @@ var plotly = require('plotly')('juancarlovieri', auth.plotly);
 var challenge = new Map(Object.entries(obj));
 obj = JSON.parse(fs.readFileSync("../lagrange_rank.json", "utf8"));
 var rank = new Map(Object.entries(obj));
-var glob = -1;
+var glob = "-1";
 var startDate = 1599710400;
 var ranked = false;
 var canceler = 0;
@@ -140,14 +140,35 @@ function save(){
   });
 }
 
+function rng(l, r, msg, cust){
+  var spawn = require('child_process').spawn;
+  var child = spawn('python3', ['lagrange_py/rng.py']);
+  child.stdout.on('data', async function(data){
+    console.log(data);
+    glob = JSON.parse(data.toString());
+    chal = await msg.channel.send(cust + glob + '**');
+    chal.react('🤷‍♀️');
+  });
+  child.on('close', function(code){
+    if(code != 0){
+      msg.channel.send('internal error, contact developer');
+      console.log('python crashed');
+    }
+  });
+  child.stdin.write(l + ' ' + r);
+  console.log(l + ' ' + r);
+  child.stdin.end();
+}
+
 async function newRanked(msg){
-  var l = 1000, r = 9999;
+  var l = '1000', r = '9999';
   prevL = l, prevR = r;
   ranked = true;
   startTime = Date.now();
-  glob = Math.floor(Math.random() * (r - l + 1)) + l;
-  chal = await msg.channel.send('global ranked duel is starting!\n integer is: **' + glob + '**');
-  chal.react('🤷‍♀️');
+  rng(l, r, msg, 'global ranked duel is starting!\n integer is: **');
+  // glob = Math.floor(Math.random() * (r - l + 1)) + l;
+  // chal = await msg.channel.send('global ranked duel is starting!\n integer is: **' + glob + '**');
+  // chal.react('🤷‍♀️');
 }
 
 async function newGlobal(args, msg){
@@ -157,14 +178,16 @@ async function newGlobal(args, msg){
     msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
     return;
   }
-  var l = parseInt(args[1]), r = parseInt(args[2]);
+  var l = args[1], r = args[2];
   prevL = l, prevR = r;
-  if(l < 0)return;
-  glob = Math.floor(Math.random()*(r-l+1))+l;
-  chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+  if(l[0] == '-')return;
+  if(r[0] == '-')return;
+  rng(l, r, msg, 'global duel is starting!\ninteger is: **');
+  // glob = Math.floor(Math.random()*(r-l+1))+l;
+  // chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
   // console.log(chal);
+  // chal.react('🤷‍♀️');
   ranked = false;
-  chal.react('🤷‍♀️');
 }
 
 async function newGlobalRepeat(msg){
@@ -172,9 +195,10 @@ async function newGlobalRepeat(msg){
   else msg.channel.send('repeating, previous range was: ' + prevL + ' and ' + prevR);
   var l = prevL, r = prevR;
   startTime = Date.now();
-  glob = Math.floor(Math.random()*(r-l+1))+l;
-  chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
-  chal.react('🤷‍♀️');
+  rng(l, r, msg, 'global duel is starting!\ninteger is: **');
+  // glob = Math.floor(Math.random()*(r-l+1))+l;
+  // chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
+  // chal.react('🤷‍♀️');
 }
 
 function reveal(msg, id){
@@ -205,8 +229,8 @@ function reveal(msg, id){
       console.log('python crashed');
     }
   });
-  child.stdin.write(glob.toString());
-  glob = -1;
+  child.stdin.write(glob);
+  glob = "-1";
   child.stdin.end();
 }
 
@@ -454,13 +478,36 @@ async function newGlobalOneInt(bot, msg, args){
     msg.channel.send('there is an ongoing global duel, integer is: **' + glob + '**');
     return;
   }
-  if(parseInt(args[1]) < 0)return;
-  var l = 0, r = parseInt(args[1]);
+  if(isNaN(args[1]))return;
+  if(args[1][0] == '-')return;
+  // var l = 0, r = parseInt(args[1]);
+  var l = '0', r = args[1];
   prevL = l, prevR = r;
   ranked = false;
-  glob = Math.floor(Math.random()*(r-l+1))+l;
-  chal = await msg.channel.send('global duel is starting!\ninteger is: **' + glob + '**');
-  chal.react('🤷‍♀️');
+  rng(l, r, msg, 'global duel is starting!\ninteger is: **');
+  // glob = Math.floor(Math.random()*(r-l+1))+l;
+}
+
+async function getSum(a, b, c, d, msg){
+  var spawn = require('child_process').spawn;
+  var child = spawn('python3', ['lagrange_py/getSum.py']);
+  child.stdout.on('data', function(data){
+    console.log(data);
+    
+  });
+  child.on('close', function(code){
+    if(code != 0){
+      msg.channel.send('internal error, contact developer');
+      console.log('python crashed');
+    }
+  });
+  child.stdin.write(a + ' ' + b + ' ' + c + ' ' + d);
+  child.stdin.end();
+  var res;
+  for await (const data of child.stdout) {
+    res = JSON.parse(data.toString());
+  }
+  return res;
 }
 
 module.exports = {
@@ -536,7 +583,7 @@ module.exports = {
         if(msg.author.id != '455184547840262144'){
           return;
         }
-        glob = -1;
+        glob = "-1";
       break;
       case 'dec':
         if(challenge.has(msg.author.id) == false)return;
@@ -612,14 +659,15 @@ module.exports = {
 
     }
   },
-  isAns: function(bot, msg){
+  isAns: async  function(bot, msg){
     var args = msg.content.split(' ');
     if(args.length != 4)return;
     var res = 0;
     for(var i = 0; i < 4; i++){
       if(isNaN(args[i]))return;
-      res += parseInt(args[i]) * parseInt(args[i]);
+      // res += parseInt(args[i]) * parseInt(args[i]);
     }
+    res = await getSum(args[0], args[1], args[2], args[3], msg);
     var temp = ongoing.get(msg.author.id);
     if(ongoing.has(msg.author.id)){
       if(res != temp.problem){
@@ -648,7 +696,7 @@ module.exports = {
       return;
     }
     if(res == glob){
-      glob = -1;
+      glob = "-1";
       prevSolver = msg.author.id;
       const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
       msg.react(emoji);
@@ -664,7 +712,7 @@ module.exports = {
         save();
       }
     } else{
-       const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
+      const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'WA');
       msg.react(emoji);
     }
   },
