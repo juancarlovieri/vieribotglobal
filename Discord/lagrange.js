@@ -532,6 +532,12 @@ module.exports = {
       case 'reveal':
         reveal(msg, msg.author.id);
       break;
+      case 'fs':
+        if(msg.author.id != '455184547840262144'){
+          return;
+        }
+        glob = -1;
+      break;
       case 'dec':
         if(challenge.has(msg.author.id) == false)return;
         var temp = challenge.get(msg.author.id);

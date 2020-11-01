@@ -257,7 +257,7 @@ module.exports = {
       case 'help':
         if(args[2] == 'solve'){
           msg.channel.send('``^cf solved <handle> <start time in epoch(ms)> <ratings>``\nthe rating must be in format: use \"-\" to combine multiple ratings into one line. Use spaces to seperate group of ratings into multiple lines.\nFor example: `` 1700-1800-1900 1400 800-900``\n there will be 3 lines, line 1 with rating ``1700, 1800, 1900.`` Line two with ``1400``. Line three with ``800 and 900``');
-        } else msg.channel.send('to register handle: ``^cf regis <your handle>``\n to verify your handle: ``^cf regisdone``\n to get a random problem: ``^cfudel problem <rating/\"myrating\">``\n after solving the problem given: ``^cf probdone``\n to view the number of solve for a specific person from a specific time: ``^cf help solve``\n ');
+        } else msg.channel.send('to register handle: ``^cf regis <your handle>``\n to verify your handle: ``^cf regisdone``\n to get a random problem: ``^cfudel problem <rating/\"myrating\">``\n after solving the problem given: ``^cf probdone``\n to view the number of solve for a specific person from a specific time: ``^cf help solve``\n rating = your rating on duels\n point = your point on solving problems given by me\n to view a person\'s rating history: ``^cf rating <person>``\n to view the rating graph for multiple people: ^cf ratinggraph <person> <person> ... <person>\n ');
       break;
       case 'regis':
         console.log('register');
@@ -388,22 +388,6 @@ module.exports = {
           });
           });
         });
-      break;
-      case 'cfrating':
-        if(map.has(msg.author.id) == false){
-          msg.channel.send('Register your handle first!');
-          return 1;
-        }
-        msg.channel.send(takeRating(map.get(msg.author.id)));
-      break;
-      case 'handles':
-        var hasil = "```";
-        // map.get(msg.author.id);
-        map.forEach(function print(key, value){
-          hasil += key + '\n';
-        });
-        hasil += '```';
-        msg.channel.send(hasil);
       break;
       case 'probdone':
         if(problem.has(msg.author.id) == false){
