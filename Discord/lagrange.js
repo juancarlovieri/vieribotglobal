@@ -215,7 +215,7 @@ function reveal(msg, id){
   canceler = 0;
   console.log(glob);
   var spawn = require('child_process').spawn;
-  var child = spawn('python3', ['lagrange reveal fast.py']);
+  var child = spawn('python3', ['lagrange_py/solve.py']);
   child.stdout.on('data', function(data){
     console.log(data);
     var res = JSON.parse(data.toString());
