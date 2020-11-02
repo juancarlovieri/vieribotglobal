@@ -459,6 +459,6 @@ bot.on("messageDelete", (msg) => {
 
 bot.on('messageUpdate', (oldMessage, newMessage) => {
   if(oldMessage.content == newMessage.content)return;
-  console.log(oldMessage._edits);
+  // console.log(oldMessage._edits);
   delMsg.edited(oldMessage, bot);
 });
