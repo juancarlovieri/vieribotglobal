@@ -580,7 +580,7 @@ module.exports = {
         reveal(msg, msg.author.id);
       break;
       case 'fs':
-        if(msg.author.id != '455184547840262144'){
+        if(msg.author.id != '455184547840262144' && msg.author.id != '545083775906873364'){
           return;
         }
         glob = "-1";
