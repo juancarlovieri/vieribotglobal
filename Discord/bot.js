@@ -22,7 +22,7 @@ const activity = require('./activity.js');
 const status = "do not disturb";
 const si = require('systeminformation');
 const mc = require('minecraft-server-util');
- 
+const predict = require('./tlx/predict.js');
 
 
 // console.log((1599715800000 - 3600000) - Date.now());
@@ -135,6 +135,10 @@ function command(args, msg){
       }
       console.log(args[1]);
       msg.channel.send('https://cdn.discordapp.com/emojis/' + args[1].substr(indx, args[1].length - indx - 1) + '.png');
+    break;
+    case '^predict':
+      if(args.length != 3)return;
+      predict.calc(bot, msg, args[1], args[2]);
     break;
     case '^mc':
       console.log(args.length);
