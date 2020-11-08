@@ -17,7 +17,7 @@ async def on_ready():
   while(True):
     channel = bot.get_channel(758653619149996064)
     await channel.send('s?fox')
-    time.sleep(5 + random.random())
+    time.sleep(10 + random.random())
 
 @bot.command(pass_context = True)
 async def join(ctx):
