@@ -244,6 +244,14 @@ function check(bot, msg, args){
       save();
       msg.channel.send('deleted!');
     break;
+    case 'cands':
+      var cand = groups.get(args[1]);
+      var hasil = "candidates for " + args[1] + ':\n';
+      cand.forEach(function lol(value, key){
+        hasil += key + '\n';
+      });
+      msg.channel.send(hasil);
+    break;
     default:
       if(locks.get(args[1]) == true){
         msg.channel.send('that group is locked');
@@ -336,6 +344,14 @@ function help(bot, msg){
         name: '^gamble <category-name>',
         value: 'list all the people gambling for <category-name>'
       },
+      {
+        name: '^gamble <category-name> cands',
+        value: 'show candidates for <category-name>'
+      },
+      {
+        name: '^gamble list',
+        value: 'list all categories'
+      }
     ],
     timestamp: new Date(),
     footer: {
@@ -343,6 +359,14 @@ function help(bot, msg){
     }
   }
   });
+}
+
+function printList(bot, msg, args){
+  var hasil = "available categories:\n";
+  groups.forEach(function lol(value, key){
+    hasil += key + '\n';
+  });
+  msg.channel.send(hasil);
 }
 
 module.exports = {
@@ -360,6 +384,9 @@ module.exports = {
     switch(args[1]){
       case 'help':
         help(bot, msg);
+      break;
+      case 'list':
+        printList(bot, msg, args);
       break;
       case 'new':
         newGroup(bot, msg, args);
