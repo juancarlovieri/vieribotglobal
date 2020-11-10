@@ -23,6 +23,7 @@ const status = "do not disturb";
 const si = require('systeminformation');
 const mc = require('minecraft-server-util');
 const predict = require('./tlx/predict.js');
+const gamble = require('./gamble.js');
 
 
 // console.log((1599715800000 - 3600000) - Date.now());
@@ -40,6 +41,9 @@ var maint = 0;
 function command(args, msg){
   console.log(args[0]);
   switch(args[0]){
+    case '^gamble':
+      gamble.command(bot, msg, args);
+    break;
     case '^spam':
       spam.msg(bot, msg, args);
     break;
@@ -105,6 +109,7 @@ function command(args, msg){
         hasil += 'Processor: ' + data.processors + 'x ' + data.manufacturer + ' ' + data.brand + '\n';
         hasil += 'Cores: ' + data.cores + '\n';
         si.graphics().then(data =>{
+          console.log(data);
           console.log(data.controllers);
             hasil += 'Graphics card: ' + '\n';
           for(var i = 0; i < data.controllers.length; i++){
