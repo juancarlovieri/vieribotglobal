@@ -204,7 +204,7 @@ function command(args, msg){
       activity.run(bot, msg);
     break;
     case '^link':
-      if(msg.channel.guild.id != '733473838754693232' && msg.channel.guild.id != '758565620907245599' && msg.channel.guild.id != '733473838754693232')return;
+      if(msg.channel.guild.id != '733473838754693232' && msg.channel.guild.id != '758565620907245599' && msg.channel.guild.id != '626412169751166996')return;
       link.run(bot, msg);
     break;
     // case '^create':
@@ -216,7 +216,7 @@ function command(args, msg){
     //   console.log('created');
     // break;
     case '^test':
-      if(msg.channel.guild.id != '733473838754693232' && msg.channel.guild.id != '758565620907245599' && msg.channel.guild.id != '733473838754693232')return;
+      if(msg.channel.guild.id != '733473838754693232' && msg.channel.guild.id != '758565620907245599' && msg.channel.guild.id != '626412169751166996')return;
       test.message(bot, msg);
     break;
     case '^set':
