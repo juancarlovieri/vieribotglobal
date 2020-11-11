@@ -44,7 +44,7 @@ module.exports = {
         var indx = -1;
         var name = -1;
         var mini = 1000000000;
-        ar minLength = 1000000000;
+        var minLength = 1000000000;
         links.forEach(function lol(value, key){
           if(key.toLowerCase().indexOf(args[2].toLowerCase()) != -1){
             console.log('found');
