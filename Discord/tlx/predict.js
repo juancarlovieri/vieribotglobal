@@ -60,7 +60,7 @@ module.exports = {
         return;
       }
       var sc = JSON.parse(response.body).data.scoreboard.content.entries;
-      var usats = -1
+      var ustats = -1
       var n = 0;
       for(var i = 0; i < sc.length; i++){
         if(sc[i].contestantJid == uid){
