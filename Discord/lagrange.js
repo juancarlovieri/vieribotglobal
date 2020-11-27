@@ -695,7 +695,7 @@ module.exports = {
     if(glob == -1){
       return;
     }
-    if(res == glob){
+    if(res == glob && !(msg.author.id == '343422542888960001' && glob == '0')){
       glob = "-1";
       prevSolver = msg.author.id;
       const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
