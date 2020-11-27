@@ -441,7 +441,6 @@ bot.on('messageReactionAdd', async (reaction, user) => {
   // console.log(reaction);
   if(user.bot == true)return;
   if(user.id == '724954396147974194')return;
-  if(reaction.message.guild.id == '688018099584237610')return;
   lagrange.repeat(reaction.message, reaction.emoji, user);
   // console.log(reaction.emoji);
   if(reaction.message.author.bot == true)return;
@@ -454,6 +453,7 @@ bot.on('messageReactionAdd', async (reaction, user) => {
       return;
     }
   }
+  if(reaction.message.guild.id == '688018099584237610')return;
   // message.react(emoji);
   reaction.message.react(reaction._emoji);
   // console.log(reaction);
