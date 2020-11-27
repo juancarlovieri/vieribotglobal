@@ -696,7 +696,7 @@ module.exports = {
       return;
     }
     var troll = 1;
-    if(msg.author.id != '455184547840262144' && glob == '0')troll = 0;
+    if(msg.author.id != '455184547840262144' && glob == '0' && res != '1')troll = 0;
     if(res == glob && troll){
       glob = "-1";
       prevSolver = msg.author.id;
