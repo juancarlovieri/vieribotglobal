@@ -15,7 +15,7 @@ const prettyMilliseconds = require('pretty-ms');
 const cfduel = require('./cfduel.js');
 const atcoder = require('./atcoder.js');
 const trans = require('./translate.js');
-const spam = require('./spam.js');
+const many = require('./many.js');
 const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
 const activity = require('./activity.js');
@@ -45,7 +45,7 @@ function command(args, msg){
       gamble.command(bot, msg, args);
     break;
     case '^spam':
-      spam.msg(bot, msg, args);
+      many.msg(bot, msg, args);
     break;
     case '^ratings':
       var request = require('sync-request');
@@ -185,7 +185,7 @@ function command(args, msg){
       if(msg.author.id != '455184547840262144'){
         return;
       }
-      spam.fox(bot, msg, args);
+      many.fox(bot, msg, args);
     case '^clear':
       if(msg.author.id != '455184547840262144'){
         return;
