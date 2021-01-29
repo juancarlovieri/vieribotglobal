@@ -154,7 +154,7 @@ module.exports = {
     if(bills.has(msg.author.id) == false)return;
     var line = msg.content.split('\n');
     for(var i = 0; i < line.length; ++i){
-      var args = line.split(' ');
+      var args = line[i].split(' ');
       var bill = bills.get(msg.author.id)
       if(args.length > 2){
         if(isNaN(args[1]))continue;
