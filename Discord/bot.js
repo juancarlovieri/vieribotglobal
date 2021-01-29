@@ -9,6 +9,7 @@ const isUp = require('is-up');
 var obj;
 const link = require('./link.js');
 const test = require('./test.js');
+const bill = require('./bill.js');
 const lagrange = require('./lagrange.js');
 const delMsg = require('./messageDelete.js');
 const prettyMilliseconds = require('pretty-ms');
@@ -275,6 +276,9 @@ function command(args, msg){
     case '^ask':
       // wolfram.ask(bot, msg);
     break;
+    case '^bill':
+      bill.cmd(bot, msg);
+    break;
   }
 }
 
@@ -416,7 +420,10 @@ bot.on("message", msg => {
     return;
   }
   var args = msg.content.split(" ");
-  if(!maint)lagrange.isAns(bot, msg);
+  if(!maint){
+    lagrange.isAns(bot, msg);
+    bill.isBill(bot, msg);
+  }
   if(args[0][0] == '^'){
     if(maint){
       msg.channel.send('bot in maintenance, please wait');
