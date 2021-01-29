@@ -153,20 +153,22 @@ module.exports = {
   isBill: function(bot, msg){
     if(bills.has(msg.author.id) == false)return;
     var line = msg.content.split('\n');
+    console.log(line.length);
     for(var i = 0; i < line.length; ++i){
+      console.log(i);
       var args = line[i].split(' ');
-      var bill = bills.get(msg.author.id)
+      var bill = bills.get(msg.author.id);
       if(args.length > 2){
         if(isNaN(args[1]))continue;
         var people = args.slice(2);
-        for(var i = 0; i < people.length; ++i)people[i] = people[i].toLowerCase();
+        for(var j = 0; j < people.length; ++j)people[j] = people[j].toLowerCase();
         bill.orders[bill.orders.length] = {
           name: args[0],
           amnt: parseFloat(args[1]),
           people: people
         }
-        msg.channel.send('Successfully added!');
       }
     }
+    msg.channel.send('Successfully added!');
   }
 }
