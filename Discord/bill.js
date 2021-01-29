@@ -153,13 +153,14 @@ module.exports = {
   isBill: function(bot, msg){
     if(bills.has(msg.author.id) == false)return;
     var line = msg.content.split('\n');
-    console.log(line.length);
+    var num = 0;
     for(var i = 0; i < line.length; ++i){
       console.log(i);
       var args = line[i].split(' ');
       var bill = bills.get(msg.author.id);
       if(args.length > 2){
         if(isNaN(args[1]))continue;
+        ++num;
         var people = args.slice(2);
         for(var j = 0; j < people.length; ++j)people[j] = people[j].toLowerCase();
         bill.orders[bill.orders.length] = {
@@ -169,6 +170,6 @@ module.exports = {
         }
       }
     }
-    msg.channel.send('Successfully added!');
+    msg.channel.send('Successfully added ' + num + ' items');
   }
 }
