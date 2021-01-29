@@ -8,7 +8,7 @@ function newBill(bot, msg){
   }
   var cloned = Object.assign({}, {orders: [],grandTot: 0});
   bills.set(msg.author.id, cloned);
-  msg.channel.send('Succesfully created a new bill');
+  msg.channel.send('Successfully created a new bill');
 }
 
 async function print(embed, vieri, msg){
@@ -163,7 +163,7 @@ module.exports = {
         amnt: parseFloat(args[1]),
         people: people
       }
+      msg.channel.send('Successfully added!');
     }
-    msg.channel.send('Succesfully added!');
   }
 }
