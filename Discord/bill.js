@@ -38,11 +38,27 @@ function closeBill(bot, msg, args){
   var orders = bill.orders;
   var subtot = 0;
   for(var i = 0; i < orders.length; ++i){
+    if(orders[i].all)continue;
     var people = orders[i].people;
     for(var j = 0; j < people.length; ++j){
       if(res.has(people[j]))continue;
       res.set(people[j], 0);
     }
+    subtot += orders[i].amnt;
+    var amnt = orders[i].amnt / people.length;
+    for(var j = 0; j < people.length; ++j){
+      res.set(people[j], res.get(people[j]) + amnt);
+    }
+  }
+
+  var participants = [];
+  res.forEach((value, key) => {
+    participants[participants.length] = key;
+  });
+
+  for(var i = 0; i < orders.length; ++i){
+    if(!orders[i].all)continue;
+    var people = participants;
     subtot += orders[i].amnt;
     var amnt = orders[i].amnt / people.length;
     for(var j = 0; j < people.length; ++j){
@@ -166,7 +182,17 @@ module.exports = {
         bill.orders[bill.orders.length] = {
           name: args[0],
           amnt: parseFloat(args[1]),
-          people: people
+          people: people,
+          all: false
+        }
+      } else if(args.length == 2){
+        if(isNaN(args[1]))continue;
+        ++num;
+        bill.orders[bill.orders.length] = {
+          name: args[0],
+          amnt: parseFloat(args[1]),
+          people: [],
+          all: true
         }
       }
     }
