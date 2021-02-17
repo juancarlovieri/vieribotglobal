@@ -372,7 +372,7 @@ function play5(){
 bot.on("ready", msg =>{
   console.log('ready'); 
   play();
-  play2();
+//   play2();
   play3();
   play4();
   play5();
