@@ -135,7 +135,6 @@ function news(){
   var request = require('sync-request');
   var list = JSON.parse(request('GET', 'https://spaceflightnewsapi.net/api/v2/articles/').getBody());
   console.log('downloaded news');
-  published.delete(list[list.length - 1].id);
   for(var i = 0; i < list.length; i++){
     if(published.has(list[i].id))continue;
     if(published.has("all"))continue;
