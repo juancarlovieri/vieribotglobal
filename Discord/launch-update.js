@@ -132,17 +132,17 @@ async function init(){
 
 function news(){
   var request = require('sync-request');
-  var list = JSON.parse(request('GET', 'https://spaceflightnewsapi.net/api/v1/articles/').getBody()).docs;
+  var list = JSON.parse(request('GET', 'https://spaceflightnewsapi.net/api/v2/articles/').getBody());
   console.log('downloaded news');
   for(var i = 0; i < list.length; i++){
-    if(published.has(list[i]._id))continue;
+    if(published.has(list[i].id))continue;
     if(published.has("all"))continue;
-    var tags = "";
-    for(var j = 0; j < list[i].tags.length; j++){
-      tags += list[i].tags[j];
-      if(j != list[i].tags.length - 1)tags += ', ';
-    }
-    if(tags == "")tags = "none";
+//     var tags = "";
+//     for(var j = 0; j < list[i].tags.length; j++){
+//       tags += list[i].tags[j];
+//       if(j != list[i].tags.length - 1)tags += ', ';
+//     }
+//     if(tags == "")tags = "none";
     var vieri = new Discord.MessageAttachment('../viericorp.png');
     var embed = {
       color: 16764006,
@@ -153,16 +153,12 @@ function news(){
       title: list[i].title,
       fields: [
         {
-          name: "tags ",
-          value: tags
-        },
-        {
           name:"\u200b",
           value:"[link](" + list[i].url + ')'
         }
       ],
       image:{
-        url: list[i].featured_image
+        url: list[i].imageUrl
       },  
       timestamp: new Date(),
       footer: {
