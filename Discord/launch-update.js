@@ -171,7 +171,7 @@ function news(){
     channel.send({files: [vieri], embed: embed});
     const channel2 = bot.channels.cache.get('576623116394954762');
     channel2.send({files: [vieri], embed: embed});
-    published.set(list[i]._id, 1);
+    published.set(list[i].id, 1);
     save();
   }
 }
