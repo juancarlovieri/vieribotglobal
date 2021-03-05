@@ -4,6 +4,7 @@ const fs = require('fs')
 
 const path = 'published.json'
 
+
 var published = new Map();
 
 
