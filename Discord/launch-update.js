@@ -154,6 +154,10 @@ function news(){
       title: list[i].title,
       fields: [
         {
+          name: "Summary",
+          value: list[i].summary
+        },
+        {
           name:"\u200b",
           value:"[link](" + list[i].url + ')'
         }
