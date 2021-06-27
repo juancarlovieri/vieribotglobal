@@ -19,7 +19,7 @@ const trans = require('./translate.js');
 const many = require('./many.js');
 const lockFile = require('lockfile');
 const wolfram = require('./wolfram.js');
-const activity = require('./activity.js');
+// const activity = require('./activity.js');
 const status = "do not disturb";
 const si = require('systeminformation');
 const mc = require('minecraft-server-util');
@@ -202,7 +202,7 @@ function command(args, msg){
       lagrange.message(bot, msg);
     break;
     case '^activity':
-      activity.run(bot, msg);
+      // activity.run(bot, msg);
     break;
     case '^link':
       if(msg.channel.guild.id != '733473838754693232' && msg.channel.guild.id != '758565620907245599' && msg.channel.guild.id != '626412169751166996')return;
@@ -387,7 +387,7 @@ bot.on("ready", msg =>{
 bot.on("message", msg => {
   // console.log(msg);
   if(msg.author.bot == true)return;
-  activity.add(msg);
+  // activity.add(msg);
   if(msg.content == '^maint?'){
     if(maint == 0){
       msg.channel.send('bot is not in maintenance');
