@@ -133,7 +133,7 @@ async function init(){
 
 function news(){
   var request = require('sync-request');
-  var list = JSON.parse(request('GET', 'https://spaceflightnewsapi.net/api/v2/articles/').getBody());
+  var list = JSON.parse(request('GET', 'https://api.spaceflightnewsapi.net/v3/articles/').getBody());
   console.log('downloaded news');
   for(var i = 0; i < list.length; i++){
     if(published.has(list[i].id))continue;
