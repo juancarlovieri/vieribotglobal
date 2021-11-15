@@ -1,4 +1,5 @@
 const Discord=  require('discord.js');
+const { MessageActionRow, MessageButton } = require('discord.js');
 var bot;
 const fs = require('fs');
 const ytdl = require('ytdl-core');
@@ -94,12 +95,12 @@ async function search(msg, srvQ) {
   }
   var name = "";
   for (var i = 2; i < args.length; ++i) name += args[i];
-  const arr = await youtubesearchapi.GetListByKeyword(name, false, 10);
-  
-  for (var i = 0; i < arr.length; ++i) {
-    
-  }
-
+  // const arr = await youtubesearchapi.GetListByKeyword(name, false, 5);
+  // const row = new MessageActionRow();
+  // for (var i = 0; i < arr.length; ++i) {
+  //   row.addComponents(new MessageButton().setCustomid(i + 1).setLabel(i + 1).setStyle('PRIMARY'));
+  // }
+  // console.log(row);
   const songInfo = await ytdl.getInfo(arr.items[0].id);
   const song = {
       title: songInfo.videoDetails.title,
@@ -200,12 +201,12 @@ module.exports = {
       case 'quality':
         changeQuality(msg);
       break;
-      case 'remove':
-        remove(msg, srvQ);
-      break;
-      case 'search':
-        search(msg, srvQ);
-      break;
+      // case 'remove':
+      //   remove(msg, srvQ);
+      // break;
+      // case 'search':
+      //   search(msg, srvQ);
+      // break;
     }
     // if (args[1] == 'play') {
     //   play(msg, srvQ);
