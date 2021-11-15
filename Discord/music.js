@@ -4,6 +4,7 @@ const fs = require('fs');
 const ytdl = require('ytdl-core');
 var queue = new Map();
 const youtubesearchapi = require('youtube-search-api');
+var quality = 25;
 
 function start(guild, song) {
   const srvQ = queue.get(guild.id);
@@ -14,7 +15,7 @@ function start(guild, song) {
   }
 
   const dispatcher = srvQ.connection
-    .play(ytdl(song.url))
+    .play(ytdl(song.url, {filter: 'audioonly', quality: 'highestaudio', highWaterMark: 1 << quality}))
     .on("finish", () => {
       srvQ.songs.shift();
       start(guild, srvQ.songs[0]);
@@ -95,7 +96,10 @@ function skip(msg, srvQ) {
     );
   if (!srvQ)
     return msg.channel.send("There is no song that I could skip!");
-  srvQ.connection.dispatcher.end();
+  try {srvQ.connection.dispatcher.end();
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function pQueue(msg, srvQ) {
@@ -110,6 +114,15 @@ function pQueue(msg, srvQ) {
     ans += srvQ.songs[i].title + '\n';
   }
   return msg.channel.send(ans);
+}
+
+function changeQuality(msg) {
+  var args = msg.content.split(" ");
+  if (isNaN(args[2])) {
+    return msg.channel.send("Input a valid quality");
+  }
+  quality = parseInt(args[2]);
+  msg.channel.send("quality changed");
 }
 
 module.exports = {
@@ -131,6 +144,9 @@ module.exports = {
       break;
       case 'queue':
         pQueue(msg, srvQ);
+      break;
+      case 'quality':
+        changeQuality(msg);
       break;
     }
     // if (args[1] == 'play') {
