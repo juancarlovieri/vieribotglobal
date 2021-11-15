@@ -24,29 +24,7 @@ function start(guild, song) {
   dispatcher.setVolumeLogarithmic(srvQ.volume / 5);
   srvQ.textChannel.send(`Start playing: **${song.title}**`);
 }
-
-async function play(msg, srvQ) {
-  var args = msg.content.split(" ");
-  const voiceChannel = msg.member.voice.channel;
-  if (!voiceChannel)
-    return msg.channel.send(
-      "You need to be in a voice channel to play music!"
-    );
-  const permissions = voiceChannel.permissionsFor(msg.client.user);
-  if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
-    return msg.channel.send(
-      "I need the permissions to join and speak in your voice channel!"
-    );
-  }
-  var name = "";
-  for (var i = 2; i < args.length; ++i) name += args[i];
-  const arr = await youtubesearchapi.GetListByKeyword(name, false, 1);
-  const songInfo = await ytdl.getInfo(arr.items[0].id);
-  const song = {
-      title: songInfo.videoDetails.title,
-      url: songInfo.videoDetails.video_url,
-   };
-
+async function addQueue(msg, srvQ, song, voiceChannel) {
   if (!srvQ) {
     const queueContruct = {
       textChannel: msg.channel,
@@ -75,6 +53,59 @@ async function play(msg, srvQ) {
     srvQ.songs.push(song);
     return msg.channel.send(`${song.title} has been added to the queue!`);
   }
+}
+
+async function play(msg, srvQ) {
+  var args = msg.content.split(" ");
+  const voiceChannel = msg.member.voice.channel;
+  if (!voiceChannel)
+    return msg.channel.send(
+      "You need to be in a voice channel to play music!"
+    );
+  const permissions = voiceChannel.permissionsFor(msg.client.user);
+  if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+    return msg.channel.send(
+      "I need the permissions to join and speak in your voice channel!"
+    );
+  }
+  var name = "";
+  for (var i = 2; i < args.length; ++i) name += args[i];
+  const arr = await youtubesearchapi.GetListByKeyword(name, false, 1);
+  const songInfo = await ytdl.getInfo(arr.items[0].id);
+  const song = {
+      title: songInfo.videoDetails.title,
+      url: songInfo.videoDetails.video_url,
+   };
+  addQueue(msg, srvQ, song, voiceChannel);
+}
+
+async function search(msg, srvQ) {
+  var args = msg.content.split(" ");
+  const voiceChannel = msg.member.voice.channel;
+  if (!voiceChannel)
+    return msg.channel.send(
+      "You need to be in a voice channel to play music!"
+    );
+  const permissions = voiceChannel.permissionsFor(msg.client.user);
+  if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
+    return msg.channel.send(
+      "I need the permissions to join and speak in your voice channel!"
+    );
+  }
+  var name = "";
+  for (var i = 2; i < args.length; ++i) name += args[i];
+  const arr = await youtubesearchapi.GetListByKeyword(name, false, 10);
+  
+  for (var i = 0; i < arr.length; ++i) {
+    
+  }
+
+  const songInfo = await ytdl.getInfo(arr.items[0].id);
+  const song = {
+      title: songInfo.videoDetails.title,
+      url: songInfo.videoDetails.video_url,
+   };
+  addQueue(msg, srvQ, song, voiceChannel);
 }
 
 function stop(msg, srvQ) {
@@ -126,6 +157,26 @@ function changeQuality(msg) {
   msg.channel.send("Quality changed! It will only affect the next songs");
 }
 
+function remove(msg, srvQ) {
+  if (!msg.member.voice.channel)
+    return msg.channel.send(
+      "You have to be in a voice channel to see the queue"
+    );
+  if (!srvQ)
+    return msg.channel.send("There is no queue!");
+  var args = msg.content.split(' ');
+  if (isNaN(args[2])) {
+    return msg.channel.send("Enter a valid number");
+  }
+  var indx = parseInt(args[2]);
+  if (srvQ.songs.length < indx || indx < 1) {
+    return msg.channel.send("Out of bounds");
+  }
+  --indx;
+  srvQ.songs.splice(indx, 1);
+  msg.channel.send("Song removed");
+}
+
 module.exports = {
   req: function(bot, msg) {
     var args = msg.content.split(" ");
@@ -148,6 +199,12 @@ module.exports = {
       break;
       case 'quality':
         changeQuality(msg);
+      break;
+      case 'remove':
+        remove(msg, srvQ);
+      break;
+      case 'search':
+        search(msg, srvQ);
       break;
     }
     // if (args[1] == 'play') {
