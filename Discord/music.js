@@ -68,7 +68,8 @@ async function play(msg, srvQ) {
     } catch (err) {
       console.log(err);
       queue.delete(msg.guild.id);
-      return msg.channel.send(err);
+      return;
+      // return msg.channel.send(err);
     }
   } else {
     srvQ.songs.push(song);
