@@ -79,7 +79,7 @@ async function init(){
         }
         var utcSeconds = Math.round(time / 1000);
         var dateStr = new Date(0);
-        await dateStr.setUTCSeconds(utcSeconds - 3600);
+        await dateStr.setUTCSeconds(utcSeconds);
         // console.log(dateStr.toString());
         dateStr = dateStr.toString();
         var pos = dateStr.indexOf('GMT');
@@ -187,7 +187,7 @@ async function printUpcoming(bot, msg){
   for(var i = 0; i < list.length; i++){
     var utcSeconds = Math.round(list[i].sort_date);
     var dateStr = new Date(0);
-    await dateStr.setUTCSeconds(utcSeconds - 3600);
+    await dateStr.setUTCSeconds(utcSeconds);
     // console.log(dateStr.toString());
     dateStr = dateStr.toString();
     var pos = dateStr.indexOf('GMT');
@@ -244,7 +244,7 @@ async function printView(bot, msg, args){
   }
   var utcSeconds = Math.round(cur.sort_date);
   var dateStr = new Date(0);
-  await dateStr.setUTCSeconds(utcSeconds - 3600);
+  await dateStr.setUTCSeconds(utcSeconds);
   // console.log(dateStr.toString());
   dateStr = dateStr.toString();
   var pos = dateStr.indexOf('GMT');

@@ -203,7 +203,7 @@ module.exports = {
         }
         lists.sort(compare);
         for(var i = 0; i < lists.length; i++){
-          var utcSeconds = Math.round(lists[i].time / 1000) - 3600;
+          var utcSeconds = Math.round(lists[i].time / 1000);
           var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
           d.setUTCSeconds(utcSeconds);
           var arrDate = d.toString().split(' ');
@@ -245,7 +245,7 @@ module.exports = {
         save();
         for(var i = 0; i < arr.length; i++){
           console.log(arr[i]);
-          var utcSeconds = Math.round(arr[i].time / 1000) - 3600;
+          var utcSeconds = Math.round(arr[i].time / 1000);
           var d = new Date(0); // The 0 there is the key, which sets the date to the epoch
           d.setUTCSeconds(utcSeconds);
           var arrDate = d.toString().split(' ');
