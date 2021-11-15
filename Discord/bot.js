@@ -25,6 +25,7 @@ const si = require('systeminformation');
 const mc = require('minecraft-server-util');
 const predict = require('./tlx/predict.js');
 const gamble = require('./gamble.js');
+const music = require('./music.js');
 
 
 // console.log((1599715800000 - 3600000) - Date.now());
@@ -279,6 +280,9 @@ function command(args, msg){
     case '^bill':
       bill.cmd(bot, msg);
     break;
+    case '^music':
+      music.req(bot, msg);
+    break;
   }
 }
 
@@ -322,8 +326,8 @@ function play2(){
       play();
     }).on("error", error => console.error(error));
   }).catch(e => {
-    console.log('error');
-    console.error(e);
+    // console.log('error');
+    // console.error(e);
   });
 }
 
@@ -336,8 +340,8 @@ function play3(){
       play();
     }).on("error", error => console.error(error));
   }).catch(e => {
-    console.log('error');
-    console.error(e);
+    // console.log('error');
+    // console.error(e);
   });
 }
 
@@ -350,8 +354,8 @@ function play4(){
       play();
     }).on("error", error => console.error(error));
   }).catch(e => {
-    console.log('error');
-    console.error(e);
+    // console.log('error');
+    // console.error(e);
   });
 }
 
@@ -364,8 +368,8 @@ function play5(){
       play();
     }).on("error", error => console.error(error));
   }).catch(e => {
-    console.log('error');
-    console.error(e);
+    // console.log('error');
+    // console.error(e);
   });
 }
 
