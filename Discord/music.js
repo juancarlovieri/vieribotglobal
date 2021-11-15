@@ -73,8 +73,15 @@ async function play(msg, srvQ) {
   }
   var name = "";
   for (var i = 2; i < args.length; ++i) name += args[i];
-  const arr = await youtubesearchapi.GetListByKeyword(name, false, 1);
-  const songInfo = await ytdl.getInfo(arr.items[0].id);
+  const arr = await youtubesearchapi.GetListByKeyword(name, false, 1000);
+  // const songInfo = await ytdl.getInfo(arr.items[0].id);
+  var songInfo;
+  for (var i = 0; i < arr.items.length; ++i) {
+    if (arr.items[i].type != 'channel') {
+      songInfo = await ytdl.getInfo(arr.items[i].id);
+      break;
+    }
+  }
   const song = {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
@@ -97,14 +104,20 @@ async function search(msg, srvQ) {
   }
   var name = "";
   for (var i = 2; i < args.length; ++i) name += args[i];
-  const arr = await youtubesearchapi.GetListByKeyword(name, false, 10);
+  const arr = await youtubesearchapi.GetListByKeyword(name, false, 1000);
   var res = "";
-  for (var i = 0; i < arr.items.length; ++i) {
+  var cnt = 0;
+  var temp = [];
+  for (var i = 0; i < arr.items.length && cnt < 10; ++i) {
     // console.log(arr.items[i]);
-    res += (i + 1);
+    if (arr.items[i].type == 'channel') continue;
+    temp.push(arr.items[i]);
+    res += (cnt + 1);
     res += ". " + arr.items[i].title + ' | **' + arr.items[i].channelTitle + "**";
     res += '\n';
+    ++cnt;
   }
+  arr.items = temp;
   var cur = {
     msg: msg,
     arr: arr,
