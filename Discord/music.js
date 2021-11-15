@@ -193,7 +193,8 @@ function pQueue(msg, srvQ) {
     return msg.channel.send("There is no queue!");
   var ans = "";
   for (var i = 0; i < srvQ.songs.length; ++i) {
-    ans += srvQ.songs[i].title + '\n';
+    ans += (i + 1);
+    ans += ". " + srvQ.songs[i].title + '\n';
   }
   return msg.channel.send(ans);
 }
