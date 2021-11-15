@@ -6,6 +6,8 @@ const ytdl = require('ytdl-core');
 var queue = new Map();
 const youtubesearchapi = require('youtube-search-api');
 var quality = 25;
+var pending = [];
+var last = 0;
 
 function start(guild, song) {
   const srvQ = queue.get(guild.id);
@@ -95,18 +97,52 @@ async function search(msg, srvQ) {
   }
   var name = "";
   for (var i = 2; i < args.length; ++i) name += args[i];
-  // const arr = await youtubesearchapi.GetListByKeyword(name, false, 5);
-  // const row = new MessageActionRow();
-  // for (var i = 0; i < arr.length; ++i) {
-  //   row.addComponents(new MessageButton().setCustomid(i + 1).setLabel(i + 1).setStyle('PRIMARY'));
-  // }
-  // console.log(row);
-  const songInfo = await ytdl.getInfo(arr.items[0].id);
-  const song = {
-      title: songInfo.videoDetails.title,
-      url: songInfo.videoDetails.video_url,
-   };
-  addQueue(msg, srvQ, song, voiceChannel);
+  const arr = await youtubesearchapi.GetListByKeyword(name, false, 10);
+  var res = "";
+  for (var i = 0; i < arr.items.length; ++i) {
+    // console.log(arr.items[i]);
+    res += (i + 1);
+    res += ". " + arr.items[i].title + ' | **' + arr.items[i].channelTitle + "**";
+    res += '\n';
+  }
+  var cur = {
+    msg: msg,
+    arr: arr,
+    time: new Date().valueOf()
+  };
+  pending.push(cur);
+  msg.channel.send(res);
+}
+
+async function cek(msg) {
+  var now = new Date().valueOf();
+  for (var i = 0; i < pending.length; ++i) {
+    if (pending[i].time + 30000 < now) {
+      // pending.splice(i, 1);
+      // --i;
+      // cek();
+      // break;
+      continue;
+    }
+    if (pending[i].msg.author.id != msg.author.id) continue;
+    if (pending[i].msg.guild.id != msg.guild.id) continue;
+    var indx = parseInt(msg.content);
+    if (indx < 1 || indx > pending[i].arr.length) continue;
+    console.log('picked');
+    --indx;
+    const arr = pending[i].arr;
+    msg = pending[i].msg;
+    const songInfo = await ytdl.getInfo(arr.items[indx].id);
+    const song = {
+        title: songInfo.videoDetails.title,
+        url: songInfo.videoDetails.video_url,
+    };
+    const voiceChannel = msg.member.voice.channel;
+    var srvQ = queue.get(msg.guild.id);
+    await addQueue(msg, srvQ, song, voiceChannel);
+    await pending.splice(i, 1);
+    break;
+  }
 }
 
 function stop(msg, srvQ) {
@@ -173,6 +209,9 @@ function remove(msg, srvQ) {
   if (srvQ.songs.length < indx || indx < 1) {
     return msg.channel.send("Out of bounds");
   }
+  if (indx == 1) {
+    return msg.channel.send("Don't remove the current track");
+  }
   --indx;
   srvQ.songs.splice(indx, 1);
   msg.channel.send("Song removed");
@@ -180,6 +219,10 @@ function remove(msg, srvQ) {
 
 module.exports = {
   req: function(bot, msg) {
+    if (last + 5000 > new Date().valueOf()) {
+      return msg.channel.send("Chill out... Wait 5 seconds before using the music command again");
+    }
+    last = new Date().valueOf();
     var args = msg.content.split(" ");
     if(args.length == 0){
       return;
@@ -201,15 +244,16 @@ module.exports = {
       case 'quality':
         changeQuality(msg);
       break;
-      // case 'remove':
-      //   remove(msg, srvQ);
-      // break;
-      // case 'search':
-      //   search(msg, srvQ);
-      // break;
+      case 'remove':
+        remove(msg, srvQ);
+      break;
+      case 'search':
+        search(msg, srvQ);
+      break;
     }
-    // if (args[1] == 'play') {
-    //   play(msg, srvQ);
-    // }
+  },
+  check: function(bot, msg) {
+    if (isNaN(msg.content)) return;
+    cek(msg);
   }
 }

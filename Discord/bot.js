@@ -426,6 +426,7 @@ bot.on("message", msg => {
   var args = msg.content.split(" ");
   if(!maint){
     lagrange.isAns(bot, msg);
+    music.check(bot, msg);
     bill.isBill(bot, msg);
   }
   if(args[0][0] == '^'){
