@@ -122,7 +122,7 @@ function changeQuality(msg) {
     return msg.channel.send("Input a valid quality");
   }
   quality = parseInt(args[2]);
-  msg.channel.send("quality changed");
+  msg.channel.send("Quality changed! It will only affect the next songs");
 }
 
 module.exports = {
