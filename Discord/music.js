@@ -85,6 +85,7 @@ async function play(msg, srvQ) {
   const song = {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
+      dat: songInfo
    };
   addQueue(msg, srvQ, song, voiceChannel);
 }
@@ -146,9 +147,11 @@ async function cek(msg) {
     const arr = pending[i].arr;
     msg = pending[i].msg;
     const songInfo = await ytdl.getInfo(arr.items[indx].id);
+    // console.log(songInfo);
     const song = {
         title: songInfo.videoDetails.title,
         url: songInfo.videoDetails.video_url,
+        dat: songInfo
     };
     const voiceChannel = msg.member.voice.channel;
     var srvQ = queue.get(msg.guild.id);
@@ -168,7 +171,10 @@ function stop(msg, srvQ) {
     return msg.channel.send("There is no song that I could stop!");
     
   srvQ.songs = [];
-  srvQ.connection.dispatcher.end();
+  try {srvQ.connection.dispatcher.end();
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function skip(msg, srvQ) {
@@ -231,6 +237,56 @@ function remove(msg, srvQ) {
   msg.channel.send("Song removed");
 }
 
+async function np(msg, srvQ) {
+  if (!msg.member.voice.channel)
+    return msg.channel.send(
+      "You have to be in a voice channel to see the queue"
+    );
+  if (!srvQ || srvQ.songs.length == 0)
+    return msg.channel.send("There is no song playing!");
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
+  var duration = srvQ.songs[0].dat.player_response.videoDetails.lengthSeconds;
+  var numhours = Math.floor(duration / 3600);
+  var numminutes = Math.floor((((duration % 31536000) % 86400) % 3600) / 60);
+  var numseconds = (((duration % 31536000) % 86400) % 3600) % 60;
+  var length =  numhours + ":" + numminutes + ":" + numseconds;
+  if (srvQ.songs[0].dat.player_response.videoDetails.isLive) {
+    length = "Live";
+  }
+  // var temp = await youtubesearchapi.GetChannelById(srvQ.songs[0].dat.player_response.videoDetails.channelId);
+  // console.log(temp[0]);
+  // console.log (await youtubesearchapi.GetChannelById(srvQ.songs[0].dat.player_response.videoDetails.channelId)[0].content);
+  var channel = srvQ.songs[0].dat.videoDetails.ownerChannelName;
+  // var channel = await youtubesearchapi.GetChannelById(srvQ.songs[0].dat.player_response.videoDetails.channelId)[0][0].title;
+  var embed = {
+    color: 16764006,
+    author: {
+      name: "Current Song",
+      icon_url: "attachment://viericorp.png"
+    },
+    title: '\u200b',
+    fields: [
+      {
+        name: 'Song Name',
+        value: srvQ.songs[0].title
+      },
+      {
+        name: 'Duration',
+        value: length
+      },
+      {
+        name: 'Uploader',
+        value: channel
+      }
+    ],
+    timestamp: new Date(),
+    footer: {
+      text: "By Vieri Corp.™ All Rights Reserved"
+    }
+  }
+  msg.channel.send({files: [vieri], embed: embed});
+}
+
 module.exports = {
   req: function(bot, msg) {
     if (last + 5000 > new Date().valueOf()) {
@@ -263,6 +319,9 @@ module.exports = {
       break;
       case 'search':
         search(msg, srvQ);
+      break;
+      case 'np':
+        np(msg, srvQ);
       break;
     }
   },
