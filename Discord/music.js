@@ -16,7 +16,7 @@ function start(guild, song) {
     queue.delete(guild.id);
     return;
   }
-
+  srvQ.songs[0].startTime = new Date().valueOf();
   const dispatcher = srvQ.connection
     .play(ytdl(song.url, {filter: 'audioonly', quality: 'highestaudio', highWaterMark: 1 << quality}))
     .on("finish", () => {
@@ -85,7 +85,8 @@ async function play(msg, srvQ) {
   const song = {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
-      dat: songInfo
+      dat: songInfo,
+      req: msg.author.id
    };
   addQueue(msg, srvQ, song, voiceChannel);
 }
@@ -151,8 +152,9 @@ async function cek(msg) {
     const song = {
         title: songInfo.videoDetails.title,
         url: songInfo.videoDetails.video_url,
-        dat: songInfo
-    };
+        dat: songInfo,
+        req: msg.author.id
+     };
     const voiceChannel = msg.member.voice.channel;
     var srvQ = queue.get(msg.guild.id);
     await addQueue(msg, srvQ, song, voiceChannel);
@@ -250,14 +252,17 @@ async function np(msg, srvQ) {
   var numminutes = Math.floor((((duration % 31536000) % 86400) % 3600) / 60);
   var numseconds = (((duration % 31536000) % 86400) % 3600) % 60;
   var length =  numhours + ":" + numminutes + ":" + numseconds;
+
+  var elapsed = new Date().valueOf() - srvQ.songs[0].startTime;
+  elapsed /= 1000;
+  numhours = Math.floor(elapsed / 3600);
+  numminutes = Math.floor((((elapsed % 31536000) % 86400) % 3600) / 60);
+  numseconds = (((elapsed % 31536000) % 86400) % 3600) % 60;
+  elapsed = numhours + ":" + numminutes + ":" + numseconds;
   if (srvQ.songs[0].dat.player_response.videoDetails.isLive) {
     length = "Live";
   }
-  // var temp = await youtubesearchapi.GetChannelById(srvQ.songs[0].dat.player_response.videoDetails.channelId);
-  // console.log(temp[0]);
-  // console.log (await youtubesearchapi.GetChannelById(srvQ.songs[0].dat.player_response.videoDetails.channelId)[0].content);
   var channel = srvQ.songs[0].dat.videoDetails.ownerChannelName;
-  // var channel = await youtubesearchapi.GetChannelById(srvQ.songs[0].dat.player_response.videoDetails.channelId)[0][0].title;
   var embed = {
     color: 16764006,
     author: {
@@ -272,11 +277,15 @@ async function np(msg, srvQ) {
       },
       {
         name: 'Duration',
-        value: length
+        value: elapsed + ' / ' + length
       },
       {
         name: 'Uploader',
         value: channel
+      },
+      {
+        name: 'Requester',
+        value: '<@' + srvQ.songs[0].req + '>'
       }
     ],
     timestamp: new Date(),
