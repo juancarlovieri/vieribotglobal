@@ -1,5 +1,7 @@
 const Discord=  require('discord.js');
 const { MessageActionRow, MessageButton } = require('discord.js');
+const lyricsFinder = require('@sujalgoel/lyrics-finder');
+require("./ExtendedMessage");
 var bot;
 const fs = require('fs');
 const ytdl = require('ytdl-core');
@@ -293,7 +295,27 @@ async function np(msg, srvQ) {
       text: "By Vieri Corp.™ All Rights Reserved"
     }
   }
-  msg.channel.send({files: [vieri], embed: embed});
+  // msg.channel.send({
+  //   embed: {files: [vieri], embed: embed},
+  // });
+  msg.inlineReply({
+    files: [vieri],
+    embed: embed,
+    allowedMentions: { repliedUser: false }
+  });
+}
+
+
+async function lyrics(msg, srvQ) {
+  if (!msg.member.voice.channel)
+    return msg.channel.send(
+      "You have to be in a voice channel to see the queue"
+    );
+  if (!srvQ || srvQ.songs.length == 0)
+    return msg.channel.send("There is no song playing!");
+  var temp = await lyricsFinder.LyricsFinder(srvQ.songs[0].title);
+  // console.log(temp);
+  msg.inlineReply('**' + srvQ.songs[0].title + '**\n' + temp, { allowedMentions: { repliedUser: false } });
 }
 
 module.exports = {
@@ -331,6 +353,9 @@ module.exports = {
       break;
       case 'np':
         np(msg, srvQ);
+      break;
+      case 'lyrics':
+        lyrics(msg, srvQ);
       break;
     }
   },
