@@ -20,7 +20,7 @@ function start(guild, song) {
   }
   srvQ.songs[0].startTime = new Date().valueOf();
   const dispatcher = srvQ.connection
-    .play(ytdl(song.url, {filter: 'audioonly', quality: 'highestaudio', highWaterMark: 1 << quality}))
+    .play(ytdl(song.url, {quality: 'highestaudio', highWaterMark: 1 << quality}))
     .on("finish", () => {
       srvQ.songs.shift();
       start(guild, srvQ.songs[0]);
