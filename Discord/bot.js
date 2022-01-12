@@ -1,5 +1,5 @@
-const Discord = require("discord.js");
-var bot = new Discord.Client();
+const {Client, Intents} = require("discord.js");
+var bot = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 var auth = require('./auth.json');
 const ytdl = require("ytdl-core");
 bot.login(auth.token);

@@ -1,7 +1,8 @@
 const Discord=  require('discord.js');
+// import { joinVoiceChannel } from "@discordjs/voice";
 const { MessageActionRow, MessageButton } = require('discord.js');
 const lyricsFinder = require('@sujalgoel/lyrics-finder');
-require("./ExtendedMessage");
+// require("./ExtendedMessage");
 var bot;
 const fs = require('fs');
 const ytdl = require('ytdl-core');
@@ -45,7 +46,14 @@ async function addQueue(msg, srvQ, song, voiceChannel) {
     queueContruct.songs.push(song);
 
     try {
-      var connection = await voiceChannel.join();
+      const { joinVoiceChannel } = require("@discordjs/voice");
+      // var connection = await voiceChannel.join();
+      var connection = await joinVoiceChannel({
+        channelId: msg.member.voice.channel,
+        guildId: msg.guild.id,
+        adapterCreator: msg.guild.voiceAdapterCreator
+      });
+      console.log(connection);
       queueContruct.connection = connection;
       start(msg.guild, queueContruct.songs[0]);
     } catch (err) {
@@ -63,6 +71,7 @@ async function addQueue(msg, srvQ, song, voiceChannel) {
 async function play(msg, srvQ) {
   var args = msg.content.split(" ");
   const voiceChannel = msg.member.voice.channel;
+  // console.log(voiceChannel);
   if (!voiceChannel)
     return msg.channel.send(
       "You need to be in a voice channel to play music!"
@@ -298,11 +307,12 @@ async function np(msg, srvQ) {
   // msg.channel.send({
   //   embed: {files: [vieri], embed: embed},
   // });
-  msg.inlineReply({
-    files: [vieri],
-    embed: embed,
-    allowedMentions: { repliedUser: false }
-  });
+  // msg.inlineReply({
+  //   files: [vieri],
+  //   embed: embed,
+  //   allowedMentions: { repliedUser: false }
+  // });
+  // msg.reply("TES");
 }
 
 
