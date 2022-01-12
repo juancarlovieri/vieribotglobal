@@ -375,11 +375,11 @@ function play5(){
 
 bot.on("ready", msg =>{
   console.log('ready'); 
-  play();
-//   play2();
-  play3();
-  play4();
-  play5();
+//   play();
+// //   play2();
+//   play3();
+//   play4();
+//   play5();
   // bot.user.setStatus("idle", "lagrange");
   test.run(bot);
   bot.user.setPresence({
