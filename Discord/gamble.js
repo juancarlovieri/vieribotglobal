@@ -175,7 +175,7 @@ async function printGambles(bot, msg, args){
   }
   // console.log(arr);
   var vieri = new Discord.MessageAttachment('../viericorp.png');
-  msg.channel.send({files: [vieri], embed: {
+  msg.channel.send({files: [vieri], embeds: [{
     color: 16764006,
     author: {
       name: 'Tests',
@@ -187,7 +187,7 @@ async function printGambles(bot, msg, args){
     footer: {
       text: "By Vieri Corp.™ All Rights Reserved"
     }
-  }
+  }]
   });
 }
 
@@ -300,7 +300,7 @@ function check(bot, msg, args){
 
 function help(bot, msg){
   var vieri = new Discord.MessageAttachment('../viericorp.png');
-  msg.channel.send({files: [vieri], embed: {
+  msg.channel.send({files: [vieri], embeds: [{
     color: 16764006,
     author: {
       name: 'Tests',
@@ -357,7 +357,7 @@ function help(bot, msg){
     footer: {
       text: "By Vieri Corp.™ All Rights Reserved"
     }
-  }
+  }]
   });
 }
 

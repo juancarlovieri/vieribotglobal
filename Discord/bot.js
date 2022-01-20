@@ -73,7 +73,7 @@ function command(args, msg){
       }
       // msg.channel.send(hasil);
       var vieri = new Discord.MessageAttachment('../viericorp.png');
-      msg.channel.send({files: [vieri], embed: {
+      msg.channel.send({files: [vieri], embeds: [{
         color: 16764006,
         author: {
           name: 'lagrange',
@@ -85,7 +85,7 @@ function command(args, msg){
         footer: {
           text: "By Vieri Corp.™ All Rights Reserved"
         }
-      }
+      }]
       });
     break;
     case '^idler':

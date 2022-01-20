@@ -51,8 +51,8 @@ function timer(time, embed, file){
   console.log(time);
   runAtDate(time, function print(){
     channel.send("<@&758716095141642282>");
-    channel.send({files: [file], embed: embed});
-    channel2.send({files: [file], embed: embed});
+    channel.send({files: [file], embeds: [embed]});
+    channel2.send({files: [file], embeds: [embed]});
   });
 }
 
@@ -172,9 +172,9 @@ function news(){
     }
     const channel = bot.channels.cache.get('761766016807469057');
     channel.send("<@&758716095141642282>");
-    channel.send({files: [vieri], embed: embed});
+    channel.send({files: [vieri], embeds: [embed]});
     const channel2 = bot.channels.cache.get('576623116394954762');
-    channel2.send({files: [vieri], embed: embed});
+    channel2.send({files: [vieri], embeds: [embed]});
     published.set(list[i].id, 1);
     save();
   }
@@ -203,7 +203,7 @@ async function printUpcoming(bot, msg){
       time: list[i].sort_date
     }
   }
-  console.log(arr);
+  // console.log(arr);
   var vieri = new Discord.MessageAttachment('../viericorp.png');
   arr.sort(compare);
   var embed = {
@@ -219,7 +219,7 @@ async function printUpcoming(bot, msg){
       text: "By Vieri Corp.™ All Rights Reserved"
     }
   }
-  msg.channel.send({files: [vieri], embed: embed});
+  msg.channel.send({files: [vieri], embeds: [embed]});
 }
 
 async function printView(bot, msg, args){
@@ -288,7 +288,7 @@ async function printView(bot, msg, args){
       text: "By Vieri Corp.™ All Rights Reserved"
     }
   }
-  msg.channel.send({files: [vieri], embed: embed});
+  msg.channel.send({files: [vieri], embeds: [embed]});
 }
 
 module.exports = {

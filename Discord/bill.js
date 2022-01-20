@@ -12,9 +12,9 @@ function newBill(bot, msg){
 }
 
 async function print(embed, vieri, msg){
-  // msg.channel.send({files: [vieri], embed: embed});
+  // msg.channel.send({files: [vieri], embeds: [embed]});
   for(var i = 0; i < embed.length; ++i){
-    await msg.channel.send({files: [vieri], embed: embed[i]});
+    await msg.channel.send({files: [vieri], embeds: [embed][i]});
   }
 }
 
@@ -117,7 +117,7 @@ function closeBill(bot, msg, args){
       text: "By Vieri Corp.™ All Rights Reserved"
     }
   }
-  // msg.channel.send({files: [vieri], embed: embed});
+  // msg.channel.send({files: [vieri], embeds: [embed]});
 
   res.forEach((value, key) =>{
     var temp = {

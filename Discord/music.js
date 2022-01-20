@@ -304,9 +304,9 @@ async function np(msg, srvQ) {
       text: "By Vieri Corp.™ All Rights Reserved"
     }
   }
-  // msg.channel.send({
-  //   embed: {files: [vieri], embed: embed},
-  // });
+  msg.channel.send({
+    embed: {files: [vieri], embeds: [embed]},
+  });
   // msg.inlineReply({
   //   files: [vieri],
   //   embed: embed,

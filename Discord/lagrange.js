@@ -80,7 +80,7 @@ async function printRank(msg, bot){
     list[i].name =  (i + 1) + '. ' + temp.username;
   }
   var vieri = new Discord.MessageAttachment('../viericorp.png');
-  msg.channel.send({files: [vieri], embed: {
+  msg.channel.send({files: [vieri], embeds: [{
     color: 16764006,
     author: {
       name: 'lagrange',
@@ -92,7 +92,7 @@ async function printRank(msg, bot){
     footer: {
       text: "By Vieri Corp.™ All Rights Reserved"
     }
-  }
+  }]
   });
 }
 
