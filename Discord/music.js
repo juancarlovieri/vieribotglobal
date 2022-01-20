@@ -53,7 +53,7 @@ async function addQueue(msg, srvQ, song, voiceChannel) {
         guildId: msg.guild.id,
         adapterCreator: msg.guild.voiceAdapterCreator
       });
-      console.log(connection);
+      // console.log(connection);
       queueContruct.connection = connection;
       start(msg.guild, queueContruct.songs[0]);
     } catch (err) {
@@ -70,9 +70,10 @@ async function addQueue(msg, srvQ, song, voiceChannel) {
 
 async function play(msg, srvQ) {
   var args = msg.content.split(" ");
-  const voiceChannel = msg.member.voice.channel;
+  const voiceChannel = await msg.member.voice.channel;
   // console.log(voiceChannel);
-  if (!voiceChannel)
+  // console.log(voiceChannel.id);
+  if (voiceChannel == null)
     return msg.channel.send(
       "You need to be in a voice channel to play music!"
     );
@@ -330,6 +331,8 @@ async function lyrics(msg, srvQ) {
 
 module.exports = {
   req: function(bot, msg) {
+    msg.channel.send("Music section under maintenance");
+    return;
     if (last + 5000 > new Date().valueOf()) {
       return msg.channel.send("Chill out... Wait 5 seconds before using the music command again");
     }
