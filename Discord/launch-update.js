@@ -145,6 +145,8 @@ function news(){
 //     }
 //     if(tags == "")tags = "none";
     var vieri = new Discord.MessageAttachment('../viericorp.png');
+    var summary = list[i].summary;
+    if (summary == "") summary = "not available"
     var embed = {
       color: 16764006,
       author: {
@@ -155,7 +157,7 @@ function news(){
       fields: [
         {
           name: "Summary",
-          value: list[i].summary
+          value: summary
         },
         {
           name:"\u200b",
