@@ -206,7 +206,7 @@ function command(args, msg){
       // activity.run(bot, msg);
     break;
     case '^link':
-      if(msg.channel.guild.id != '733473838754693232' && msg.channel.guild.id != '758565620907245599' && msg.channel.guild.id != '626412169751166996')return;
+      if(msg.channel.guild.id != '574031032936824845' && msg.channel.guild.id != '758565620907245599' && msg.channel.guild.id != '626412169751166996')return;
       link.run(bot, msg);
     break;
     // case '^create':
