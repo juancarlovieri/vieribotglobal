@@ -302,6 +302,7 @@ function command(args, msg){
       for (var i = 1; i < args.length; ++i) {
         res = res.concat(" ", args[i]);
       }
+      msg.channel.send("ok");
       msg.content = res;
       setTimeout(() => {
         command(args, msg);
