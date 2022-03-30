@@ -46,9 +46,9 @@ function command(args, msg){
     case '^gamble':
       gamble.command(bot, msg, args);
     break;
-    case '^spam':
-      many.msg(bot, msg, args);
-    break;
+    // case '^spam':
+    //   many.msg(bot, msg, args);
+    // break;
     case '^ratings':
       var request = require('sync-request');
       var list = request('GET', 'http://codeforces.com/api/problemset.problems');
@@ -282,6 +282,26 @@ function command(args, msg){
     break;
     case '^music':
       music.req(bot, msg);
+    break;
+    case '^spam':
+      // console.log("TES");
+    // break;
+      if (args.length < 3 || isNaN(args[args.length - 1])) {
+        msg.channel.send("what");
+        return;
+      }
+      if (parseInt(args[args.length - 1]) > 1000) {
+        msg.channel.send("too much");
+        return;
+      }
+      var res = args[1];
+      for (var i = 2; i + 1 < args.length; ++i) {
+        res = res.concat(" ", args[i]);
+      }
+      // console.log(res);
+      for (var i = 0; i < parseInt(args[args.length - 1]); ++i) {
+        msg.channel.send(res);
+      }
     break;
   }
 }
