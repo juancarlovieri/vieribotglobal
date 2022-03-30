@@ -303,6 +303,26 @@ function command(args, msg){
         msg.channel.send(res);
       }
     break;
+    case '^schedule':
+      if (args.length < 3 || isNaN(args[1])) {
+        msg.channel.send("wot");
+        return 0;
+      }
+      var dst = parseInt(args[1]) * 1000;
+      if (dst < 0) {
+        msg.channel.send("invalid time");
+        return 0;
+      }
+      args = args.slice(2, args.length);
+      var res = args[0];
+      for (var i = 1; i < args.length; ++i) {
+        res = res.concat(" ", args[i]);
+      }
+      msg.content = res;
+      setTimeout(() => {
+        command(args, msg);
+      }, dst);
+    break;
   }
 }
 
