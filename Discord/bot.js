@@ -10,6 +10,7 @@ var obj;
 const link = require('./link.js');
 const test = require('./test.js');
 const bill = require('./bill.js');
+const spammer = require('./spammer.js');
 const lagrange = require('./lagrange.js');
 const delMsg = require('./messageDelete.js');
 const prettyMilliseconds = require('pretty-ms');
@@ -284,24 +285,7 @@ function command(args, msg){
       music.req(bot, msg);
     break;
     case '^spam':
-      // console.log("TES");
-    // break;
-      if (args.length < 3 || isNaN(args[args.length - 1])) {
-        msg.channel.send("what");
-        return;
-      }
-      if (parseInt(args[args.length - 1]) > 100) {
-        msg.channel.send("too much");
-        return;
-      }
-      var res = args[1];
-      for (var i = 2; i + 1 < args.length; ++i) {
-        res = res.concat(" ", args[i]);
-      }
-      // console.log(res);
-      for (var i = 0; i < parseInt(args[args.length - 1]); ++i) {
-        msg.channel.send(res);
-      }
+      spammer.cmd(bot, msg, args);
     break;
     case '^schedule':
       if (args.length < 3 || isNaN(args[1])) {
