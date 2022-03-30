@@ -62,6 +62,8 @@ function organize(){
   save();
 }
 
+// console.log(new Date());
+
 schedule.scheduleJob('0 0 * * *', () => {
   console.log('adding new array for activity;');
   var temp = new Map();
@@ -345,6 +347,7 @@ async function printGraph(bot, msg, args){
 
 module.exports = {
   add: function(msg){
+    return;
     if(msg.channel.guild.id != '688018099584237610')return;
     if(msg.channel.id == '688608091855519801')return;
     if(msg.author.bot)return;
@@ -355,6 +358,7 @@ module.exports = {
     save();
   },
   run: function(bot, msg){
+    return;
     var args = msg.content.split(' ');
     if(args[1] == 'top'){
       if(msg.author.id != '455184547840262144'){

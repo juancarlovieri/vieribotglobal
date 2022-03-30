@@ -51,8 +51,6 @@ schedule.scheduleJob('0 0 * * *', () => {
     }
     save();
     lockFile.unlockSync('../lock.lock');
-    const emoji = msg.guild.emojis.cache.find(emoji => emoji.name === 'AC');
-    msg.react(emoji);
   });
 });
 
