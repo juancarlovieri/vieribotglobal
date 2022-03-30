@@ -290,7 +290,7 @@ function command(args, msg){
         msg.channel.send("what");
         return;
       }
-      if (parseInt(args[args.length - 1]) > 1000) {
+      if (parseInt(args[args.length - 1]) > 100) {
         msg.channel.send("too much");
         return;
       }
