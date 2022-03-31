@@ -14,7 +14,7 @@ module.exports = {
       return;
     }
     var cnt = parseInt(args[args.length - 1]);
-    if (cnt > 100) {
+    if (cnt > 20) {
       msg.channel.send("too much");
       return;
     }
