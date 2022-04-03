@@ -90,6 +90,7 @@ function newGroup(bot, msg, args){
   groups.set(args[2], temp);
   locks.set(args[2], false);
   save();
+  msg.channel.send("created!");
 }
 
 function admin(msg){
@@ -395,10 +396,10 @@ module.exports = {
         finish(bot, msg, args);
       break;
       case 'reserved':
-        msg.channel.send(balance.get(msg.author.id).reserved);
+        msg.channel.send(balance.get(msg.author.id).reserved.toString());
       break;
       case 'bal':
-        msg.channel.send(balance.get(msg.author.id).balance[balance.get(msg.author.id).balance.length - 1]);
+        msg.channel.send(balance.get(msg.author.id).balance[balance.get(msg.author.id).balance.length - 1].toString());
       break;
       default:
         check(bot, msg, args);
