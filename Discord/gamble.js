@@ -45,7 +45,7 @@ function save(){
   });
   var jsonObj = Object.fromEntries(temp);
   var jsonContent = JSON.stringify(jsonObj);
-  console.log(jsonContent);
+  // console.log(jsonContent);
   fs.writeFileSync("gambles.json", jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
@@ -54,7 +54,7 @@ function save(){
   });
   jsonObj = Object.fromEntries(balance);
   jsonContent = JSON.stringify(jsonObj);
-  console.log(jsonContent);
+  // console.log(jsonContent);
   fs.writeFileSync("balance.json", jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
@@ -63,7 +63,7 @@ function save(){
   });
   jsonObj = Object.fromEntries(locks);
   jsonContent = JSON.stringify(jsonObj);
-  console.log(jsonContent);
+  // console.log(jsonContent);
   fs.writeFileSync("gambleLocks.json", jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
@@ -104,13 +104,13 @@ function finish(bot, msg, args){
     return;
   }
   args.splice(1, 1);
-  console.log(args);
+  // console.log(args);
   if(groups.has(args[1]) == false)return;
   var cand = groups.get(args[1]);
   if(cand.has(args[2]) == false)return;
   cand.forEach(function lol(value, key){
     value.forEach(function lol(value2, key2){
-      console.log(balance.get(key2));
+      // console.log(balance.get(key2));
       var newBalance = balance.get(key2).balance[balance.get(key2).balance.length - 1] + value2;
       if(key != args[2]){
         newBalance -= 2 * value2;
@@ -153,7 +153,7 @@ async function printGambles(bot, msg, args){
   var arr = [];
   cand.forEach(function lol(value, key){
     value.forEach(function lol(value2, key2){
-      console.log(key);
+      // console.log(key);
       // let temp = await bot.users.fetch(key2);
       arr[arr.length] = {
         name: key2,
@@ -163,7 +163,7 @@ async function printGambles(bot, msg, args){
       // hasil += temp.username + ' ' + arr[i].point + '\n';
     });
   });  
-  console.log(arr);
+  // console.log(arr);
   arr.sort(cmp);
   var rank = 1;
   for(var i = 0; i < arr.length; ++i){
