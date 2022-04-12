@@ -48,6 +48,8 @@ function refresh(bot) {
           // console.log("switch");
           cur.endcontext[1] = [cur.endcontext[0], cur.endcontext[0] = cur.endcontext[1]][0];
         }
+        var friend = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id).getBody()).data.user.league;
+        var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
         var color;
         if (cur.endcontext[0].wins > cur.endcontext[1].wins) {
           state = "won";
@@ -56,31 +58,6 @@ function refresh(bot) {
           state = "lost";
           color = "#a83232";
         }
-        // var embed = new MessageEmbed()
-        //   .setColor(color)
-        //   .setTitle(cur.user.username + " just " + state + " a game")
-        //   .setURL('https://tetr.io/#R:' + cur.replayid)
-        //   .setAuthor({ name: 'Tetris game update', iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', url: 'https://tetr.io/' })
-        //   .setDescription('Some description here')
-        //   // .setThumbnail('https://i.imgur.com/AfFp7pu.png')
-        //   .addFields(
-        //     // { name: 'Regular field title', value: 'Some value here' },
-        //     // { name: '\u200B', value: '\u200B' },
-        //     { name: 'PPS', value: cur.endcontext[0].points.secondary, inline: true },
-        //     { name: 'APM', value: cur.endcontext[0].points.tertiary , inline: true },
-        //     { name: 'VS', value: cur.endcontext[0].points.extra.vs, inline: true },
-        //     { name: '\u200B', value: '\u200B' },
-        //     { name: 'Opponent', value: cur.endcontext[1].user.username},
-        //     { name: 'PPS', value: cur.endcontext[1].points.secondary, inline: true },
-        //     { name: 'APM', value: cur.endcontext[1].points.tertiary , inline: true },
-        //     { name: 'VS', value: cur.endcontext[1].points.extra.vs, inline: true },
-        //   )
-        //   .setImage('https://i.imgur.com/AfFp7pu.png')
-        //   .setTimestamp()
-        //   .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
-        // console.log(cur.endcontext[0].points.secondary.toFixed(1));
-        // console.log(cur.endcontext[0].points.tertiary.toFixed(1));
-        // console.log(cur.endcontext[0].points.extra.vs.toFixed(1));
         const embed = {
             color: color,
             title: cur.user.username + " just " + state + " a game",
@@ -90,16 +67,19 @@ function refresh(bot) {
             //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
             //   url: 'https://tetr.io/' 
             // },
-            description: '**' + cur.user.username + '**',
+            description: cur.endcontext[0].wins.toFixed(0) + ' - ' + cur.endcontext[1].wins.toFixed(0),
             // thumbnail: {
             //   url: 'https://i.imgur.com/AfFp7pu.png',
             // },
             fields: [
+              { name: '\u200B', value: '**' + cur.endcontext[0].user.username + '**'},
+              { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(0) + "TR", inline: true },
               { name: 'PPS', value: cur.endcontext[0].points.secondary.toFixed(1), inline: true },
               { name: 'APM', value: cur.endcontext[0].points.tertiary .toFixed(1), inline: true },
               { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(1), inline: true },
               // { name: '\u200B', value: '\u200B' },
               { name: '\u200B', value: '**' + cur.endcontext[1].user.username + '**'},
+              { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(0) + "TR", inline: true },
               { name: 'PPS', value: cur.endcontext[1].points.secondary.toFixed(1), inline: true },
               { name: 'APM', value: cur.endcontext[1].points.tertiary .toFixed(1), inline: true },
               { name: 'VS', value: cur.endcontext[1].points.extra.vs.toFixed(1), inline: true },
