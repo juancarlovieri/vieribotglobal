@@ -27,6 +27,7 @@ const mc = require('minecraft-server-util');
 const predict = require('./tlx/predict.js');
 const gamble = require('./gamble.js');
 const music = require('./music.js');
+const tetr = require('./tetr.js');
 
 
 // console.log((1599715800000 - 3600000) - Date.now());
@@ -308,6 +309,9 @@ function command(args, msg){
         command(args, msg);
       }, dst);
     break;
+    case '^tetr':
+      tetr.cmd(bot, msg);
+    break;
   }
 }
 
@@ -411,6 +415,7 @@ bot.on("ready", msg =>{
     status: 'dnd'
   });
   launch.new(bot);
+  tetr.startRefresh(bot);
 })
 
 bot.on("message", msg => {
