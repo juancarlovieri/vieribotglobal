@@ -74,15 +74,15 @@ function refresh(bot) {
             fields: [
               { name: '\u200B', value: '**' + cur.endcontext[0].user.username + '**'},
               { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(0) + "TR", inline: true },
-              { name: 'PPS', value: cur.endcontext[0].points.secondary.toFixed(1), inline: true },
-              { name: 'APM', value: cur.endcontext[0].points.tertiary .toFixed(1), inline: true },
-              { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(1), inline: true },
+              { name: 'PPS', value: cur.endcontext[0].points.tertiary.toFixed(2), inline: true },
+              { name: 'APM', value: cur.endcontext[0].points.secondary.toFixed(2), inline: true },
+              { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(2), inline: true },
               // { name: '\u200B', value: '\u200B' },
               { name: '\u200B', value: '**' + cur.endcontext[1].user.username + '**'},
               { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(0) + "TR", inline: true },
-              { name: 'PPS', value: cur.endcontext[1].points.secondary.toFixed(1), inline: true },
-              { name: 'APM', value: cur.endcontext[1].points.tertiary .toFixed(1), inline: true },
-              { name: 'VS', value: cur.endcontext[1].points.extra.vs.toFixed(1), inline: true },
+              { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
+              { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
+              { name: 'VS', value: cur.endcontext[1].points.extra.vs.toFixed(2), inline: true },
             ],
             timestamp: new Date()
           };
