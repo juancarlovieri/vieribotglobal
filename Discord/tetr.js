@@ -44,6 +44,7 @@ function refresh(bot) {
       var newblitz = record.blitz.record.endcontext.score;
       if (newblitz > val.blitz) {
         var cur = record.blitz.record;
+        var dat = cur.endcontext;
         const embed = {
             color: "#0394fc",
             title: cur.user.username + " just achieved a new blitz personal best!",
@@ -53,26 +54,30 @@ function refresh(bot) {
             //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
             //   url: 'https://tetr.io/' 
             // },
-            // description: cur.endcontext.score,
+            description: "**" + cur.endcontext.score.toFixed(0) + "**",
             // thumbnail: {
             //   url: 'https://i.imgur.com/AfFp7pu.png',
             // },
             fields: [
-              { name: cur.endcontext.score.toFixed(0), value: '**Clears**'},
-              { name: 'Singles', value: cur.endcontext.clears.singles.toFixed(0), inline: true },
-              { name: 'Doubles', value: cur.endcontext.clears.doubles.toFixed(0), inline: true },
-              { name: 'Triples', value: cur.endcontext.clears.triples.toFixed(0), inline: true },
-              { name: 'Quads', value: cur.endcontext.clears.quads.toFixed(0), inline: true },
+              { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
+              { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
+              { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
+              { name: 'Level', value: (dat.level).toFixed(0), inline: true },
+              { name: '\u200B', value: '**Clears**'},
+              { name: 'Singles', value: dat.clears.singles.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.doubles.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.triples.toFixed(0), inline: true },
+              { name: 'Quads', value: dat.clears.quads.toFixed(0), inline: true },
               { name: '\u200B', value: '**T-spins**'},
-              { name: 'Real', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'Mini', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'Mini Singles', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'Singles', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'Mini Doubles', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'Doubles', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'Triples', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'Quads', value: cur.endcontext.clears.realtspins.toFixed(0), inline: true },
-              { name: 'All clears', value: cur.endcontext.clears.allclear.toFixed(0)},
+              { name: 'Real', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Mini', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Mini Singles', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Singles', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Mini Doubles', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Quads', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
             ],
             timestamp: new Date()
           };
