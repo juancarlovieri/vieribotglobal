@@ -46,6 +46,10 @@ function refresh(bot) {
       if (newblitz > val.blitz) {
         var cur = record.blitz.record;
         var dat = cur.endcontext;
+        var rank = ">#1000";
+        if (record.blitz.rank != null) {
+          rank = "#" + record.blitz.rank.toFixed(0);
+        }
         const embed = {
             color: "#0394fc",
             title: cur.user.username + " just achieved a new blitz personal best!",
@@ -60,6 +64,7 @@ function refresh(bot) {
             //   url: 'https://i.imgur.com/AfFp7pu.png',
             // },
             fields: [
+              { name: 'Rank', value: rank, inline: true },
               { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
               { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
               { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
@@ -92,6 +97,10 @@ function refresh(bot) {
       if (new40l < val["40l"]) {
         var cur = record["40l"].record;
         var dat = cur.endcontext;
+        var rank = ">#1000";
+        if (record["40l"].rank != null) {
+          rank = "#" + record["40l"].rank.toFixed(0);
+        }
         const embed = {
             color: "#0394fc",
             title: cur.user.username + " just achieved a new 40 lines personal best!",
@@ -106,6 +115,7 @@ function refresh(bot) {
             //   url: 'https://i.imgur.com/AfFp7pu.png',
             // },
             fields: [
+              { name: 'Rank', value: rank, inline: true },
               { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
               { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
               { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
