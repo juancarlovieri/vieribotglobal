@@ -42,7 +42,7 @@ function refresh(bot) {
     }
     if (record.blitz.record != null) {
       var newblitz = record.blitz.record.endcontext.score;
-      if (newblitz != val.blitz) {
+      if (newblitz > val.blitz) {
         var cur = record.blitz.record;
         const embed = {
             color: "#0394fc",
