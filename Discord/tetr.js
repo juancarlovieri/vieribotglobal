@@ -88,8 +88,47 @@ function refresh(bot) {
     }
     if (record["40l"].record != null) {
       var new40l = record["40l"].record.endcontext.score;
-      if (new40l != val["40l"]) {
-        console.log("NEW 40L");
+      if (new40l > val["40l"]) {
+        var cur = record["40l"].record;
+        var dat = cur.endcontext;
+        const embed = {
+            color: "#0394fc",
+            title: cur.user.username + " just achieved a new 40 lines personal best!",
+            url: 'https://tetr.io/#r:' + cur.replayid,
+            // author: {
+            //    name: 'Tetris game update', 
+            //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
+            //   url: 'https://tetr.io/' 
+            // },
+            description: "**" + cur.endcontext.score.toFixed(0) + "**",
+            // thumbnail: {
+            //   url: 'https://i.imgur.com/AfFp7pu.png',
+            // },
+            fields: [
+              { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
+              { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
+              { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
+              { name: 'Level', value: (dat.level).toFixed(0), inline: true },
+              { name: '\u200B', value: '**Clears**'},
+              { name: 'Singles', value: dat.clears.singles.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.doubles.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.triples.toFixed(0), inline: true },
+              { name: 'Quads', value: dat.clears.quads.toFixed(0), inline: true },
+              { name: '\u200B', value: '**T-spins**'},
+              { name: 'Real', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Mini', value: dat.clears.minitspins.toFixed(0), inline: true },
+              { name: 'Mini Singles', value: dat.clears.minitspinsingles.toFixed(0), inline: true },
+              { name: 'Singles', value: dat.clears.tspinsingles.toFixed(0), inline: true },
+              { name: 'Mini Doubles', value: dat.clears.minitspindoubles.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.tspindoubles.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
+              { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
+              { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
+            ],
+            timestamp: new Date()
+          };
+
+        bot.channels.cache.get(val.channel).send({ embeds: [embed] });
         val["40l"] = new40l;
       }
     }
