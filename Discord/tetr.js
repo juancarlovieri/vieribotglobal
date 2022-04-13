@@ -4,6 +4,7 @@ const fs = require('fs')
 const { MessageEmbed } = require('discord.js');
 const path = 'monitor.json'
 var request = require('sync-request');
+const prettyMilliseconds = require('pretty-ms');
 
 
 var monitor = new Map();
@@ -87,8 +88,8 @@ function refresh(bot) {
       }
     }
     if (record["40l"].record != null) {
-      var new40l = record["40l"].record.endcontext.score;
-      if (new40l > val["40l"]) {
+      var new40l = record["40l"].record.endcontext.finalTime;
+      if (new40l < val["40l"]) {
         var cur = record["40l"].record;
         var dat = cur.endcontext;
         const embed = {
@@ -100,7 +101,7 @@ function refresh(bot) {
             //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
             //   url: 'https://tetr.io/' 
             // },
-            description: "**" + cur.endcontext.score.toFixed(0) + "**",
+            description: "**" + prettyMilliseconds(cur.endcontext.finalTime) + "**",
             // thumbnail: {
             //   url: 'https://i.imgur.com/AfFp7pu.png',
             // },
