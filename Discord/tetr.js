@@ -52,7 +52,7 @@ function refresh(bot) {
         }
         const embed = {
             color: "#0394fc",
-            title: cur.user.username + " just achieved a new blitz personal best!",
+            title: cur.user.username.toUpperCase() + " just achieved a new blitz personal best!",
             url: 'https://tetr.io/#r:' + cur.replayid,
             // author: {
             //    name: 'Tetris game update', 
@@ -103,7 +103,7 @@ function refresh(bot) {
         }
         const embed = {
             color: "#0394fc",
-            title: cur.user.username + " just achieved a new 40 lines personal best!",
+            title: cur.user.username.toUpperCase() + " just achieved a new 40 lines personal best!",
             url: 'https://tetr.io/#r:' + cur.replayid,
             // author: {
             //    name: 'Tetris game update', 
@@ -179,7 +179,7 @@ function refresh(bot) {
       }
       const embed = {
           color: color,
-          title: cur.user.username + " just " + state + " a game",
+          title: cur.user.username.toUpperCase() + " just " + state + " a game",
           url: 'https://tetr.io/#r:' + cur.replayid,
           // author: {
           //    name: 'Tetris game update', 
@@ -191,13 +191,13 @@ function refresh(bot) {
           //   url: 'https://i.imgur.com/AfFp7pu.png',
           // },
           fields: [
-            { name: '\u200B', value: '**' + cur.endcontext[0].user.username + '**'},
+            { name: '\u200B', value: '**' + cur.endcontext[0].user.username.toUpperCase() + '**'},
             { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(0) + "TR", inline: true },
             { name: 'PPS', value: cur.endcontext[0].points.tertiary.toFixed(2), inline: true },
             { name: 'APM', value: cur.endcontext[0].points.secondary.toFixed(2), inline: true },
             { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(2), inline: true },
             // { name: '\u200B', value: '\u200B' },
-            { name: '\u200B', value: '**' + cur.endcontext[1].user.username + '**'},
+            { name: '\u200B', value: '**' + cur.endcontext[1].user.username.toUpperCase() + '**'},
             { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(0) + "TR", inline: true },
             { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
             { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
