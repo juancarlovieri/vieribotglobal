@@ -116,10 +116,9 @@ function refresh(bot) {
             // },
             fields: [
               { name: 'Rank', value: rank, inline: true },
-              { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
+              { name: 'PPS', value: (dat.piecesplaced/(new40l/1000)).toFixed(2), inline: true },
               { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
               { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
-              { name: 'Level', value: (dat.level).toFixed(0), inline: true },
               { name: '\u200B', value: '**Clears**'},
               { name: 'Singles', value: dat.clears.singles.toFixed(0), inline: true },
               { name: 'Doubles', value: dat.clears.doubles.toFixed(0), inline: true },
