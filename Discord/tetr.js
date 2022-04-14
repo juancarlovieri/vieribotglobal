@@ -168,7 +168,9 @@ function refresh(bot) {
         cur.endcontext[1] = [cur.endcontext[0], cur.endcontext[0] = cur.endcontext[1]][0];
       }
       var friend = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id).getBody()).data.user.league;
+      if (friend.rank == "z") friend.rank = "?";
       var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
+      if (foe.rank == "z") foe.rank = "?";
       var color;
       if (cur.endcontext[0].wins > cur.endcontext[1].wins) {
         state = "won";
