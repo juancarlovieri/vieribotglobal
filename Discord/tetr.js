@@ -31,7 +31,13 @@ function save(){
 
 function refresh(bot) {
   monitor.forEach(function (val, id) {
-    var record = JSON.parse(request('GET', "https://ch.tetr.io/api/users/"+ id + "/records").getBody()).data.records;
+    var record = null;
+    try {
+      record = JSON.parse(request('GET', "https://ch.tetr.io/api/users/"+ id + "/records").getBody()).data.records;
+    } catch (e) {
+      console.error(e);
+      return;
+    }
     if (val.blitz == undefined) {
       if (record.blitz.record == null) val.blitz = null;
       else val.blitz = record.blitz.record.endcontext.score;
@@ -149,7 +155,13 @@ function refresh(bot) {
 
   monitor.forEach(function (val, id) {
     var request = require('sync-request');
-    var match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
+    try {
+      var match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
+    }
+    catch (e) {
+      console.error(e);
+      return;
+    }
     match = match.data.records;
     var last = match.length;
     for (var i = 0; i < match.length; ++i) {
