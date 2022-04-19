@@ -15,7 +15,7 @@ try {
     monitor = new Map(Object.entries(obj));
   }
 } catch(err) {
-  console.log('new map');
+  console.error(err);
 }
 
 function save(){

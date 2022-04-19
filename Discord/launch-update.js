@@ -60,7 +60,13 @@ async function init(){
   var jarak = [600000, 1800000, 3600000, 21600000, 86400000, 172800000, 432000000];
   var message = ["T - 10 minutes", "T - 30 minutes", "T - 1 hour", "T - 6 hours", "T - 1 day", "T - 2 days", "T - 5 days"]
   var request = require('sync-request');
-  var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+  var list;
+  try {
+    list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+  } catch(e) {
+    console.error(e);
+    return;
+  }
   console.log('downloaded launches');  
   for(var i = 0; i < list.length; i++){
     var cur = list[i];
@@ -133,7 +139,13 @@ async function init(){
 
 function news(){
   var request = require('sync-request');
-  var list = JSON.parse(request('GET', 'https://api.spaceflightnewsapi.net/v3/articles/').getBody());
+  var list;
+  try {
+    list = JSON.parse(request('GET', 'https://api.spaceflightnewsapi.net/v3/articles/').getBody());
+  } catch (e) {
+    console.error(e);
+    return;
+  }
   console.log('downloaded news');
   for(var i = 0; i < list.length; i++){
     if(published.has(list[i].id))continue;
@@ -184,7 +196,13 @@ function news(){
 
 async function printUpcoming(bot, msg){
   var request = require('sync-request');
-  var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+  var list;
+  try {
+    list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+  } catch (e) {
+    console.error(e);
+    return;
+  }
   var arr = [];
   for(var i = 0; i < list.length; i++){
     var utcSeconds = Math.round(list[i].sort_date);
@@ -308,8 +326,8 @@ module.exports = {
   new: function(bott){
     bot = bott;
     // console.log('tes');
-    init();
-    setInterval(init, 3600000); 
+    // init();
+    // setInterval(init, 3600000); 
     news();
     setInterval(news, 3600000)
   },

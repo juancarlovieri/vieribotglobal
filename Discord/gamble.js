@@ -248,7 +248,7 @@ function check(bot, msg, args){
     case 'cands':
       var cand = groups.get(args[1]);
       var hasil = "candidates for " + args[1] + ':\n';
-      cand.forEach(function lol(value, key){
+      cand.forEach(function lol(value, key) {
         hasil += key + '\n';
       });
       msg.channel.send(hasil);
