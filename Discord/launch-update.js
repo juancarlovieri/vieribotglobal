@@ -326,8 +326,8 @@ module.exports = {
   new: function(bott){
     bot = bott;
     // console.log('tes');
-    // init();
-    // setInterval(init, 3600000); 
+    init();
+    setInterval(init, 3600000); 
     news();
     setInterval(news, 3600000)
   },
