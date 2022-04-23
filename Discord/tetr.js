@@ -266,7 +266,12 @@ module.exports = {
   },
   startRefresh: function(bot) {
     setInterval(() => {
-      refresh(bot);
+      var http = require('http');
+      http.get('http://tetr.io/', function (res) {
+        refresh(bot);
+      }).on('error', function(e) {
+        console.error(e);
+      });
     }, 60000);
   }
 }
