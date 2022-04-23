@@ -155,10 +155,10 @@ function refresh(bot) {
 
   monitor.forEach(function (val, id) {
     var request = require('sync-request');
+    var match;
     try {
-      var match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
-    }
-    catch (e) {
+      match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
+    } catch (e) {
       console.error(e);
       return;
     }
