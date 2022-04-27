@@ -1,3 +1,4 @@
+"use strict";
 const Discord=  require('discord.js');
 var bot;
 const fs = require('fs')
@@ -6,6 +7,21 @@ const path = 'published.json'
 
 
 var published = new Map();
+
+const https = require("https");
+
+function async_request(option) {
+  return new Promise( (resolve, reject) => {                    
+    let request = https.get( option, (response) => {
+        if (response.statusCode < 200 || response.statusCode > 299) {
+        reject( new Error('Failed to load page'+response.statusCode) );}
+        let data = "";
+        response.on( 'data', (chunk) => data += chunk );
+        response.on( 'end', () => resolve(JSON.parse(data)) );
+    } );
+    request.on( 'error', (err) => reject(err) );
+ })
+}
 
 
 function compare(a, b){
@@ -59,10 +75,12 @@ function timer(time, embed, file){
 async function init(){
   var jarak = [600000, 1800000, 3600000, 21600000, 86400000, 172800000, 432000000];
   var message = ["T - 10 minutes", "T - 30 minutes", "T - 1 hour", "T - 6 hours", "T - 1 day", "T - 2 days", "T - 5 days"]
-  var request = require('sync-request');
+  // var request = require('sync-request');
   var list;
   try {
-    list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+    list = await async_request('https://fdo.rocketlaunch.live/json/launches/next/100');
+    list = list.result;
+    // list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
   } catch(e) {
     console.error(e);
     return;
@@ -137,11 +155,12 @@ async function init(){
   }
 }
 
-function news(){
-  var request = require('sync-request');
+async function news(){
+  // var request = require('sync-request');
   var list;
   try {
-    list = JSON.parse(request('GET', 'https://api.spaceflightnewsapi.net/v3/articles/').getBody());
+    list = await async_request('https://api.spaceflightnewsapi.net/v3/articles/');
+    // list = JSON.parse(request('GET', 'https://api.spaceflightnewsapi.net/v3/articles/').getBody());
   } catch (e) {
     console.error(e);
     return;
@@ -195,10 +214,12 @@ function news(){
 }
 
 async function printUpcoming(bot, msg){
-  var request = require('sync-request');
+  // var request = require('sync-request');
   var list;
   try {
-    list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+    list = await async_request('https://fdo.rocketlaunch.live/json/launches/next/100');
+    list = list.result;
+    // list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
   } catch (e) {
     console.error(e);
     return;
@@ -245,8 +266,10 @@ async function printUpcoming(bot, msg){
 async function printView(bot, msg, args){
   var indx = parseInt(args[1]);
   indx--;
-  var request = require('sync-request');
-  var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
+  // var request = require('sync-request');
+  var list = await async_request('https://fdo.rocketlaunch.live/json/launches/next/100');
+  list = list.result;
+  // var list = JSON.parse(request('GET', 'https://fdo.rocketlaunch.live/json/launches/next/100').getBody()).result;
   if(indx < 0 || indx >= list.length)return;
   var arr = [];
   for(var i = 0; i < list.length; i++){

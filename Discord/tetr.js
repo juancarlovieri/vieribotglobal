@@ -1,4 +1,5 @@
-const Discord=  require('discord.js');
+"use strict";
+const Discord =  require('discord.js');
 var bot;
 const fs = require('fs')
 const { MessageEmbed } = require('discord.js');
@@ -8,6 +9,21 @@ const prettyMilliseconds = require('pretty-ms');
 
 
 var monitor = new Map();
+
+const https = require("https");
+
+function async_request(option) {
+  return new Promise( (resolve, reject) => {                    
+    let request = https.get( option, (response) => {
+        if (response.statusCode < 200 || response.statusCode > 299) {
+        reject( new Error('Failed to load page'+response.statusCode) );}
+        let data = "";
+        response.on( 'data', (chunk) => data += chunk );
+        response.on( 'end', () => resolve(JSON.parse(data)) );
+    } );
+    request.on( 'error', (err) => reject(err) );
+ })
+}
 
 try {
   if (fs.existsSync(path)) {
@@ -30,10 +46,12 @@ function save(){
 }
 
 function refresh(bot) {
-  monitor.forEach(function (val, id) {
+  monitor.forEach(async function (val, id) {
     var record = null;
     try {
-      record = JSON.parse(request('GET', "https://ch.tetr.io/api/users/"+ id + "/records").getBody()).data.records;
+      record = await async_request("https://ch.tetr.io/api/users/"+ id + "/records");
+      record = record.data.records;
+      // record = JSON.parse(request('GET', "https://ch.tetr.io/api/users/"+ id + "/records").getBody()).data.records;
     } catch (e) {
       console.error(e);
       return;
@@ -153,11 +171,11 @@ function refresh(bot) {
     }
   });
 
-  monitor.forEach(function (val, id) {
-    var request = require('sync-request');
+  monitor.forEach(async function (val, id) {
     var match;
     try {
-      match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
+      match = await async_request('https://ch.tetr.io/api/streams/league_userrecent_' + id);
+      // match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
     } catch (e) {
       console.error(e);
       return;
@@ -178,11 +196,15 @@ function refresh(bot) {
         // console.log("switch");
         cur.endcontext[1] = [cur.endcontext[0], cur.endcontext[0] = cur.endcontext[1]][0];
       }
-      var friend = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id).getBody()).data.user.league;
+      var friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
+      friend = friend.data.user.league;
+      // var friend = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id).getBody()).data.user.league;
       if (friend.rank == "z") friend.rank = "?";
-      var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
+      var foe = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id);
+      foe = foe.data.user.league;
+      // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
       if (foe.rank == "z") foe.rank = "?";
-      var color;
+      var color, state;
       if (cur.endcontext[0].wins > cur.endcontext[1].wins) {
         state = "won";
         color = "#32a844";
@@ -223,6 +245,7 @@ function refresh(bot) {
       // console.log(match[i]._id);
       // bot.channels.cache.get(val.channel).send(match[i]._id);
     }
+    if (match.length == 0) match[0] = {_id: null};
     val.last = match[0]._id
     monitor.set(id, val);
   });
@@ -230,7 +253,7 @@ function refresh(bot) {
 }
 
 module.exports = {
-  cmd: function(bot, msg) {
+  cmd: async function(bot, msg) {
     var args = msg.content.split(" ");
     switch (args[1]) {
       case 'monitor':
@@ -238,18 +261,26 @@ module.exports = {
           msg.channel.send("wot");
           return;
         }
-        var user = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + args[2]).getBody());
+        var user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        // user = user.data;
+        // console.log(user);
+        // var user = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + args[2]).getBody());
         if (user.success == false) {
           msg.channel.send("who is dat");
-          return;
+          return; 
         }
         var id = user.data.user._id;
         if (monitor.has(id)) {
           msg.channel.send("bruh we have that guy");
           return;
         }
-        var match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
+        var match = await async_request("https://ch.tetr.io/api/streams/league_userrecent_" + id);
+        // console.log(match);
+        // var match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
         match = match.data.records[0];
+        if (match == undefined) {
+          match = {_id: null}
+        }
         var dat = {
           last: match._id,
           channel: msg.channel.id,
