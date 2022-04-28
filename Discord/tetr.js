@@ -295,6 +295,59 @@ async function refresh(bot) {
   save();
 }
 
+
+async function forceRefresh(bot) {
+  for (var curm of monitor) {
+    var channel = curm[0];
+    checkPerms(channel);
+    curm = curm[1];
+    for (var temp of curm) {
+      var val = temp[1], id = temp[0];
+      var record = null;
+      try {
+        record = await async_request("https://ch.tetr.io/api/users/"+ id + "/records");
+        record = record.data.records;
+      } catch (e) {
+        console.error(e);
+        continue;
+      }
+      if (record.blitz.record == null) val.blitz = null;
+      else val.blitz = Math.round(record.blitz.record.endcontext.score);
+      if (record["40l"].record == null) val["40l"] = null;
+      else val["40l"] = Math.round(record["40l"].record.endcontext.finalTime);
+      curm.set(id, val);
+    }
+    monitor.set(channel, curm);
+  }
+  save();
+  // monitor.forEach(async function (val, id) {
+  // });
+
+  for (var curm of monitor) {
+    var channel = curm[0];
+    curm = curm[1];
+    for (var temp of curm) {
+      var val = temp[1], id = temp[0];
+      var match;
+      try {
+        match = await async_request('https://ch.tetr.io/api/streams/league_userrecent_' + id);
+        // match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
+      } catch (e) {
+        console.error(e);
+        continue;
+      }
+      match = match.data.records;
+      if (match.length == 0) match[0] = {_id: null};
+      val.last = match[0]._id
+      curm.set(id, val);   
+    }
+    monitor.set(channel, curm);
+  }
+  // monitor.forEach(async function (val, id) {
+  // });
+  save();
+}
+
 function hasAdmin(msg) {
   if (msg.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return true;
   return false;
@@ -440,6 +493,13 @@ module.exports = {
         monitor.set(channel, temp);
         msg.channel.send("removed");
         save();
+      break;
+      case 'forceRefresh':
+        if (!hasAdmin(msg)) {
+          msg.channel.send("no");
+          return;
+        }
+        forceRefresh();
       break;
     }
   },
