@@ -1,14 +1,17 @@
 "use strict";
 const Discord =  require('discord.js');
+const { Permissions } = require('discord.js');
 var bot;
+const pathMonitor = 'monitor.json'
+const pathPerms = 'perms.json'
 const fs = require('fs')
 const { MessageEmbed } = require('discord.js');
-const path = 'monitor.json'
 var request = require('sync-request');
 const prettyMilliseconds = require('pretty-ms');
 
 
 var monitor = new Map();
+var perms = new Map();
 
 const https = require("https");
 
@@ -26,14 +29,23 @@ function async_request(option) {
 }
 
 try {
-  if (fs.existsSync(path)) {
-    var obj = JSON.parse(fs.readFileSync(path, "utf8"));
+  if (fs.existsSync(pathMonitor)) {
+    var obj = JSON.parse(fs.readFileSync(pathMonitor, "utf8"));
     monitor = new Map(Object.entries(obj));
     var temp = new Map();
     for (var cur of monitor) {
       temp.set(cur[0], new Map(Object.entries(cur[1])));
     }
     monitor = temp;
+  }
+} catch(err) {
+  console.error(err);
+}
+
+try {
+  if (fs.existsSync(pathPerms)) {
+    var obj = JSON.parse(fs.readFileSync(pathPerms, "utf8"));
+    perms = new Map(Object.entries(obj));
   }
 } catch(err) {
   console.error(err);
@@ -46,7 +58,16 @@ function save(){
   }
   var jsonObj = Object.fromEntries(temp);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync(path, jsonContent, "utf8", function(err) {
+  fs.writeFileSync(pathMonitor, jsonContent, "utf8", function(err) {
+    if (err) {
+      console.log("An errr occured while writing JSON jsonObj to File.");
+      return console.log(err);
+    }
+  });
+
+  jsonObj = Object.fromEntries(perms);
+  jsonContent = JSON.stringify(jsonObj);
+  fs.writeFileSync(pathPerms, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -57,6 +78,7 @@ function save(){
 async function refresh(bot) {
   for (var curm of monitor) {
     var channel = curm[0];
+    checkPerms(channel);
     curm = curm[1];
     for (var temp of curm) {
       var val = temp[1], id = temp[0];
@@ -86,44 +108,43 @@ async function refresh(bot) {
             rank = "#" + record.blitz.rank.toFixed(0);
           }
           const embed = {
-              color: "#0394fc",
-              title: cur.user.username.toUpperCase() + " just achieved a new blitz personal best!",
-              url: 'https://tetr.io/#r:' + cur.replayid,
-              // author: {
-              //    name: 'Tetris game update', 
-              //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
-              //   url: 'https://tetr.io/' 
-              // },
-              description: "**" + cur.endcontext.score.toFixed(0) + "**",
-              // thumbnail: {
-              //   url: 'https://i.imgur.com/AfFp7pu.png',
-              // },
-              fields: [
-                { name: 'Rank', value: rank, inline: true },
-                { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
-                { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
-                { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
-                { name: 'Level', value: (dat.level).toFixed(0), inline: true },
-                { name: '\u200B', value: '**Clears**'},
-                { name: 'Singles', value: dat.clears.singles.toFixed(0), inline: true },
-                { name: 'Doubles', value: dat.clears.doubles.toFixed(0), inline: true },
-                { name: 'Triples', value: dat.clears.triples.toFixed(0), inline: true },
-                { name: 'Quads', value: dat.clears.quads.toFixed(0), inline: true },
-                { name: '\u200B', value: '**T-spins**'},
-                { name: 'Real', value: dat.clears.realtspins.toFixed(0), inline: true },
-                { name: 'Mini', value: dat.clears.minitspins.toFixed(0), inline: true },
-                { name: 'Mini Singles', value: dat.clears.minitspinsingles.toFixed(0), inline: true },
-                { name: 'Singles', value: dat.clears.tspinsingles.toFixed(0), inline: true },
-                { name: 'Mini Doubles', value: dat.clears.minitspindoubles.toFixed(0), inline: true },
-                { name: 'Doubles', value: dat.clears.tspindoubles.toFixed(0), inline: true },
-                { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
-                { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
-                { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
-              ],
-              timestamp: new Date()
-            };
-
-          bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+            color: "#0394fc",
+            title: cur.user.username.toUpperCase() + " just achieved a new blitz personal best!",
+            url: 'https://tetr.io/#r:' + cur.replayid,
+            // author: {
+            //    name: 'Tetris game update', 
+            //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
+            //   url: 'https://tetr.io/' 
+            // },
+            description: "**" + cur.endcontext.score.toFixed(0) + "**",
+            // thumbnail: {
+            //   url: 'https://i.imgur.com/AfFp7pu.png',
+            // },
+            fields: [
+              { name: 'Rank', value: rank, inline: true },
+              { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
+              { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
+              { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
+              { name: 'Level', value: (dat.level).toFixed(0), inline: true },
+              { name: '\u200B', value: '**Clears**'},
+              { name: 'Singles', value: dat.clears.singles.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.doubles.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.triples.toFixed(0), inline: true },
+              { name: 'Quads', value: dat.clears.quads.toFixed(0), inline: true },
+              { name: '\u200B', value: '**T-spins**'},
+              { name: 'Real', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Mini', value: dat.clears.minitspins.toFixed(0), inline: true },
+              { name: 'Mini Singles', value: dat.clears.minitspinsingles.toFixed(0), inline: true },
+              { name: 'Singles', value: dat.clears.tspinsingles.toFixed(0), inline: true },
+              { name: 'Mini Doubles', value: dat.clears.minitspindoubles.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.tspindoubles.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
+              { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
+              { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
+            ],
+            timestamp: new Date()
+          };
+          if (perms.get(channel).blitz) bot.channels.cache.get(val.channel).send({ embeds: [embed] });
           val.blitz = newblitz;
         }
       }
@@ -173,7 +194,7 @@ async function refresh(bot) {
               timestamp: new Date()
             };
 
-          bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+         if (perms.get(channel)["40l"])  bot.channels.cache.get(val.channel).send({ embeds: [embed] });
           val["40l"] = new40l;
         }
       }
@@ -261,7 +282,7 @@ async function refresh(bot) {
             timestamp: new Date()
           };
 
-        bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+        if (perms.get(channel).ranked) bot.channels.cache.get(val.channel).send({ embeds: [embed] });
         // console.log(match[i]._id);
         // bot.channels.cache.get(val.channel).send(match[i]._id);
       }
@@ -273,6 +294,25 @@ async function refresh(bot) {
   }
   // monitor.forEach(async function (val, id) {
   // });
+  save();
+}
+
+function hasAdmin(msg) {
+  if (msg.member.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS)) return true;
+  return false;
+}
+
+function checkPerms(channel) {
+  if (perms.has(channel)) {
+    return;
+  }
+  var temp = {
+    blitz: true,
+    ranked: true
+  };
+  temp["40l"] = true;
+  perms.set(channel, temp);
+  // console.log(perms);
   save();
 }
 
@@ -323,6 +363,46 @@ module.exports = {
       break;
       case 'refresh':
         refresh(bot);
+      break;
+      case 'toggle':
+        if (!hasAdmin(msg)) {
+          msg.channel.send("no");
+          return;
+        }
+        var channel = msg.channel.id;
+        checkPerms(channel);
+        var cur = perms.get(channel);
+        switch (args[2]) {
+          case 'blitz':
+            if (cur.blitz == true) {
+              cur.blitz = false;
+              msg.channel.send("disabled blitz");
+            } else {
+              cur.blitz = true;
+              msg.channel.send("enabled blitz");
+            }
+          break;
+          case '40l':
+            if (cur["40l"] == true) {
+              cur["40l"] = false;
+              msg.channel.send("disabled 40l");
+            } else {
+              cur["40l"] = true;
+              msg.channel.send("enabled 40l");
+            }
+          break;
+          case 'ranked':
+            if (cur.ranked == true) {
+              cur.ranked = false;
+              msg.channel.send("disabled ranked");
+            } else {
+              cur.ranked = true;
+              msg.channel.send("enabled ranked");
+            }
+          break;
+        }
+        perms.set(channel, cur);
+        save();
       break;
     }
   },
