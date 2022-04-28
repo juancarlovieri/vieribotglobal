@@ -92,9 +92,9 @@ async function refresh(bot) {
       }
       if (val.blitz == undefined) {
         if (record.blitz.record == null) val.blitz = null;
-        else val.blitz = record.blitz.record.endcontext.score;
+        else val.blitz = Math.round(record.blitz.record.endcontext.score);
         if (record["40l"].record == null) val["40l"] = null;
-        else val["40l"] = record["40l"].record.endcontext.score;
+        else val["40l"] = Math.round(record["40l"].record.endcontext.finalTime);
         curm.set(id, val);
         continue;
       }
@@ -414,6 +414,32 @@ module.exports = {
           ans += cur[1].username + '\n';
         }
         msg.channel.send(ans);
+      break;
+      case 'remove':
+        if (!hasAdmin(msg)) {
+          msg.channel.send("no");
+          return;
+        }
+        if (args.length != 3) {
+          msg.channel.send("wot");
+          return;
+        }
+        var user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        if (user.success == false) {
+          msg.channel.send("who is dat");
+          return; 
+        }
+        var channel = msg.channel.id;
+        var id = user.data.user._id;
+        if (monitor.has(channel) == false || monitor.get(channel).has(id) == false) {
+          msg.channel.send("nope, I wasn't monitoring him");
+          return;
+        }
+        var temp = monitor.get(channel);
+        temp.delete(id);
+        monitor.set(channel, temp);
+        msg.channel.send("removed");
+        save();
       break;
     }
   },
