@@ -402,6 +402,19 @@ module.exports = {
         perms.set(channel, cur);
         save();
       break;
+      case 'list':
+        var channel = msg.channel.id;
+        if (monitor.has(channel) == false || monitor.get(channel).length == 0) {
+          msg.channel.send("nope, no one");
+          return;
+        }
+        var arr = monitor.get(channel);
+        var ans = "**List of monitored people**:\n";
+        for (var cur of arr) {
+          ans += cur[1].username + '\n';
+        }
+        msg.channel.send(ans);
+      break;
     }
   },
   startRefresh: function(bot) {
