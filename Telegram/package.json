@@ -4,19 +4,18 @@
   "description": "",
   "main": "bot.js",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.27.2",
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
-    "lockfile": "^1.0.4",
     "discord.js": "^12.2.0",
     "express": "^4.17.1",
+    "lockfile": "^1.0.4",
     "node-telegram-bot-api": "^0.50.0",
     "plotly": "^1.0.6",
     "sha256": "^0.2.0",
     "sync-request": "^6.1.0",
     "wolfram-alpha-api": "https://products.wolframalpha.com/api/libraries/javascript/wolfram-alpha-api-1.0.0-rc.1.tgz"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node bot.js"
