@@ -8,6 +8,7 @@ const fs = require('fs')
 const { MessageEmbed } = require('discord.js');
 var request = require('sync-request');
 const prettyMilliseconds = require('pretty-ms');
+var ownerId = "455184547840262144";
 
 
 var monitor = new Map();
@@ -353,6 +354,11 @@ function hasAdmin(msg) {
   return false;
 }
 
+function isOwner(msg) {
+  if (msg.author.id == ownerId) return true;
+  return false;
+}
+
 function checkPerms(channel) {
   if (perms.has(channel)) {
     return;
@@ -495,7 +501,7 @@ module.exports = {
         save();
       break;
       case 'forceRefresh':
-        if (!hasAdmin(msg)) {
+        if (!isOwner(msg)) {
           msg.channel.send("no");
           return;
         }
