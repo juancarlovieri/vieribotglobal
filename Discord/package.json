@@ -49,5 +49,8 @@
     "start": "node bot.js"
   },
   "author": "Juan Carlo Vieri",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.14.0"
+  }
 }
