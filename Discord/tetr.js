@@ -99,8 +99,8 @@ async function refresh(bot) {
         continue;
       }
       if (record.blitz.record != null) {
-        var newblitz = record.blitz.record.endcontext.score;
-        if (newblitz > val.blitz) {
+        var newblitz = Math.round(record.blitz.record.endcontext.score);
+        if (val.blitz == null || newblitz > val.blitz) {
           var cur = record.blitz.record;
           var dat = cur.endcontext;
           var rank = ">#1000";
@@ -149,8 +149,8 @@ async function refresh(bot) {
         }
       }
       if (record["40l"].record != null) {
-        var new40l = record["40l"].record.endcontext.finalTime;
-        if (new40l < val["40l"]) {
+        var new40l = Math.round(record["40l"].record.endcontext.finalTime);
+        if (val["40l"] == null || new40l < val["40l"]) {
           var cur = record["40l"].record;
           var dat = cur.endcontext;
           var rank = ">#1000";
@@ -198,9 +198,7 @@ async function refresh(bot) {
           val["40l"] = new40l;
         }
       }
-      if (val != curm.get(id)) {
-        curm.set(id, val);
-      }
+      curm.set(id, val);
     }
     monitor.set(channel, curm);
   }
