@@ -434,8 +434,8 @@ async function blitzLb(bot, msg, country) {
   var str = "```\n";
   for (var i = 0; i < ans.length; ++i) {
     var spaces = " ";
-    if ((i + 1).toFixed().length == 2) spaces += " ";
-    if ((i + 1).toFixed().length == 1) spaces += "  ";
+    // if ((i + 1).toFixed().length == 2) spaces += " ";
+    if ((i + 1).toFixed().length == 1) spaces += " ";
 
     var spaces2 = " ";
     for (var j = 0; j < maxScoreChar - ans[i].endcontext.score.toFixed().length; ++j) spaces2 += " ";
