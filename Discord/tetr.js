@@ -83,8 +83,10 @@ async function refresh(bot) {
     curm = curm[1];
     for (var temp of curm) {
       var val = temp[1], id = temp[0];
-      var record = null;
+      var record = null, username = null;
       try {
+        username = await async_request("https://ch.tetr.io/api/users/"+ id);
+        username = username.data.user.username
         record = await async_request("https://ch.tetr.io/api/users/"+ id + "/records");
         record = record.data.records;
       } catch (e) {
@@ -199,6 +201,7 @@ async function refresh(bot) {
           val["40l"] = new40l;
         }
       }
+      val.username = username;
       curm.set(id, val);
     }
     monitor.set(channel, curm);
