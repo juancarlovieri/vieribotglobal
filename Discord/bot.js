@@ -26,7 +26,7 @@ const si = require('systeminformation');
 const mc = require('minecraft-server-util');
 const predict = require('./tlx/predict.js');
 const gamble = require('./gamble.js');
-const music = require('./music.js');
+// const music = require('./music.js');
 const tetr = require('./tetr.js');
 
 
@@ -283,7 +283,7 @@ function command(args, msg){
       bill.cmd(bot, msg);
     break;
     case '^music':
-      music.req(bot, msg);
+      // music.req(bot, msg);
     break;
     case '^spam':
       spammer.cmd(bot, msg, args);
@@ -456,7 +456,7 @@ bot.on("message", msg => {
   var args = msg.content.split(" ");
   if(!maint){
     lagrange.isAns(bot, msg);
-    music.check(bot, msg);
+    // music.check(bot, msg);
     bill.isBill(bot, msg);
   }
   if(args[0][0] == '^'){
