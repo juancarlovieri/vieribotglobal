@@ -398,7 +398,7 @@ function checkPerms(channel) {
 }
 
 
-const cacheTime = 43200000;
+const cacheTime = 86400000;
 const maxScoreChar = 8;
 
 async function blitzLb(bot, msg, country) {
@@ -428,6 +428,7 @@ async function blitzLb(bot, msg, country) {
   records = records.data.records;
   var ans = [];
   for (var i = 0; i < records.length; ++i) {
+    if (ans.length >= 50) break;
     if (arr.includes(records[i].user._id)) ans.push(records[i]);
   }
   var str = "```\n";
@@ -479,13 +480,14 @@ async function fortyLinesLb(bot, msg, country) {
   records = records.data.records;
   var ans = [];
   for (var i = 0; i < records.length; ++i) {
+    if (ans.length >= 50) break;
     if (arr.includes(records[i].user._id)) ans.push(records[i]);
   }
   var str = "```\n";
   for (var i = 0; i < ans.length; ++i) {
     var spaces = " ";
-    if ((i + 1).toFixed().length == 2) spaces += " ";
-    if ((i + 1).toFixed().length == 1) spaces += "  ";
+    // if ((i + 1).toFixed().length == 2) spaces += " ";
+    if ((i + 1).toFixed().length == 1) spaces += " ";
 
     var spaces2 = " ";
     for (var j = 0; j < maxScoreChar - (ans[i].endcontext.finalTime / 1000).toFixed(3).length; ++j) spaces2 += " ";
