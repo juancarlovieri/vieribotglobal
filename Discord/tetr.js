@@ -166,7 +166,10 @@ async function refresh(bot) {
               { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
               { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
             ],
-            timestamp: new Date()
+            timestamp: new Date(),
+            footer: {
+              text: "By Vieri Corp.™ All Rights Reserved"
+            }
           };
           if (perms.get(channel).blitz) bot.channels.cache.get(val.channel).send({ embeds: [embed] });
           val.blitz = newblitz;
@@ -215,7 +218,10 @@ async function refresh(bot) {
                 { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
                 { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
               ],
-              timestamp: new Date()
+              timestamp: new Date(),
+              footer: {
+                text: "By Vieri Corp.™ All Rights Reserved"
+              }
             };
 
          if (perms.get(channel)["40l"])  bot.channels.cache.get(val.channel).send({ embeds: [embed] });
@@ -302,7 +308,10 @@ async function refresh(bot) {
               { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
               { name: 'VS', value: cur.endcontext[1].points.extra.vs.toFixed(2), inline: true },
             ],
-            timestamp: new Date()
+            timestamp: new Date(),
+            footer: {
+              text: "By Vieri Corp.™ All Rights Reserved"
+            }
           };
 
         if (perms.get(channel).ranked) bot.channels.cache.get(val.channel).send({ embeds: [embed] });
@@ -447,7 +456,10 @@ async function blitzLb(bot, msg, country) {
     color: "#ebc334",
     title: "Blitz Leaderboard for " + country,
     description: str,
-    timestamp: new Date()
+    timestamp: new Date(),
+    footer: {
+      text: "By Vieri Corp.™ All Rights Reserved"
+    }
   };
   // console.log(embed);
   msg.channel.send({ embeds: [embed] });
@@ -499,7 +511,10 @@ async function fortyLinesLb(bot, msg, country) {
     color: "#ebc334",
     title: "40l Leaderboard for " + country,
     description: str,
-    timestamp: new Date()
+    timestamp: new Date(),
+    footer: {
+      text: "By Vieri Corp.™ All Rights Reserved"
+    }
   };
   // console.log(embed);
   msg.channel.send({ embeds: [embed] });
@@ -510,6 +525,33 @@ module.exports = {
     var args = msg.content.split(" ");
     if (args.length == 1) return;
     switch (args[1]) {
+      case 'help':
+          var vieri = new Discord.MessageAttachment('../viericorp.png');
+          var str = '**^tetr monitor <user>** - spy on <user>, you will get notified when they play ranked or achieve new pbs\n';
+          str    += '**^tetr refresh** - refreshes the spied users instantly\n';
+          str    += '**^tetr list** - lists the users being monitored\n';
+          str    += '**^tetr lb <gameMode> <country>** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
+          // console.log(str);
+          var strAdmin = '**^tetr remove <user>** - remove <user> from monitor list\n'
+          strAdmin    += '**^tetr toggle <gameMode>** - disables/enables notification for <gameMode>, gameMode can be blitz, 40l, or ranked\n';
+          msg.channel.send({files: [vieri], embeds: [{
+              color: 16764006,
+              author: {
+                name: 'Tetris',
+                icon_url: "attachment://viericorp.png"
+              },
+              title: 'help center',
+              description: str,
+              fields: [
+                { name: 'For admins only', value: strAdmin},
+              ],
+              timestamp: new Date(),
+              footer: {
+                text: "By Vieri Corp.™ All Rights Reserved"
+              }
+            }]
+          });
+      break;
       case 'monitor':
         if (args.length != 3) {
           msg.channel.send("wot");

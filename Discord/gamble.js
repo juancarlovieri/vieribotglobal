@@ -301,64 +301,76 @@ function check(bot, msg, args){
 
 function help(bot, msg){
   var vieri = new Discord.MessageAttachment('../viericorp.png');
+  var str = '**group name** - the category you are voting for (e.g. duel-5)\n';
+  str    += '**candidate name** - the candidate you are voting for (e.g. rama)\n';
+  str    += '**balance** - your balance\n';
+  str    += '**reserved balance** - the amount you have gambled and the winner is not yet announced\n';
+  str    += '**^gamble <group-name> <candidate-name> <amount>** - gamble in <group-name> for <candidate-name> at <amount>\n';
+  str    += '**^gamble <group-name> reset** - reset your gambles for <group-name>\n';
+  str    += '**^gamble bal** - show your balance\n';
+  str    += '**^gamble reserved** - show your reserved amount\n';
+  str    += '**^gamble <category-name>** - list all the people gambling for <category-name>\n';
+  str    += '**^gamble <category-name> cands** - show candidates for <category-name>\n';
+  str    += '**^gamble list** - list all categories\n';
   msg.channel.send({files: [vieri], embeds: [{
-    color: 16764006,
-    author: {
-      name: 'Tests',
-      icon_url: "attachment://viericorp.png"
-    },
-    title: 'help center',
-    fields: [
-      {
-        name: 'group name',
-        value: 'the category you are voting for (e.g. duel-5)'
+      color: 16764006,
+      author: {
+        name: 'Gamble',
+        icon_url: "attachment://viericorp.png"
       },
-      {
-        name: 'candidate name',
-        value: 'the candidate you are voting for (e.g. rama)'
-      },
-      {
-        name: 'balance',
-        value: 'your balance'
-      },
-      {
-        name: 'reserved balance',
-        value: 'the amount you have gambled and the winner is not yet announced'
-      },
-      {
-        name: '^gamble <group-name> <candidate-name> <amount>',
-        value: 'gamble in <group-name> for <candidate-name> at <amount>'
-      },
-      {
-        name: '^gamble <group-name> reset',
-        value: 'reset your gambles for <group-name>'
-      },
-      {
-        name: '^gamble bal',
-        value: 'show your balance'
-      },
-      {
-        name: '^gamble reserved',
-        value: 'show your reserved amount'
-      },
-      {
-        name: '^gamble <category-name>',
-        value: 'list all the people gambling for <category-name>'
-      },
-      {
-        name: '^gamble <category-name> cands',
-        value: 'show candidates for <category-name>'
-      },
-      {
-        name: '^gamble list',
-        value: 'list all categories'
+      title: 'help center',
+      description: str,
+      // fields: [
+      //   {
+      //     name: 'group name',
+      //     value: 'the category you are voting for (e.g. duel-5)'
+      //   },
+      //   {
+      //     name: 'candidate name',
+      //     value: 'the candidate you are voting for (e.g. rama)'
+      //   },
+      //   {
+      //     name: 'balance',
+      //     value: 'your balance'
+      //   },
+      //   {
+      //     name: 'reserved balance',
+      //     value: 'the amount you have gambled and the winner is not yet announced'
+      //   },
+      //   {
+      //     name: '^gamble <group-name> <candidate-name> <amount>',
+      //     value: 'gamble in <group-name> for <candidate-name> at <amount>'
+      //   },
+      //   {
+      //     name: '^gamble <group-name> reset',
+      //     value: 'reset your gambles for <group-name>'
+      //   },
+      //   {
+      //     name: '^gamble bal',
+      //     value: 'show your balance'
+      //   },
+      //   {
+      //     name: '^gamble reserved',
+      //     value: 'show your reserved amount'
+      //   },
+      //   {
+      //     name: '^gamble <category-name>',
+      //     value: 'list all the people gambling for <category-name>'
+      //   },
+      //   {
+      //     name: '^gamble <category-name> cands',
+      //     value: 'show candidates for <category-name>'
+      //   },
+      //   {
+      //     name: '^gamble list',
+      //     value: 'list all categories'
+      //   }
+      // ],
+      timestamp: new Date(),
+      footer: {
+        text: "By Vieri Corp.™ All Rights Reserved"
       }
-    ],
-    timestamp: new Date(),
-    footer: {
-      text: "By Vieri Corp.™ All Rights Reserved"
-    }
-  }]
+    }]
   });
 }
 

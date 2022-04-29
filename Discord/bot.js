@@ -1,4 +1,5 @@
 const {Client, Intents} = require("discord.js");
+const Discord = require('discord.js');
 var bot = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 var auth = require('./auth.json');
 const ytdl = require("ytdl-core");
@@ -45,6 +46,31 @@ var maint = 0;
 function command(args, msg){
   console.log(args[0]);
   switch(args[0]){
+    case '^help':
+      var vieri = new Discord.MessageAttachment('../viericorp.png');
+      var str = '**^tetr help** - help page for tetris section\n';
+      str    += '**^gamble help** - help page for gamble section\n';
+      str    += '**^coinflip** - do a coinflip, obviously\n';
+      str    += '**^uptime** - see the bot\'s uptime\n';
+      str    += '**^freemems** - see the bot\'s resource usage\n';
+      str    += '**^bigmoji <emoji>** - converts emoji to a big image (only works on server emoji)\n';
+      str    += '**^isup <website>** - check if <website> is online\n';
+      // console.log(str);
+      msg.channel.send({files: [vieri], embeds: [{
+          color: 16764006,
+          author: {
+            name: 'Vieri Bot',
+            icon_url: "attachment://viericorp.png"
+          },
+          title: 'help center',
+          description: str,
+          timestamp: new Date(),
+          footer: {
+            text: "By Vieri Corp.™ All Rights Reserved"
+          }
+        }]
+      });
+    break;
     case '^gamble':
       gamble.command(bot, msg, args);
     break;
