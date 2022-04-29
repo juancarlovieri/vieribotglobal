@@ -2,8 +2,9 @@
 const Discord =  require('discord.js');
 const { Permissions } = require('discord.js');
 var bot;
-const pathMonitor = 'monitor.json'
-const pathPerms = 'perms.json'
+const pathMonitor = 'monitor.json';
+const pathPerms = 'perms.json';
+var pathPlayers = "players.json";
 const fs = require('fs')
 const { MessageEmbed } = require('discord.js');
 var request = require('sync-request');
@@ -13,6 +14,7 @@ var ownerId = "455184547840262144";
 
 var monitor = new Map();
 var perms = new Map();
+var players = new Map();
 
 const https = require("https");
 
@@ -52,6 +54,15 @@ try {
   console.error(err);
 }
 
+try {
+  if (fs.existsSync(pathPlayers)) {
+    var obj = JSON.parse(fs.readFileSync(pathPlayers, "utf8"));
+    players = new Map(Object.entries(obj));
+  }
+} catch(err) {
+  console.error(err);
+}
+
 function save(){
   var temp = new Map();
   for (var cur of monitor) {
@@ -69,6 +80,16 @@ function save(){
   jsonObj = Object.fromEntries(perms);
   jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(pathPerms, jsonContent, "utf8", function(err) {
+    if (err) {
+      console.log("An errr occured while writing JSON jsonObj to File.");
+      return console.log(err);
+    }
+  });
+
+
+  jsonObj = Object.fromEntries(players);
+  jsonContent = JSON.stringify(jsonObj);
+  fs.writeFileSync(pathPlayers, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -376,9 +397,116 @@ function checkPerms(channel) {
   save();
 }
 
+
+const cacheTime = 43200000;
+const maxScoreChar = 8;
+
+async function blitzLb(bot, msg, country) {
+  // console.log(country);
+  var cur = parseInt(Date.now());
+  country = country.toUpperCase();
+  if (players.has(country) == false || players.get(country).time + cacheTime < cur) {
+    var temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
+    temp = temp.data.users;
+    var cnt = 1;
+    var num = 0;
+    var arr = [];
+    while(true) {
+      num += temp.length;
+      if (temp.length == 0) break;
+      for (var i = 0; i < temp.length; ++i) arr.push(temp[i]._id);
+      temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=" + temp[temp.length - 1].xp);
+      temp = temp.data.users;
+      ++cnt;
+    }
+    await players.set(country, {time: cur, arr: arr});
+    save();
+  }
+
+  var arr = players.get(country).arr;
+  var records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+  records = records.data.records;
+  var ans = [];
+  for (var i = 0; i < records.length; ++i) {
+    if (arr.includes(records[i].user._id)) ans.push(records[i]);
+  }
+  var str = "```\n";
+  for (var i = 0; i < ans.length; ++i) {
+    var spaces = " ";
+    if ((i + 1).toFixed().length == 2) spaces += " ";
+    if ((i + 1).toFixed().length == 1) spaces += "  ";
+
+    var spaces2 = " ";
+    for (var j = 0; j < maxScoreChar - ans[i].endcontext.score.toFixed().length; ++j) spaces2 += " ";
+    str += (i + 1).toFixed() + "." + spaces + ans[i].endcontext.score.toFixed() + spaces2 + "| " + ans[i].user.username + '\n';
+  }
+  str += "```"
+  // console.log(str);
+  const embed = {
+    color: "#ebc334",
+    title: "Blitz Leaderboard for " + country,
+    description: str,
+    timestamp: new Date()
+  };
+  // console.log(embed);
+  msg.channel.send({ embeds: [embed] });
+}
+
+async function fortyLinesLb(bot, msg, country) {
+  // console.log(country);
+  var cur = parseInt(Date.now());
+  country = country.toUpperCase();
+  if (players.has(country) == false || players.get(country).time + cacheTime < cur) {
+    var temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
+    temp = temp.data.users;
+    var cnt = 1;
+    var num = 0;
+    var arr = [];
+    while(true) {
+      num += temp.length;
+      if (temp.length == 0) break;
+      for (var i = 0; i < temp.length; ++i) arr.push(temp[i]._id);
+      temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=" + temp[temp.length - 1].xp);
+      temp = temp.data.users;
+      ++cnt;
+    }
+    await players.set(country, {time: cur, arr: arr});
+    save();
+  }
+
+  var arr = players.get(country).arr;
+  var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+  records = records.data.records;
+  var ans = [];
+  for (var i = 0; i < records.length; ++i) {
+    if (arr.includes(records[i].user._id)) ans.push(records[i]);
+  }
+  var str = "```\n";
+  for (var i = 0; i < ans.length; ++i) {
+    var spaces = " ";
+    if ((i + 1).toFixed().length == 2) spaces += " ";
+    if ((i + 1).toFixed().length == 1) spaces += "  ";
+
+    var spaces2 = " ";
+    for (var j = 0; j < maxScoreChar - (ans[i].endcontext.finalTime / 1000).toFixed(3).length; ++j) spaces2 += " ";
+    str += (i + 1).toFixed() + "." + spaces + (ans[i].endcontext.finalTime / 1000).toFixed(3) + spaces2 + "| " + ans[i].user.username + '\n';
+  }
+  str += "```"
+  // console.log(str);
+  const embed = {
+    color: "#ebc334",
+    title: "40l Leaderboard for " + country,
+    description: str,
+    timestamp: new Date()
+  };
+  // console.log(embed);
+  msg.channel.send({ embeds: [embed] });
+}
+
 module.exports = {
   cmd: async function(bot, msg) {
     var args = msg.content.split(" ");
+    if (args.length == 1) return;
     switch (args[1]) {
       case 'monitor':
         if (args.length != 3) {
@@ -509,6 +637,19 @@ module.exports = {
           return;
         }
         forceRefresh();
+      break;
+      case 'lb':
+        if (args.length < 4) return;
+        var country = args[3];
+        if (country.length != 2) {
+          msg.channel.send("invalid country");
+          return;
+        }
+        if (args[2] == "blitz") {
+          blitzLb(bot, msg, country);
+        } else if (args[2] == "40l") {
+          fortyLinesLb(bot, msg, country);
+        }
       break;
     }
   },
