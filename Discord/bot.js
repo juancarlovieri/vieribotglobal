@@ -434,7 +434,7 @@ function setPresence() {
   bot.user.setPresence({
     status: 'dnd',
     activities: [{
-        name: `!help`,  //The message shown
+        name: `^help`,  //The message shown
         type: `WATCHING` //PLAYING: WATCHING: LISTENING: STREAMING:
     }]
   });
