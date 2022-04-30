@@ -5,11 +5,90 @@ var bot;
 const pathMonitor = 'monitor.json';
 const pathPerms = 'perms.json';
 var pathPlayers = "players.json";
-const fs = require('fs')
+const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 var request = require('sync-request');
 const prettyMilliseconds = require('pretty-ms');
 var ownerId = "455184547840262144";
+const MongoClient = require("mongodb").MongoClient;
+const token = require('./auth.json');
+
+const client = new MongoClient(token.mongodb, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+var database, col;
+
+async function init() {
+  await client.connect();
+  database = client.db('vieribot');
+  col = database.collection('tetr');
+  // try {
+  //   // var obj = JSON.parse(fs.readFileSync(pathMonitor, "utf8"));
+  //   // console.log(await col.findOne({title: 'monitor'}).val);
+  //   var temp = await col.findOne({title: "monitor"});
+  //   monitor = new Map(Object.entries(JSON.parse(temp.val)));
+  //   var temp = new Map();
+  //   for (var cur of monitor) {
+  //     temp.set(cur[0], new Map(Object.entries(cur[1])));
+  //   }
+  //   monitor = temp;
+  // } catch(err) {
+  //   console.error(err);
+  // }
+
+  // try {
+  //   var temp = await col.findOne({title: "perms"});
+  //   var obj = JSON.parse(temp.val);
+  //   perms = new Map(Object.entries(obj));
+  //     // console.log(perms);
+  // } catch(err) {
+  //   console.error(err);
+  // }
+
+  // try {
+  //   var obj = JSON.parse(fs.readFileSync(pathPlayers, "utf8"));
+  //   players = new Map(Object.entries(obj));
+  // } catch(err) {
+  //   console.error(err);
+  // }
+  
+  try {
+    if (fs.existsSync(pathMonitor)) {
+      var obj = JSON.parse(fs.readFileSync(pathMonitor, "utf8"));
+      monitor = new Map(Object.entries(obj));
+      var temp = new Map();
+      for (var cur of monitor) {
+        temp.set(cur[0], new Map(Object.entries(cur[1])));
+      }
+      monitor = temp;
+    }
+  } catch(err) {
+    console.error(err);
+  }
+
+  try {
+    if (fs.existsSync(pathPerms)) {
+      var obj = JSON.parse(fs.readFileSync(pathPerms, "utf8"));
+      perms = new Map(Object.entries(obj));
+    }
+  } catch(err) {
+    console.error(err);
+  }
+
+  try {
+    if (fs.existsSync(pathPlayers)) {
+      var obj = JSON.parse(fs.readFileSync(pathPlayers, "utf8"));
+      players = new Map(Object.entries(obj));
+    }
+  } catch(err) {
+    console.error(err);
+  }
+
+}
+
+init();
 
 
 var monitor = new Map();
@@ -31,39 +110,8 @@ function async_request(option) {
  })
 }
 
-try {
-  if (fs.existsSync(pathMonitor)) {
-    var obj = JSON.parse(fs.readFileSync(pathMonitor, "utf8"));
-    monitor = new Map(Object.entries(obj));
-    var temp = new Map();
-    for (var cur of monitor) {
-      temp.set(cur[0], new Map(Object.entries(cur[1])));
-    }
-    monitor = temp;
-  }
-} catch(err) {
-  console.error(err);
-}
-
-try {
-  if (fs.existsSync(pathPerms)) {
-    var obj = JSON.parse(fs.readFileSync(pathPerms, "utf8"));
-    perms = new Map(Object.entries(obj));
-  }
-} catch(err) {
-  console.error(err);
-}
-
-try {
-  if (fs.existsSync(pathPlayers)) {
-    var obj = JSON.parse(fs.readFileSync(pathPlayers, "utf8"));
-    players = new Map(Object.entries(obj));
-  }
-} catch(err) {
-  console.error(err);
-}
-
-function save(){
+async function save(){
+  
   var temp = new Map();
   for (var cur of monitor) {
     temp.set(cur[0], Object.fromEntries(cur[1]));
@@ -77,6 +125,12 @@ function save(){
     }
   });
 
+
+  await col.updateOne({title: "monitor"}, {$set: {title: "monitor", val: jsonContent}}, (err, res) => {
+    if (err) {console.error(err); return;}
+  });
+
+
   jsonObj = Object.fromEntries(perms);
   jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(pathPerms, jsonContent, "utf8", function(err) {
@@ -87,6 +141,10 @@ function save(){
   });
 
 
+  await col.updateOne({title: "perms"}, {$set: {title: "perms", val: jsonContent}}, (err, res) => {
+    if (err) {console.error(err); return;}
+  });
+
   jsonObj = Object.fromEntries(players);
   jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(pathPlayers, jsonContent, "utf8", function(err) {
@@ -95,6 +153,7 @@ function save(){
       return console.log(err);
     }
   });
+  save();
 }
 
 async function refresh(bot) {

@@ -3,34 +3,88 @@ const Discord = require('discord.js');
 var groups = new Map();
 var balance = new Map();
 var locks = new Map();
+const MongoClient = require("mongodb").MongoClient;
+const token = require('./auth.json');
 
-if(fs.existsSync('gambles.json')){
-  var obj = JSON.parse(fs.readFileSync("gambles.json", "utf8"));
-  obj = new Map(Object.entries(obj));
-  obj.forEach(function lol(value, key){
-    var sub = new Map();
-    for(var i = 0; i < value.length; ++i){
-      var temp = new Map();
-      for(var j = 0; j < value[i][1].length; j++){
-        temp.set(value[i][1][j][0], value[i][1][j][1]);
+const client = new MongoClient(token.mongodb, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+var database, col;
+
+async function init() {
+  await client.connect();
+  database = client.db('vieribot');
+  col = database.collection('gamble');
+
+  // try {
+  //   var temp = await col.findOne({title: "gambles"});
+  //   var obj = JSON.parse(temp.val);
+  //   obj = new Map(Object.entries(obj));
+  //   obj.forEach(function lol(value, key){
+  //     var sub = new Map();
+  //     for(var i = 0; i < value.length; ++i){
+  //       var temp = new Map();
+  //       for(var j = 0; j < value[i][1].length; j++){
+  //         temp.set(value[i][1][j][0], value[i][1][j][1]);
+  //       }
+  //       sub.set(value[i][0], temp);
+  //     }
+  //     groups.set(key, sub);
+  //   });
+  // } catch (e) {
+  //   console.error(e);
+  // }
+
+  // try {
+  //   var temp = await col.findOne({title: "balance"});
+  //   var obj = JSON.parse(temp.val);
+  //   balance = new Map(Object.entries(obj));
+  // } catch(e) {
+  //   console.error(e);
+  // }
+
+  // try {
+  //   var temp = await col.findOne({title: "gambleLocks"});
+  //   var obj = JSON.parse(temp.val);
+  //   locks = new Map(Object.entries(obj));
+  // } catch (e) {
+  //   console.error(e);
+  // }
+
+  if(fs.existsSync('gambles.json')){
+    var obj = JSON.parse(fs.readFileSync("gambles.json", "utf8"));
+    obj = new Map(Object.entries(obj));
+    obj.forEach(function lol(value, key){
+      var sub = new Map();
+      for(var i = 0; i < value.length; ++i){
+        var temp = new Map();
+        for(var j = 0; j < value[i][1].length; j++){
+          temp.set(value[i][1][j][0], value[i][1][j][1]);
+        }
+        sub.set(value[i][0], temp);
       }
-      sub.set(value[i][0], temp);
-    }
-    groups.set(key, sub);
-  });
+      groups.set(key, sub);
+    });
+  }
+
+  if(fs.existsSync('balance.json')){
+    var obj = JSON.parse(fs.readFileSync("balance.json", "utf8"));
+    balance = new Map(Object.entries(obj));
+  }
+
+  if(fs.existsSync('gambleLocks.json')){
+    var obj = JSON.parse(fs.readFileSync("gambleLocks.json", "utf8"));
+    locks = new Map(Object.entries(obj));
+  }
+
+  save();
 }
 
-if(fs.existsSync('balance.json')){
-  var obj = JSON.parse(fs.readFileSync("balance.json", "utf8"));
-  balance = new Map(Object.entries(obj));
-}
+init();
 
-if(fs.existsSync('gambleLocks.json')){
-  var obj = JSON.parse(fs.readFileSync("gambleLocks.json", "utf8"));
-  locks = new Map(Object.entries(obj));
-}
-
-function save(){
+async function save(){
   var temp = new Map();
   groups.forEach(function lol(value, key){
     var temp2 = [];
@@ -52,6 +106,12 @@ function save(){
       return console.log(err);
     }
   });
+
+  await col.updateOne({title: "gambles"}, {$set: {title: "gambles", val: jsonContent}}, (err, res) => {
+    if (err) {console.error(err); return;}
+  });
+
+
   jsonObj = Object.fromEntries(balance);
   jsonContent = JSON.stringify(jsonObj);
   // console.log(jsonContent);
@@ -61,6 +121,12 @@ function save(){
       return console.log(err);
     }
   });
+
+  await col.updateOne({title: "balance"}, {$set: {title: "balance", val: jsonContent}}, (err, res) => {
+    if (err) {console.error(err); return;}
+  });
+
+
   jsonObj = Object.fromEntries(locks);
   jsonContent = JSON.stringify(jsonObj);
   // console.log(jsonContent);
@@ -70,7 +136,13 @@ function save(){
       return console.log(err);
     }
   });
+
+  await col.updateOne({title: "gambleLocks"}, {$set: {title: "gambleLocks", val: jsonContent}}, (err, res) => {
+    if (err) {console.error(err); return;}
+  });
+
 }
+
 
 function newGroup(bot, msg, args){
   if(!admin(msg))return;
