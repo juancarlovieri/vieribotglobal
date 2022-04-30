@@ -413,10 +413,8 @@ function checkPerms(channel) {
 const cacheTime = 86400000;
 const maxScoreChar = 8;
 
-async function blitzLb(bot, msg, country) {
-  // console.log(country);
+async function updatePlayers(country) {
   var cur = parseInt(Date.now());
-  country = country.toUpperCase();
   if (players.has(country) == false || players.get(country).time + cacheTime < cur) {
     var temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
     temp = temp.data.users;
@@ -434,7 +432,12 @@ async function blitzLb(bot, msg, country) {
     await players.set(country, {time: cur, arr: arr});
     save();
   }
+}
 
+async function blitzLb(bot, msg, country) {
+  // console.log(country);
+  country = country.toUpperCase();
+  await updatePlayers(country);
   var arr = players.get(country).arr;
   var records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
   records = records.data.records;
@@ -470,26 +473,8 @@ async function blitzLb(bot, msg, country) {
 
 async function fortyLinesLb(bot, msg, country) {
   // console.log(country);
-  var cur = parseInt(Date.now());
   country = country.toUpperCase();
-  if (players.has(country) == false || players.get(country).time + cacheTime < cur) {
-    var temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
-    temp = temp.data.users;
-    var cnt = 1;
-    var num = 0;
-    var arr = [];
-    while(true) {
-      num += temp.length;
-      if (temp.length == 0) break;
-      for (var i = 0; i < temp.length; ++i) arr.push(temp[i]._id);
-      temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=" + temp[temp.length - 1].xp);
-      temp = temp.data.users;
-      ++cnt;
-    }
-    await players.set(country, {time: cur, arr: arr});
-    save();
-  }
-
+  await updatePlayers(country);
   var arr = players.get(country).arr;
   var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
   records = records.data.records;
@@ -697,6 +682,20 @@ module.exports = {
         } else if (args[2] == "40l") {
           fortyLinesLb(bot, msg, country);
         }
+      break;
+      case 'players':
+        if (args.length != 3) {
+          msg.channel.send("wot");
+          return;
+        }
+        var country = args[2];
+        if (country.length != 2) {
+          msg.channel.send("invalid country");
+          return;
+        }
+        await updatePlayers(country);
+        country = country.toUpperCase();
+        msg.channel.send(await players.get(country).arr.length.toFixed());
       break;
     }
   },
