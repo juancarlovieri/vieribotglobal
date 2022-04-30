@@ -165,6 +165,7 @@ async function refresh(bot) {
               { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
               { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
               { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
+              { name: '\u200B', value: '[replay](https://tetr.io/#r:' + cur.replayid + ')'},
             ],
             timestamp: new Date(),
             footer: {
@@ -217,6 +218,7 @@ async function refresh(bot) {
                 { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
                 { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
                 { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
+              { name: '\u200B', value: '[replay](https://tetr.io/#r:' + cur.replayid + ')'},
               ],
               timestamp: new Date(),
               footer: {
@@ -307,6 +309,7 @@ async function refresh(bot) {
               { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
               { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
               { name: 'VS', value: cur.endcontext[1].points.extra.vs.toFixed(2), inline: true },
+              { name: '\u200B', value: '[replay](https://tetr.io/#r:' + cur.replayid + ')'},
             ],
             timestamp: new Date(),
             footer: {
