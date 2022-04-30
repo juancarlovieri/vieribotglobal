@@ -519,6 +519,7 @@ module.exports = {
           str    += '**^tetr refresh** - refreshes the spied users instantly\n';
           str    += '**^tetr list** - lists the users being monitored\n';
           str    += '**^tetr lb <gameMode> <country>** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
+          str    += '**^tetr players <country>** - shows the number of players for <country>\n';
           // console.log(str);
           var strAdmin = '**^tetr remove <user>** - remove <user> from monitor list\n'
           strAdmin    += '**^tetr toggle <gameMode>** - disables/enables notification for <gameMode>, gameMode can be blitz, 40l, or ranked\n';
