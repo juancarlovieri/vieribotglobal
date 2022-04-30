@@ -250,17 +250,19 @@ function command(args, msg){
       test.message(bot, msg);
     break;
     case '^set':
-      if(msg.author.id != '455184547840262144'){
-        return;
-      }
-      status = args[1];
-      bot.user.setPresence({
-        status: status,
-        game: {
-            name: "Using !help",  //The message shown
-            type: "STREAMING" //PLAYING: WATCHING: LISTENING: STREAMING:
-        }
-      });
+      // console.log("here");
+      // if(msg.author.id != '455184547840262144'){
+      //   return;
+      // }
+      // var status = args[1];
+      // console.log("here");
+      // bot.user.setPresence({
+      //   activities: [{
+      //       name: "Using !help",  //The message shown
+      //       type: "STREAMING" //PLAYING: WATCHING: LISTENING: STREAMING:
+      //   }]
+      // });
+      setPresence();
     break;
     case '^freemems':
       var os = require('os-utils');
@@ -428,6 +430,16 @@ function play5(){
   });
 }
 
+function setPresence() {
+  bot.user.setPresence({
+    status: 'dnd',
+    activities: [{
+        name: `!help`,  //The message shown
+        type: `WATCHING` //PLAYING: WATCHING: LISTENING: STREAMING:
+    }]
+  });
+}
+
 bot.on("ready", msg =>{
   console.log('ready'); 
 //   play();
@@ -437,9 +449,8 @@ bot.on("ready", msg =>{
 //   play5();
   // bot.user.setStatus("idle", "lagrange");
   test.run(bot);
-  bot.user.setPresence({
-    status: 'dnd'
-  });
+  setPresence();
+  setInterval(setPresence, 3600000);
   launch.new(bot);
   tetr.startRefresh(bot);
 })
