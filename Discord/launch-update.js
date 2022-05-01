@@ -3,7 +3,7 @@ const Discord=  require('discord.js');
 var bot;
 const fs = require('fs')
 
-const path = 'published.json'
+const publishedPath = 'datas/published.json';
 
 
 var published = new Map();
@@ -35,8 +35,8 @@ function compare(a, b){
 }
 
 try {
-  if (fs.existsSync(path)) {
-    var obj = JSON.parse(fs.readFileSync("published.json", "utf8"));
+  if (fs.existsSync(publishedPath)) {
+    var obj = JSON.parse(fs.readFileSync(publishedPath, "utf8"));
     published = new Map(Object.entries(obj));
   }
 } catch(err) {
@@ -46,7 +46,7 @@ try {
 function save(){
   var jsonObj = Object.fromEntries(published);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("published.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(publishedPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);

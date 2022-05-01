@@ -1,16 +1,22 @@
 const Discord = require('discord.js');
 const fs = require("fs");
 var crypto = require('crypto');
-var obj = JSON.parse(fs.readFileSync("handles.json", "utf8"));
+const handlesPath = 'datas/handles.json';
+var obj = JSON.parse(fs.readFileSync(handlesPath, "utf8"));
 var map = new Map(Object.entries(obj));
 // obj = JSON.parse(fs.readFileSync("points.json", "utf8"));
 // var points = new Map(Object.entries(obj));
+
+const ongoingPath = 'datas/ongoing.json';
+const ongoingTeamPath = 'datas/ongoingTeam.json';
+const problemsPath = 'datas/problems.json';
+
 var teamChallenge = new Map();
-obj = JSON.parse(fs.readFileSync("problems.json", "utf8"));
+obj = JSON.parse(fs.readFileSync(problemsPath, "utf8"));
 var problem = new Map(Object.entries(obj));
-obj = JSON.parse(fs.readFileSync("ongoing.json", "utf8"));
+obj = JSON.parse(fs.readFileSync(ongoingPath, "utf8"));
 var ongoing = new Map(Object.entries(obj));
-obj = JSON.parse(fs.readFileSync("ongoingTeam.json", "utf8"));
+obj = JSON.parse(fs.readFileSync(ongoingTeamPath, "utf8"));
 var ongoingTeam = new Map(Object.entries(obj));
 // obj = JSON.parse(fs.readFileSync("rating.json", "utf8"));
 // var rating = new Map(Object.entries(obj));
@@ -45,7 +51,7 @@ function save(){
   var jsonObj = Object.fromEntries(map);
   console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("handles.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(handlesPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -54,7 +60,7 @@ function save(){
   jsonObj = Object.fromEntries(problem);
   console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("problems.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(problemsPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -64,7 +70,7 @@ function save(){
   jsonObj = Object.fromEntries(ongoing);
   console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("ongoing.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(ongoingPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -94,7 +100,7 @@ function save(){
   jsonObj = Object.fromEntries(ongoingTeam);
   console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("ongoingTeam.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(ongoingTeamPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);

@@ -6,6 +6,10 @@ var locks = new Map();
 const MongoClient = require("mongodb").MongoClient;
 const token = require('./auth.json');
 
+const gambleLocksPath = "datas/gambleLocks.json";
+const gamblesPath = "datas/gambles.json";
+const balancePath = "datas/balance.json";
+
 const client = new MongoClient(token.mongodb, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -18,7 +22,7 @@ async function init() {
   database = client.db(token.mongodb_db);
   col = database.collection('gamble');
 
-  
+
 
   // try {
   //   var temp = await col.findOne({title: "gambles"});
@@ -55,8 +59,8 @@ async function init() {
   //   console.error(e);
   // }
 
-  if(fs.existsSync('gambles.json')){
-    var obj = JSON.parse(fs.readFileSync("gambles.json", "utf8"));
+  if(fs.existsSync(gamblesPath)){
+    var obj = JSON.parse(fs.readFileSync(gamblesPath, "utf8"));
     obj = new Map(Object.entries(obj));
     obj.forEach(function lol(value, key){
       var sub = new Map();
@@ -71,13 +75,13 @@ async function init() {
     });
   }
 
-  if(fs.existsSync('balance.json')){
-    var obj = JSON.parse(fs.readFileSync("balance.json", "utf8"));
+  if(fs.existsSync(balancePath)){
+    var obj = JSON.parse(fs.readFileSync(balancePath, "utf8"));
     balance = new Map(Object.entries(obj));
   }
 
-  if(fs.existsSync('gambleLocks.json')){
-    var obj = JSON.parse(fs.readFileSync("gambleLocks.json", "utf8"));
+  if(fs.existsSync(gambleLocksPath)){
+    var obj = JSON.parse(fs.readFileSync(gambleLocksPath, "utf8"));
     locks = new Map(Object.entries(obj));
   }
 
@@ -102,7 +106,7 @@ async function save(){
   var jsonObj = Object.fromEntries(temp);
   var jsonContent = JSON.stringify(jsonObj);
   // console.log(jsonContent);
-  fs.writeFileSync("gambles.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(gamblesPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -117,7 +121,7 @@ async function save(){
   jsonObj = Object.fromEntries(balance);
   jsonContent = JSON.stringify(jsonObj);
   // console.log(jsonContent);
-  fs.writeFileSync("balance.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(balancePath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -132,7 +136,7 @@ async function save(){
   jsonObj = Object.fromEntries(locks);
   jsonContent = JSON.stringify(jsonObj);
   // console.log(jsonContent);
-  fs.writeFileSync("gambleLocks.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(gambleLocksPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);

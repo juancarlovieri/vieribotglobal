@@ -1,11 +1,12 @@
 const fs = require('fs');
-var obj = JSON.parse(fs.readFileSync("links.json", "utf8"));
+const linksPath = 'datas/links.json';
+var obj = JSON.parse(fs.readFileSync(linksPath, "utf8"));
 var links = new Map(Object.entries(obj));
 
 function save(){
   var jsonObj = Object.fromEntries(links);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("links.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(linksPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);

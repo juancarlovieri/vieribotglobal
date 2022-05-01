@@ -2,9 +2,9 @@
 const Discord =  require('discord.js');
 const { Permissions } = require('discord.js');
 var bot;
-const pathMonitor = 'monitor.json';
-const pathPerms = 'perms.json';
-var pathPlayers = "players.json";
+const pathMonitor = 'datas/monitor.json';
+const pathPerms = 'datas/perms.json';
+var pathPlayers = "datas/players.json";
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 var request = require('sync-request');

@@ -1,10 +1,12 @@
 const fs = require('fs');
-var obj = JSON.parse(fs.readFileSync("ongoingLagrange.json", "utf8"));
+const ongoingLagrangePath = 'datas/ongoingLagrange.json';
+const challengeLagrangePath = 'datas/challengeLagrange.json';
+var obj = JSON.parse(fs.readFileSync(ongoingLagrangePath, "utf8"));
 var cancelList = new Map();
 var startTime = 0;
 const lockFile = require('lockfile');
 var ongoing = new Map(Object.entries(obj));
-obj = JSON.parse(fs.readFileSync("challengeLagrange.json", "utf8"));
+obj = JSON.parse(fs.readFileSync(challengeLagrangePath, "utf8"));
 var Discord = require("discord.js");
 var auth = require('./auth.json');
 var plotly = require('plotly')('juancarlovieri', auth.plotly);
@@ -108,7 +110,7 @@ function save(){
   var jsonObj = Object.fromEntries(ongoing);
   console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("ongoingLagrange.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(ongoingLagrangePath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -119,7 +121,7 @@ function save(){
 
 
   
-  fs.writeFileSync("challengeLagrange.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(challengeLagrangePath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);

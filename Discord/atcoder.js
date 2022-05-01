@@ -1,8 +1,10 @@
 const fs = require("fs");
 var crypto = require('crypto');
-var obj = JSON.parse(fs.readFileSync("atcoderHandles.json", "utf8"));
+const atcoderHandlesPath = "datas/atcoderHandles.json"
+const ongoingAtcoderPath = "datas/ongoingAtcoder.json"
+var obj = JSON.parse(fs.readFileSync(atcoderHandlesPath, "utf8"));
 var handles = new Map(Object.entries(obj));
-obj = JSON.parse(fs.readFileSync("ongoingAtcoder.json", "utf8"));
+obj = JSON.parse(fs.readFileSync(ongoingAtcoderPath, "utf8"));
 var ongoing = new Map(Object.entries(obj));
 var tempRegis = new Map();
 var challenge = new Map();
@@ -11,7 +13,7 @@ function save(){
   var jsonObj = Object.fromEntries(handles);
   console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("atcoderHandles.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(atcoderHandlesPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
@@ -21,7 +23,7 @@ function save(){
    jsonObj = Object.fromEntries(ongoing);
   console.log(jsonObj);
    jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("ongoingAtcoder.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(ongoingAtcoderPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);

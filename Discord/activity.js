@@ -1,7 +1,9 @@
 const auth = require('./auth.json');
 var plotly = require('plotly')('juancarlovieri', auth.plotly);
 const fs = require('fs');
-var obj = JSON.parse(fs.readFileSync("activity.json", "utf8"));
+const activityPath = "datas/activity.json";
+
+var obj = JSON.parse(fs.readFileSync(activityPath, "utf8"));
 var activity = new Map(Object.entries(obj));
 var startDate = 1595304000;
 
@@ -29,7 +31,7 @@ let schedule = require('node-schedule');
 function save(){
   var jsonObj = Object.fromEntries(activity);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync("activity.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(activityPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);

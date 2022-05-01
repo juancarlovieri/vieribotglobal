@@ -1,5 +1,6 @@
 const fs = require("fs");
-var obj = JSON.parse(fs.readFileSync("changeHandle.json", "utf8"));
+const changeHandlePath = "datas/changeHandle.json"
+var obj = JSON.parse(fs.readFileSync(changeHandlePath, "utf8"));
 
 module.exports = {
   edited: function(msg, bot){
@@ -37,7 +38,7 @@ module.exports = {
     obj = temp;
     // console.log(msg.channel.name);
     var jsonContent = JSON.stringify(obj);
-    fs.writeFileSync("changeHandle.json", jsonContent, "utf8", function(err) {
+    fs.writeFileSync(changeHandlePath, jsonContent, "utf8", function(err) {
       if (err) {
         console.log("An errr occured while writing JSON jsonObj to File.");
         return console.log(err);
@@ -51,7 +52,7 @@ module.exports = {
       b: "foo"
     };
     var jsonContent = JSON.stringify(obj);
-    fs.writeFileSync("changeHandle.json", jsonContent, "utf8", function(err) {
+    fs.writeFileSync(changeHandlePath, jsonContent, "utf8", function(err) {
       if (err) {
         console.log("An errr occured while writing JSON jsonObj to File.");
         return console.log(err);

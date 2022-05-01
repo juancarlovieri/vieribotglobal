@@ -1,10 +1,13 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-var tests = JSON.parse(fs.readFileSync("tests.json", "utf8"));
+
+const testsPath = 'datas/tests.json';
+
+var tests = JSON.parse(fs.readFileSync(testsPath, "utf8"));
 
 function save(){
   var jsonContent = JSON.stringify(tests);
-  fs.writeFileSync("tests.json", jsonContent, "utf8", function(err) {
+  fs.writeFileSync(testsPath, jsonContent, "utf8", function(err) {
     if (err) {
       console.log("An errr occured while writing JSON jsonObj to File.");
       return console.log(err);
