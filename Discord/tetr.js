@@ -323,9 +323,15 @@ async function refresh(bot) {
         var cur = match[i];
         // console.log(cur.user.username);
         // console.log(cur.endcontext[0].user.username);
+        var color, state;
         if (cur.endcontext[0].user.username != cur.user.username) {
+          state = "lost";
+          color = "#a83232";
           // console.log("switch");
           cur.endcontext[1] = [cur.endcontext[0], cur.endcontext[0] = cur.endcontext[1]][0];
+        } else {
+          state = "won";
+          color = "#32a844";
         }
         var friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
         friend = friend.data.user.league;
@@ -335,14 +341,13 @@ async function refresh(bot) {
         foe = foe.data.user.league;
         // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
         if (foe.rank == "z") foe.rank = "?";
-        var color, state;
-        if (cur.endcontext[0].wins > cur.endcontext[1].wins) {
-          state = "won";
-          color = "#32a844";
-        } else {
-          state = "lost";
-          color = "#a83232";
-        }
+        // if (cur.endcontext[0].wins > cur.endcontext[1].wins) {
+        //   state = "won";
+        //   color = "#32a844";
+        // } else {
+        //   state = "lost";
+        //   color = "#a83232";
+        // }
         const embed = {
             color: color,
             title: cur.user.username.toUpperCase() + " just " + state + " a game",
