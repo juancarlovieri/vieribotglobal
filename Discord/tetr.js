@@ -22,7 +22,7 @@ var database, col;
 
 async function init() {
   await client.connect();
-  database = client.db('vieribot');
+  database = client.db(token.mongodb_db);
   col = database.collection('tetr');
   // try {
   //   // var obj = JSON.parse(fs.readFileSync(pathMonitor, "utf8"));
@@ -85,6 +85,7 @@ async function init() {
   } catch(err) {
     console.error(err);
   }
+  save();
 
 }
 
@@ -153,7 +154,6 @@ async function save(){
       return console.log(err);
     }
   });
-  save();
 }
 
 async function refresh(bot) {

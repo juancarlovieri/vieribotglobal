@@ -15,8 +15,10 @@ var database, col;
 
 async function init() {
   await client.connect();
-  database = client.db('vieribot');
+  database = client.db(token.mongodb_db);
   col = database.collection('gamble');
+
+  
 
   // try {
   //   var temp = await col.findOne({title: "gambles"});
