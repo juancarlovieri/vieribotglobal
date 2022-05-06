@@ -573,8 +573,8 @@ async function fortyLinesLb(bot, msg, country) {
 }
 
 async function playerCount(bot, msg, country) {
-  await updatePlayers(country);
   country = country.toUpperCase();
+  await updatePlayers(country);
   var arr = players.get(country).arr;
   msg.channel.send(arr.length.toFixed());
 }
