@@ -178,7 +178,7 @@ async function news(){
     var vieri = new Discord.MessageAttachment('../viericorp.png');
     var summary = list[i].summary;
     if (summary == "") summary = "not available"
-      if (summary.length > 1000) summary = summar.substr(0, 1000);
+      if (summary.length > 1000) summary = summary.substr(0, 1000) + '...';
     var embed = {
       color: 16764006,
       author: {
