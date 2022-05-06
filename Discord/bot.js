@@ -455,7 +455,7 @@ bot.on("ready", msg =>{
   tetr.startRefresh(bot);
 })
 
-bot.on("message", msg => {
+bot.on("messageCreate", msg => {
   // console.log(msg);
   if(msg.author.bot == true)return;
   // activity.add(msg);
