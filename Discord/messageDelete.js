@@ -9,6 +9,7 @@ module.exports = {
       if(msg.content == "")return;
       var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
+        
         channel.send(msg.content);
         return;
       }

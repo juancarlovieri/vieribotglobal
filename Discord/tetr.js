@@ -572,6 +572,13 @@ async function fortyLinesLb(bot, msg, country) {
   msg.channel.send({ embeds: [embed] });
 }
 
+async function playerCount(bot, msg, country) {
+  await updatePlayers(country);
+  country = country.toUpperCase();
+  var arr = players.get(country).arr;
+  msg.channel.send(arr.length.toFixed());
+}
+
 module.exports = {
   cmd: async function(bot, msg) {
     var args = msg.content.split(" ");
@@ -758,9 +765,7 @@ module.exports = {
           msg.channel.send("invalid country");
           return;
         }
-        await updatePlayers(country);
-        country = country.toUpperCase();
-        msg.channel.send(await players.get(country).arr.length.toFixed());
+        playerCount(bot, msg, country);
       break;
     }
   },
