@@ -743,6 +743,70 @@ module.exports = {
         forceRefresh();
       break;
       case 'lb':
+        if (args.length == 3) {
+          if (args[2] == "blitz") {
+            var records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+            records = records.data.records;
+            var ans = records;
+            if (ans.length > 50) {
+              ans = ans.slice(0, 50);
+            }
+            var str = "```\n";
+            for (var i = 0; i < ans.length; ++i) {
+              var spaces = " ";
+              // if ((i + 1).toFixed().length == 2) spaces += " ";
+              if ((i + 1).toFixed().length == 1) spaces += " ";
+
+              var spaces2 = " ";
+              for (var j = 0; j < maxScoreChar - ans[i].endcontext.score.toFixed().length; ++j) spaces2 += " ";
+              str += (i + 1).toFixed() + "." + spaces + ans[i].endcontext.score.toFixed() + spaces2 + "| " + ans[i].user.username + '\n';
+            }
+            str += "```"
+            // console.log(str);
+            const embed = {
+              color: "#ebc334",
+              title: "Blitz Leaderboard for global",
+              description: str,
+              timestamp: new Date(),
+              footer: {
+                text: "By Vieri Corp.™ All Rights Reserved"
+              }
+            };
+            // console.log(embed);
+            msg.channel.send({ embeds: [embed] });
+          } else if (args[2] == "40l") {
+            var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+            records = records.data.records;
+            var ans = records;
+            if (ans.length > 50) {
+              ans = ans.slice(0, 50);
+            }
+            var str = "```\n";
+            for (var i = 0; i < ans.length; ++i) {
+              var spaces = " ";
+              // if ((i + 1).toFixed().length == 2) spaces += " ";
+              if ((i + 1).toFixed().length == 1) spaces += " ";
+
+              var spaces2 = " ";
+              for (var j = 0; j < maxScoreChar - (ans[i].endcontext.finalTime / 1000).toFixed(3).length; ++j) spaces2 += " ";
+              str += (i + 1).toFixed() + "." + spaces + (ans[i].endcontext.finalTime / 1000).toFixed(3) + spaces2 + "| " + ans[i].user.username + '\n';
+            }
+            str += "```"
+            // console.log(str);
+            const embed = {
+              color: "#ebc334",
+              title: "40l Leaderboard for global",
+              description: str,
+              timestamp: new Date(),
+              footer: {
+                text: "By Vieri Corp.™ All Rights Reserved"
+              }
+            };
+            // console.log(embed);
+            msg.channel.send({ embeds: [embed] });
+          }
+          return;
+        }
         if (args.length < 4) return;
         var country = args[3];
         if (country.length != 2) {
