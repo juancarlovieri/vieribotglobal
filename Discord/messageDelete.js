@@ -5,8 +5,8 @@ var obj = JSON.parse(fs.readFileSync(changeHandlePath, "utf8"));
 module.exports = {
   edited: function(msg, bot){
     // if(msg.embeds.length != 0)return;
-    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232' || msg.channel.guild.id == '626412169751166996'){
-      if(msg.content == "")return;
+    if(msg.channel.id == '804347785804906496' || msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232' || msg.channel.guild.id == '626412169751166996'){
+      // if(msg.content == "")return;
       var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
         
@@ -14,22 +14,32 @@ module.exports = {
         return;
       }
       if(msg.author.bot)return;
+      var files = [];
+      msg.attachments.forEach((val, key) => {
+        files[files.length] = val;
+      });
       var channel = bot.channels.cache.get('758941261703938058');
-      channel.send("***EDITED*** #" + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp);
+      channel.send({content: "***EDITED*** #" + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp, files: files});
     }
   },
   deleted: function(msg, bot){
+    // msg.channel.send(msg.attachments);
     // if(msg.embeds.length != 0)return;
     var arr = obj.a;
-    if(msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232'  || msg.channel.guild.id == '626412169751166996'){
-      if(msg.content == "")return;
-      var channel = bot.channels.cache.get('758941261703938058');
+    if(msg.channel.id == '804347785804906496' || msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232'  || msg.channel.guild.id == '626412169751166996'){
+      // if(msg.content == "")return;
+      var channel = bot.channels.cache.get('804347785804906496');
+      // var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
         channel.send(msg.content);
         return;
       }
       if(msg.author.bot)return;
-      channel.send("***DELETED*** #" + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp);
+      var files = [];
+      msg.attachments.forEach((val, key) => {
+        files[files.length] = val;
+      });
+      channel.send({content: "***DELETED*** #" + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp, files: files});
     }
     arr[arr.length] = msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.createdTimestamp + ' ' + msg.content;
     var temp = {
