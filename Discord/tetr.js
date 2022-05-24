@@ -287,7 +287,7 @@ async function refresh(bot) {
               //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
               //   url: 'https://tetr.io/' 
               // },
-              description: "**" + prettyMilliseconds(cur.endcontext.finalTime) + "**",
+              description: "**" + prettyMilliseconds(cur.endcontext.finalTime, {secondsDecimalDigits: 3}) + "**",
               // thumbnail: {
               //   url: 'https://i.imgur.com/AfFp7pu.png',
               // },
