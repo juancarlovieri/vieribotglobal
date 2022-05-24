@@ -20,6 +20,28 @@ const client = new MongoClient(token.mongodb, {
 
 var database, col;
 
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const emoji = new Map();
+emoji.set('x', "978615861575315536");
+emoji.set('u', "978615918332633098");
+emoji.set('ss', "978615896417378304");
+emoji.set('s', "978615943238385674");
+emoji.set('s-', "978615963840827452");
+emoji.set('a+', "978616006874394648");
+emoji.set('a', "978616041993289758");
+emoji.set('a-', "978616066081161246");
+emoji.set('b+', "978616086700380161");
+emoji.set('b', "978616110226223124");
+emoji.set('b-', "978616129780088842");
+emoji.set('c+', "978642028592234546");
+emoji.set('c', "978642115980558338");
+emoji.set('c-', "978642002990231622");
+emoji.set('d+', "978642028676145244");
+emoji.set('d', "978642028260888618");
+
 async function init() {
   await client.connect();
   database = client.db(token.mongodb_db);
@@ -156,7 +178,15 @@ async function save(){
   });
 }
 
+var load_next = 1;
+
 async function refresh(bot) {
+  if (load_next == 0) return;
+  load_next = 0;
+  // emoji.forEach((val, key) => {
+  //   bot.channels.cache.get('804347785804906496').send(key + ' ' + "<:a:" + val + ">");
+  //   // msg.channel.send(key + ' ' + emo);
+  // });
   for (var curm of monitor) {
     var channel = curm[0];
     checkPerms(channel);
@@ -231,7 +261,11 @@ async function refresh(bot) {
               text: "By Vieri Corp.™ All Rights Reserved"
             }
           };
-          if (perms.get(channel).blitz) bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+          if (perms.get(channel).blitz) {
+            try {
+              bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+            } catch (e) {console.error(e);}
+          }
           val.blitz = newblitz;
         }
       }
@@ -285,7 +319,11 @@ async function refresh(bot) {
               }
             };
 
-         if (perms.get(channel)["40l"])  bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+         if (perms.get(channel)["40l"])  {
+            try {
+              bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+            } catch (e) {console.error(e);}
+          }
           val["40l"] = new40l;
         }
       }
@@ -333,14 +371,22 @@ async function refresh(bot) {
           state = "won";
           color = "#32a844";
         }
+        await timeout(10000);
         var friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
+        var cfriend = friend;
         friend = friend.data.user.league;
         // var friend = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id).getBody()).data.user.league;
         if (friend.rank == "z") friend.rank = "?";
+        if (emoji.has(friend.rank)) {
+          friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
+        }
         var foe = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id);
         foe = foe.data.user.league;
         // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
         if (foe.rank == "z") foe.rank = "?";
+        if (emoji.has(foe.rank)) {
+          foe.rank = '<:a:' + emoji.get(foe.rank) + '>';
+        }
         // if (cur.endcontext[0].wins > cur.endcontext[1].wins) {
         //   state = "won";
         //   color = "#32a844";
@@ -349,39 +395,47 @@ async function refresh(bot) {
         //   color = "#a83232";
         // }
         const embed = {
-            color: color,
-            title: cur.user.username.toUpperCase() + " just " + state + " a game",
-            url: 'https://tetr.io/#r:' + cur.replayid,
-            // author: {
-            //    name: 'Tetris game update', 
-            //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
-            //   url: 'https://tetr.io/' 
-            // },
-            description: cur.endcontext[0].wins.toFixed(0) + ' - ' + cur.endcontext[1].wins.toFixed(0),
-            // thumbnail: {
-            //   url: 'https://i.imgur.com/AfFp7pu.png',
-            // },
-            fields: [
-              { name: '\u200B', value: '**' + cur.endcontext[0].user.username.toUpperCase() + '**'},
-              { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(0) + "TR", inline: true },
-              { name: 'PPS', value: cur.endcontext[0].points.tertiary.toFixed(2), inline: true },
-              { name: 'APM', value: cur.endcontext[0].points.secondary.toFixed(2), inline: true },
-              { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(2), inline: true },
-              // { name: '\u200B', value: '\u200B' },
-              { name: '\u200B', value: '**' + cur.endcontext[1].user.username.toUpperCase() + '**'},
-              { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(0) + "TR", inline: true },
-              { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
-              { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
-              { name: 'VS', value: cur.endcontext[1].points.extra.vs.toFixed(2), inline: true },
-              { name: '\u200B', value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')'},
-            ],
-            timestamp: new Date(),
-            footer: {
-              text: "By Vieri Corp.™ All Rights Reserved"
-            }
-          };
+          color: color,
+          title: cur.user.username.toUpperCase() + " just " + state + " a game",
+          url: 'https://tetr.io/#r:' + cur.replayid,
+          // author: {
+          //    name: 'Tetris game update', 
+          //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
+          //   url: 'https://tetr.io/' 
+          // },
+          description: cur.endcontext[0].wins.toFixed(0) + ' - ' + cur.endcontext[1].wins.toFixed(0),
+          // thumbnail: {
+          //   url: 'https://i.imgur.com/AfFp7pu.png',
+          // },
+          fields: [
+            { name: '\u200B', value: '**' + cur.endcontext[0].user.username.toUpperCase() + '**'},
+            { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(0) + "TR", inline: true },
+            { name: 'PPS', value: cur.endcontext[0].points.tertiary.toFixed(2), inline: true },
+            { name: 'APM', value: cur.endcontext[0].points.secondary.toFixed(2), inline: true },
+            { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(2), inline: true },
+            // { name: '\u200B', value: '\u200B' },
+            { name: '\u200B', value: '**' + cur.endcontext[1].user.username.toUpperCase() + '**'},
+            { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(0) + "TR", inline: true },
+            { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
+            { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
+            { name: 'VS', value: cur.endcontext[1].points.extra.vs.toFixed(2), inline: true },
+            { name: '\u200B', value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')'},
+          ],
+          timestamp: new Date(),
+          footer: {
+            text: "By Vieri Corp.™ All Rights Reserved"
+          }
+        };
+        cfriend = cfriend.data.user;
+        if (cfriend.avatar_revision != undefined) {
+          embed.thumbnail = {url: 'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg'};
+        }
 
-        if (perms.get(channel).ranked) bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+        if (perms.get(channel).ranked) {
+          try {
+            bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+          } catch(e) {console.error(e);}
+        }
         // console.log(match[i]._id);
         // bot.channels.cache.get(val.channel).send(match[i]._id);
       }
@@ -394,6 +448,7 @@ async function refresh(bot) {
   // monitor.forEach(async function (val, id) {
   // });
   save();
+  load_next = 1;
 }
 
 
