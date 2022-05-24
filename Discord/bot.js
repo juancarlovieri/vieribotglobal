@@ -341,7 +341,7 @@ function command(args, msg){
       tetr.cmd(bot, msg);
     break;
     case '^ping':
-      msg.channel.send(`Pong! Latency is ${Date.now() - msg.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`)
+      msg.channel.send(`Pong! Latency is ${Date.now() - msg.createdTimestamp}ms. API Latency is ${Math.round(bot.ws.ping)}ms`)
     break;
   }
 }
