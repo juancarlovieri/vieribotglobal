@@ -7,6 +7,7 @@ module.exports = {
     // if(msg.embeds.length != 0)return;
     if(msg.channel.id == '804347785804906496' || msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232' || msg.channel.guild.id == '626412169751166996'){
       // if(msg.content == "")return;
+      // var channel = bot.channels.cache.get('804347785804906496');
       var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
         
@@ -18,7 +19,6 @@ module.exports = {
       msg.attachments.forEach((val, key) => {
         files[files.length] = val;
       });
-      var channel = bot.channels.cache.get('758941261703938058');
       channel.send({content: "***EDITED*** #" + msg.channel.name + ' ' + msg.author.username + msg.author.discriminator + ' ' + msg.content + ' ' + msg.createdTimestamp, files: files});
     }
   },
@@ -28,8 +28,8 @@ module.exports = {
     var arr = obj.a;
     if(msg.channel.id == '804347785804906496' || msg.channel.guild.id == '758565620907245599' || msg.channel.guild.id == '733473838754693232'  || msg.channel.guild.id == '626412169751166996'){
       // if(msg.content == "")return;
-      var channel = bot.channels.cache.get('804347785804906496');
-      // var channel = bot.channels.cache.get('758941261703938058');
+      // var channel = bot.channels.cache.get('804347785804906496');
+      var channel = bot.channels.cache.get('758941261703938058');
       if(msg.author.id == '724954396147974194'){
         channel.send(msg.content);
         return;

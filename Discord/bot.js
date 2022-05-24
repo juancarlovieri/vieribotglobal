@@ -340,6 +340,9 @@ function command(args, msg){
     case '^tetr':
       tetr.cmd(bot, msg);
     break;
+    case '^ping':
+      msg.channel.send(`Pong! Latency is ${Date.now() - msg.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`)
+    break;
   }
 }
 
@@ -434,7 +437,7 @@ function setPresence() {
   bot.user.setPresence({
     status: 'dnd',
     activities: [{
-        name: `^help`,  //The message shown
+        name: `^help`,  //The msg shown
         type: `WATCHING` //PLAYING: WATCHING: LISTENING: STREAMING:
     }]
   });
