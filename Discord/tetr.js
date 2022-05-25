@@ -184,7 +184,7 @@ var force_load = 3600000;
 
 async function refresh(bot) {
   var cur = parseInt(Date.now());
-  if (load_next == 0 && last_load + force_load > cur) return;
+  if (load_next == 0 && last_load + force_load > cur) {console.log("denied refresh"); return;}
   last_load = cur;
   console.log(last_load);
   load_next = 0;
