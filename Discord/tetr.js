@@ -186,6 +186,7 @@ async function refresh(bot) {
   var cur = parseInt(Date.now());
   if (load_next == 0 && last_load + force_load > cur) return;
   last_load = cur;
+  console.log(last_load);
   load_next = 0;
   for (var curm of monitor) {
     var channel = curm[0];
