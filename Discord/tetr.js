@@ -186,13 +186,7 @@ async function refresh(bot) {
   var cur = parseInt(Date.now());
   if (load_next == 0 && last_load + force_load > cur) return;
   last_load = cur;
-  // console.log(last_load);
-  // console.log("TES");
   load_next = 0;
-  // emoji.forEach((val, key) => {
-  //   bot.channels.cache.get('804347785804906496').send(key + ' ' + "<:a:" + val + ">");
-  //   // msg.channel.send(key + ' ' + emo);
-  // });
   for (var curm of monitor) {
     var channel = curm[0];
     checkPerms(channel);
@@ -230,15 +224,7 @@ async function refresh(bot) {
             color: "#0394fc",
             title: cur.user.username.toUpperCase() + " just achieved a new blitz personal best!",
             url: 'https://tetr.io/#r:' + cur.replayid,
-            // author: {
-            //    name: 'Tetris game update', 
-            //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
-            //   url: 'https://tetr.io/' 
-            // },
             description: "**" + cur.endcontext.score.toFixed(0) + "**",
-            // thumbnail: {
-            //   url: 'https://i.imgur.com/AfFp7pu.png',
-            // },
             fields: [
               { name: 'Rank', value: rank, inline: true },
               { name: 'PPS', value: (dat.piecesplaced/120).toFixed(2), inline: true },
@@ -258,7 +244,6 @@ async function refresh(bot) {
               { name: 'Mini Doubles', value: dat.clears.minitspindoubles.toFixed(0), inline: true },
               { name: 'Doubles', value: dat.clears.tspindoubles.toFixed(0), inline: true },
               { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
-              // { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
               { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
               { name: '\u200B', value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')'},
             ],
@@ -288,15 +273,7 @@ async function refresh(bot) {
               color: "#0394fc",
               title: cur.user.username.toUpperCase() + " just achieved a new 40 lines personal best!",
               url: 'https://tetr.io/#r:' + cur.replayid,
-              // author: {
-              //    name: 'Tetris game update', 
-              //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
-              //   url: 'https://tetr.io/' 
-              // },
               description: "**" + prettyMilliseconds(cur.endcontext.finalTime, {secondsDecimalDigits: 3}) + "**",
-              // thumbnail: {
-              //   url: 'https://i.imgur.com/AfFp7pu.png',
-              // },
               fields: [
                 { name: 'Rank', value: rank, inline: true },
                 { name: 'PPS', value: (dat.piecesplaced/(new40l/1000)).toFixed(2), inline: true },
@@ -315,7 +292,6 @@ async function refresh(bot) {
                 { name: 'Mini Doubles', value: dat.clears.minitspindoubles.toFixed(0), inline: true },
                 { name: 'Doubles', value: dat.clears.tspindoubles.toFixed(0), inline: true },
                 { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
-                // { name: 'Quads', value: dat.clears.tspinquads.toFixed(0), inline: true },
                 { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
               { name: '\u200B', value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')'},
               ],
@@ -339,8 +315,6 @@ async function refresh(bot) {
     monitor.set(channel, curm);
   }
   save();
-  // monitor.forEach(async function (val, id) {
-  // });
 
   for (var curm of monitor) {
     var channel = curm[0];
@@ -350,7 +324,6 @@ async function refresh(bot) {
       var match;
       try {
         match = await async_request('https://ch.tetr.io/api/streams/league_userrecent_' + id);
-        // match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
       } catch (e) {
         console.error(e);
         continue;
@@ -365,13 +338,10 @@ async function refresh(bot) {
       }
       for (var i = last - 1; i >= 0; --i) {
         var cur = match[i];
-        // console.log(cur.user.username);
-        // console.log(cur.endcontext[0].user.username);
         var color, state;
         if (cur.endcontext[0].user.username != cur.user.username) {
           state = "lost";
           color = "#a83232";
-          // console.log("switch");
           cur.endcontext[1] = [cur.endcontext[0], cur.endcontext[0] = cur.endcontext[1]][0];
         } else {
           state = "won";
@@ -381,7 +351,6 @@ async function refresh(bot) {
         var friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
         var cfriend = friend;
         friend = friend.data.user.league;
-        // var friend = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id).getBody()).data.user.league;
         if (friend.rank == "z") friend.rank = "?";
         if (emoji.has(friend.rank)) {
           friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
@@ -393,33 +362,17 @@ async function refresh(bot) {
         if (emoji.has(foe.rank)) {
           foe.rank = '<:a:' + emoji.get(foe.rank) + '>';
         }
-        // if (cur.endcontext[0].wins > cur.endcontext[1].wins) {
-        //   state = "won";
-        //   color = "#32a844";
-        // } else {
-        //   state = "lost";
-        //   color = "#a83232";
-        // }
         const embed = {
           color: color,
           title: cur.user.username.toUpperCase() + " just " + state + " a game",
           url: 'https://tetr.io/#r:' + cur.replayid,
-          // author: {
-          //    name: 'Tetris game update', 
-          //   iconURL: 'https://pbs.twimg.com/profile_images/1286993509573169153/pN9ULwc6_400x400.jpg', 
-          //   url: 'https://tetr.io/' 
-          // },
           description: cur.endcontext[0].wins.toFixed(0) + ' - ' + cur.endcontext[1].wins.toFixed(0),
-          // thumbnail: {
-          //   url: 'https://i.imgur.com/AfFp7pu.png',
-          // },
           fields: [
             { name: '\u200B', value: '**' + cur.endcontext[0].user.username.toUpperCase() + '**'},
             { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(2) + " TR", inline: true },
             { name: 'PPS', value: cur.endcontext[0].points.tertiary.toFixed(2), inline: true },
             { name: 'APM', value: cur.endcontext[0].points.secondary.toFixed(2), inline: true },
             { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(2), inline: true },
-            // { name: '\u200B', value: '\u200B' },
             { name: '\u200B', value: '**' + cur.endcontext[1].user.username.toUpperCase() + '**'},
             { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(2) + " TR", inline: true },
             { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
@@ -442,8 +395,6 @@ async function refresh(bot) {
             bot.channels.cache.get(val.channel).send({ embeds: [embed] });
           } catch(e) {console.error(e);}
         }
-        // console.log(match[i]._id);
-        // bot.channels.cache.get(val.channel).send(match[i]._id);
       }
       if (match.length == 0) match[0] = {_id: null};
       val.last = match[0]._id
@@ -451,8 +402,6 @@ async function refresh(bot) {
     }
     monitor.set(channel, curm);
   }
-  // monitor.forEach(async function (val, id) {
-  // });
   save();
   load_next = 1;
 }
@@ -482,8 +431,6 @@ async function forceRefresh(bot) {
     monitor.set(channel, curm);
   }
   save();
-  // monitor.forEach(async function (val, id) {
-  // });
 
   for (var curm of monitor) {
     var channel = curm[0];
@@ -505,8 +452,6 @@ async function forceRefresh(bot) {
     }
     monitor.set(channel, curm);
   }
-  // monitor.forEach(async function (val, id) {
-  // });
   save();
 }
 
@@ -530,7 +475,6 @@ function checkPerms(channel) {
   };
   temp["40l"] = true;
   perms.set(channel, temp);
-  // console.log(perms);
   save();
 }
 
@@ -560,7 +504,6 @@ async function updatePlayers(country) {
 }
 
 async function blitzLb(bot, msg, country) {
-  // console.log(country);
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
@@ -574,7 +517,6 @@ async function blitzLb(bot, msg, country) {
   var str = "```\n";
   for (var i = 0; i < ans.length; ++i) {
     var spaces = " ";
-    // if ((i + 1).toFixed().length == 2) spaces += " ";
     if ((i + 1).toFixed().length == 1) spaces += " ";
 
     var spaces2 = " ";
@@ -582,25 +524,19 @@ async function blitzLb(bot, msg, country) {
     str += (i + 1).toFixed() + "." + spaces + ans[i].endcontext.score.toFixed() + spaces2 + "| " + ans[i].user.username + '\n';
   }
   str += "```"
-  // console.log(str);
   const embed = {
     color: "#ebc334",
     title: "Blitz Leaderboard for " + country + " :flag_" + country.toLowerCase() + ":",
-    // thumbnail: {
-    //   url: "https://tetr.io/res/flags/" + country.toLowerCase() + ".png"
-    // },
     description: str,
     timestamp: new Date(),
     footer: {
       text: "By Vieri Corp.™ All Rights Reserved"
     }
   };
-  // console.log(embed);
   msg.channel.send({ embeds: [embed] });
 }
 
 async function fortyLinesLb(bot, msg, country) {
-  // console.log(country);
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
@@ -614,27 +550,21 @@ async function fortyLinesLb(bot, msg, country) {
   var str = "```\n";
   for (var i = 0; i < ans.length; ++i) {
     var spaces = " ";
-    // if ((i + 1).toFixed().length == 2) spaces += " ";
     if ((i + 1).toFixed().length == 1) spaces += " ";
     var spaces2 = " ";
     for (var j = 0; j < maxScoreChar - (ans[i].endcontext.finalTime / 1000).toFixed(3).length; ++j) spaces2 += " ";
     str += (i + 1).toFixed() + "." + spaces + (ans[i].endcontext.finalTime / 1000).toFixed(3) + spaces2 + "| " + ans[i].user.username + '\n';
   }
   str += "```"
-  // console.log(str);
   const embed = {
     color: "#ebc334",
     title: "40l Leaderboard for " + country + " :flag_" + country.toLowerCase() + ":",
-    // thumbnail: {
-    //   url: "https://tetr.io/res/flags/" + country.toLowerCase() + ".png"
-    // },
     description: str,
     timestamp: new Date(),
     footer: {
       text: "By Vieri Corp.™ All Rights Reserved"
     }
   };
-  // console.log(embed);
   msg.channel.send({ embeds: [embed] });
 }
 
@@ -656,7 +586,6 @@ async function printGlobal(bot, msg, args) {
     var str = "```\n";
     for (var i = 0; i < ans.length; ++i) {
       var spaces = " ";
-      // if ((i + 1).toFixed().length == 2) spaces += " ";
       if ((i + 1).toFixed().length == 1) spaces += " ";
 
       var spaces2 = " ";
@@ -664,7 +593,6 @@ async function printGlobal(bot, msg, args) {
       str += (i + 1).toFixed() + "." + spaces + ans[i].endcontext.score.toFixed() + spaces2 + "| " + ans[i].user.username + '\n';
     }
     str += "```"
-    // console.log(str);
     const embed = {
       color: "#ebc334",
       title: "Blitz Leaderboard for global",
@@ -674,7 +602,6 @@ async function printGlobal(bot, msg, args) {
         text: "By Vieri Corp.™ All Rights Reserved"
       }
     };
-    // console.log(embed);
     msg.channel.send({ embeds: [embed] });
   } else if (args[2] == "40l") {
     var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
@@ -686,7 +613,6 @@ async function printGlobal(bot, msg, args) {
     var str = "```\n";
     for (var i = 0; i < ans.length; ++i) {
       var spaces = " ";
-      // if ((i + 1).toFixed().length == 2) spaces += " ";
       if ((i + 1).toFixed().length == 1) spaces += " ";
 
       var spaces2 = " ";
@@ -694,7 +620,6 @@ async function printGlobal(bot, msg, args) {
       str += (i + 1).toFixed() + "." + spaces + (ans[i].endcontext.finalTime / 1000).toFixed(3) + spaces2 + "| " + ans[i].user.username + '\n';
     }
     str += "```"
-    // console.log(str);
     const embed = {
       color: "#ebc334",
       title: "40l Leaderboard for global",
@@ -704,7 +629,6 @@ async function printGlobal(bot, msg, args) {
         text: "By Vieri Corp.™ All Rights Reserved"
       }
     };
-    // console.log(embed);
     msg.channel.send({ embeds: [embed] });
   }
 }
@@ -810,9 +734,6 @@ module.exports = {
           return;
         }
         var user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
-        // user = user.data;
-        // console.log(user);
-        // var user = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + args[2]).getBody());
         if (user.success == false) {
           msg.channel.send("who is dat");
           return; 
@@ -829,7 +750,6 @@ module.exports = {
         }
         var match = await async_request("https://ch.tetr.io/api/streams/league_userrecent_" + id);
         // console.log(match);
-        // var match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
         match = match.data.records[0];
         if (match == undefined) {
           match = {_id: null}
@@ -841,7 +761,6 @@ module.exports = {
         };
         curm.set(id, dat);
         monitor.set(channel, curm);
-        // console.log(monitor);
         save();
         msg.channel.send("saved!");
       break;
