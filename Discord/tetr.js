@@ -179,9 +179,15 @@ async function save(){
 }
 
 var load_next = 1;
+var last_load = 1;
+var force_load = 3600000;
 
 async function refresh(bot) {
-  if (load_next == 0) return;
+  var cur = parseInt(Date.now());
+  if (load_next == 0 && last_load + force_load > cur) return;
+  last_load = cur;
+  // console.log(last_load);
+  // console.log("TES");
   load_next = 0;
   // emoji.forEach((val, key) => {
   //   bot.channels.cache.get('804347785804906496').send(key + ' ' + "<:a:" + val + ">");
@@ -714,16 +720,25 @@ async function printMonitored(bot, msg, args) {
       if (cur["40l"] == null) continue;
       all[all.length] = {
         username: cur.username,
-        score: cur["40l"]
+        score: cur["40l"],
+        gm: "40l"
       }
     } else if (args[2] == "blitz") {
       if (cur.blitz == null) continue;
       all[all.length] = {
         username: cur.username,
-        score: cur.blitz
+        score: cur.blitz,
+        gm: "blitz"
       }
     }
   }
+  all.sort((a, b) => {
+    if (a.gm == "blitz") {
+      return a.score < b.score ? 1 : -1
+    } else {
+      return a.score > b.score ? 1 : -1
+    }
+  });
   if (all.length > 50) {
     all = all.slice(0, 50);
   }
