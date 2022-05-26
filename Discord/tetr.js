@@ -180,7 +180,7 @@ async function save(){
 
 var load_next = 1;
 var last_load = 1;
-var force_load = 3600000;
+var force_load = 600000;
 
 async function refresh(bot) {
   var cur = parseInt(Date.now());
