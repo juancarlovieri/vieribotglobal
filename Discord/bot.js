@@ -28,7 +28,7 @@ const mc = require('minecraft-server-util');
 const predict = require('./tlx/predict.js');
 const gamble = require('./gamble.js');
 // const music = require('./music.js');
-const tetr = require('./tetr.js');
+const tetr = require('./tetr_new.js');
 
 
 // console.log((1599715800000 - 3600000) - Date.now());

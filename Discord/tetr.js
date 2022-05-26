@@ -271,36 +271,36 @@ async function refresh(bot) {
             rank = "#" + record["40l"].rank.toFixed(0);
           }
           const embed = {
-              color: "#0394fc",
-              title: cur.user.username.toUpperCase() + " just achieved a new 40 lines personal best!",
-              url: 'https://tetr.io/#r:' + cur.replayid,
-              description: "**" + prettyMilliseconds(cur.endcontext.finalTime, {secondsDecimalDigits: 3}) + "**",
-              fields: [
-                { name: 'Rank', value: rank, inline: true },
-                { name: 'PPS', value: (dat.piecesplaced/(new40l/1000)).toFixed(2), inline: true },
-                { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
-                { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
-                { name: '\u200B', value: '**Clears**'},
-                { name: 'Singles', value: dat.clears.singles.toFixed(0), inline: true },
-                { name: 'Doubles', value: dat.clears.doubles.toFixed(0), inline: true },
-                { name: 'Triples', value: dat.clears.triples.toFixed(0), inline: true },
-                { name: 'Quads', value: dat.clears.quads.toFixed(0), inline: true },
-                { name: '\u200B', value: '**T-spins**'},
-                { name: 'Real', value: dat.clears.realtspins.toFixed(0), inline: true },
-                { name: 'Mini', value: dat.clears.minitspins.toFixed(0), inline: true },
-                { name: 'Mini Singles', value: dat.clears.minitspinsingles.toFixed(0), inline: true },
-                { name: 'Singles', value: dat.clears.tspinsingles.toFixed(0), inline: true },
-                { name: 'Mini Doubles', value: dat.clears.minitspindoubles.toFixed(0), inline: true },
-                { name: 'Doubles', value: dat.clears.tspindoubles.toFixed(0), inline: true },
-                { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
-                { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
-              { name: '\u200B', value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')'},
-              ],
-              timestamp: new Date(),
-              footer: {
-                text: "By Vieri Corp.™ All Rights Reserved"
-              }
-            };
+            color: "#0394fc",
+            title: cur.user.username.toUpperCase() + " just achieved a new 40 lines personal best!",
+            url: 'https://tetr.io/#r:' + cur.replayid,
+            description: "**" + prettyMilliseconds(cur.endcontext.finalTime, {secondsDecimalDigits: 3}) + "**",
+            fields: [
+              { name: 'Rank', value: rank, inline: true },
+              { name: 'PPS', value: (dat.piecesplaced/(new40l/1000)).toFixed(2), inline: true },
+              { name: 'Finesse', value: (dat.finesse.perfectpieces * 100/dat.piecesplaced).toFixed(2) + "%", inline: true },
+              { name: 'Finesse faults', value: (dat.finesse.faults).toFixed(0), inline: true },
+              { name: '\u200B', value: '**Clears**'},
+              { name: 'Singles', value: dat.clears.singles.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.doubles.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.triples.toFixed(0), inline: true },
+              { name: 'Quads', value: dat.clears.quads.toFixed(0), inline: true },
+              { name: '\u200B', value: '**T-spins**'},
+              { name: 'Real', value: dat.clears.realtspins.toFixed(0), inline: true },
+              { name: 'Mini', value: dat.clears.minitspins.toFixed(0), inline: true },
+              { name: 'Mini Singles', value: dat.clears.minitspinsingles.toFixed(0), inline: true },
+              { name: 'Singles', value: dat.clears.tspinsingles.toFixed(0), inline: true },
+              { name: 'Mini Doubles', value: dat.clears.minitspindoubles.toFixed(0), inline: true },
+              { name: 'Doubles', value: dat.clears.tspindoubles.toFixed(0), inline: true },
+              { name: 'Triples', value: dat.clears.tspintriples.toFixed(0), inline: true },
+              { name: 'All clears', value: dat.clears.allclear.toFixed(0)},
+            { name: '\u200B', value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')'},
+            ],
+            timestamp: new Date(),
+            footer: {
+              text: "By Vieri Corp.™ All Rights Reserved"
+            }
+          };
 
          if (perms.get(channel)["40l"])  {
             try {
@@ -588,7 +588,6 @@ async function printGlobal(bot, msg, args) {
     for (var i = 0; i < ans.length; ++i) {
       var spaces = " ";
       if ((i + 1).toFixed().length == 1) spaces += " ";
-
       var spaces2 = " ";
       for (var j = 0; j < maxScoreChar - ans[i].endcontext.score.toFixed().length; ++j) spaces2 += " ";
       str += (i + 1).toFixed() + "." + spaces + ans[i].endcontext.score.toFixed() + spaces2 + "| " + ans[i].user.username + '\n';
