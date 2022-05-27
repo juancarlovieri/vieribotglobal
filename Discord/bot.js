@@ -203,12 +203,15 @@ function command(args, msg){
     break;
     case '^isup':
       (async () => {
-        if(await isUp('http://' + args[1])){
-          msg.channel.send(args[1] + ' is up');
-        } else{
-          msg.channel.send(args[1] + ' is down');
+        try {
+          if(await isUp('http://' + args[1])){
+            msg.channel.send(args[1] + ' is up');
+          } else{
+            msg.channel.send(args[1] + ' is down');
+          }
+        } catch (e) {
+          msg.channel.send("invalid url (remove the http)");
         }
-        //=> true
       })();
     break;
     case '^fox':
