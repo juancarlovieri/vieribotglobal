@@ -187,7 +187,7 @@ async function refreshUser(bot, m) {
   return { updated: jobs.some((j) => j.value.updated) };
 }
 
-async function refreshChannel(bot, channelId, monitors) {
+async function refreshChannel(bot, monitors) {
   const jobs = await Promise.allSettled(monitors.map((m) => refreshUser(bot, m)));
   return { updated: jobs.some((j) => j.value.updated) };
 }
@@ -202,10 +202,29 @@ async function refresh(bot, msg) {
   const channelId = msg.channel.id;
   const monitors = await Monitor.find({ channelId }).exec();
 
-  const result = await refreshChannel(bot, msg.channel.id, monitors);
+  const result = await refreshChannel(bot, monitors);
 
   if (!result.updated) {
     msg.channel.send('nothing to update');
+  }
+}
+
+const refreshAllStatus = { running: false };
+
+async function refreshAll(bot) {
+  if (refreshAllStatus.running) {
+    return;
+  }
+  try {
+    refreshAllStatus.running = true;
+    logger.info('refreshAll started.');
+    const monitors = await Monitor.find().exec();
+    await Promise.allSettled(monitors.map((m) => refreshUser(bot, m)));
+  } catch (error) {
+    logger.error(`refreshAll failed: ${error.message}`);
+  } finally {
+    logger.info('refreshAll finished.');
+    refreshAllStatus.running = false;
   }
 }
 
@@ -229,6 +248,11 @@ async function cmd(bot, msg) {
   }
 }
 
+function startRefresh(bot) {
+  setInterval(() => refreshAll(bot), 60000);
+}
+
 module.exports = {
   cmd,
+  startRefresh,
 };

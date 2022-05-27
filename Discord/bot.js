@@ -463,6 +463,7 @@ bot.on("ready", msg =>{
   setInterval(setPresence, 3600000);
   launch.new(bot);
   tetr.startRefresh(bot);
+  tetrNew.startRefresh(bot);
 })
 
 bot.on("messageCreate", msg => {
