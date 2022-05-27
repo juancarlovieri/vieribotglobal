@@ -1,15 +1,13 @@
 const mongoose = require('mongoose');
 
 const monitorSchema = new mongoose.Schema({
-  channelId: { type: String, index: true },
+  channelId: String,
   userId: String,
-  data: {
-    username: String,
-    lastMatchId: String,
-  },
+  username: String,
+  lastMatchId: String,
 });
 
-monitorSchema.index({ channelId: 1, 'data.username': 1 });
+monitorSchema.index({ channelId: 1, username: 1 }, { unique: true });
 
 const Monitor = mongoose.model('Monitor', monitorSchema);
 

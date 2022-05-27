@@ -58,7 +58,7 @@ async function monitor(bot, msg) {
 
   const channelId = msg.channel.id;
 
-  const existingMonitor = await Monitor.findOne({ channelId, userId }).exec();
+  const existingMonitor = await Monitor.findOne({ channelId, username }).exec();
 
   if (existingMonitor) {
     msg.channel.send('bruh we have that guy');
@@ -66,7 +66,12 @@ async function monitor(bot, msg) {
   }
 
   const lastMatchId = await tetrApi.getLastMatchId(userId);
-  const newMonitor = new Monitor({ channelId, userId, data: { username, lastMatchId } });
+  const newMonitor = new Monitor({
+    channelId,
+    userId,
+    username,
+    lastMatchId,
+  });
   await newMonitor.save();
 
   msg.channel.send('saved!');
@@ -81,8 +86,8 @@ async function list(bot, msg) {
 
   const channelId = msg.channel.id;
   const monitors = await Monitor.find({ channelId })
-    .select('data.username')
-    .sort('data.username')
+    .sort({ username: 1 })
+    .select({ username: 1 })
     .exec();
 
   if (!monitors.length) {
@@ -90,7 +95,7 @@ async function list(bot, msg) {
     return;
   }
 
-  const reply = ['**List of monitored people**:'].concat(monitors.map((m) => m.data.username));
+  const reply = ['**List of monitored people**:'].concat(monitors.map((m) => m.username));
   msg.channel.send(reply.join('\n'));
 }
 
@@ -108,7 +113,7 @@ async function remove(bot, msg) {
 
   const channelId = msg.channel.id;
   const username = args[2];
-  const result = await Monitor.deleteOne({ channelId, 'data.username': username }).exec();
+  const result = await Monitor.deleteOne({ channelId, username }).exec();
 
   if (!result.deletedCount) {
     msg.channel.send("nope, I wasn't monitoring him");
