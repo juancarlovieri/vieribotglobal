@@ -122,11 +122,99 @@ async function remove(bot, msg) {
   msg.channel.send(`removed ${username}`);
 }
 
+async function sendNewPbMessage(bot, m, { record, rank, score }, gameName) {
+  const rankString = rank === null ? '#>1000' : `#${rank.toFixed(0)}`;
+  const ec = record.endcontext;
+
+  const embed = {
+    color: '#0394fc',
+    title: `${m.username.toUpperCase()} just achieved a new ${gameName} personal best!`,
+    description: `**${score.toFixed(0)}**`,
+    fields: [
+      { name: 'Rank', value: rankString, inline: true },
+      { name: 'PPS', value: (ec.piecesplaced / 120).toFixed(2), inline: true },
+      {
+        name: 'Finesse',
+        value: `${((ec.finesse.perfectpieces * 100) / ec.piecesplaced).toFixed(2)}%`,
+        inline: true,
+      },
+      { name: 'Finesse faults', value: ec.finesse.faults.toFixed(0), inline: true },
+      { name: 'Level', value: ec.level.toFixed(0), inline: true },
+      { name: '\u200B', value: '**Clears**' },
+      { name: 'Singles', value: ec.clears.singles.toFixed(0), inline: true },
+      { name: 'Doubles', value: ec.clears.doubles.toFixed(0), inline: true },
+      { name: 'Triples', value: ec.clears.triples.toFixed(0), inline: true },
+      { name: 'Quads', value: ec.clears.quads.toFixed(0), inline: true },
+      { name: '\u200B', value: '**T-spins**' },
+      { name: 'Real', value: ec.clears.realtspins.toFixed(0), inline: true },
+      { name: 'Mini', value: ec.clears.minitspins.toFixed(0), inline: true },
+      { name: 'Mini Singles', value: ec.clears.minitspinsingles.toFixed(0), inline: true },
+      { name: 'Singles', value: ec.clears.tspinsingles.toFixed(0), inline: true },
+      { name: 'Mini Doubles', value: ec.clears.minitspindoubles.toFixed(0), inline: true },
+      { name: 'Doubles', value: ec.clears.tspindoubles.toFixed(0), inline: true },
+      { name: 'Triples', value: ec.clears.tspintriples.toFixed(0), inline: true },
+      { name: 'All clears', value: ec.clears.allclear.toFixed(0) },
+      { name: '\u200B', value: `[replay link](https://tetr.io/#r:${record.replayid})` },
+    ],
+    timestamp: new Date(),
+    footer: {
+      text: 'By Vieri Corp.™ All Rights Reserved',
+    },
+  };
+  bot.channels.cache.get(m.channelId).send({ embeds: [embed] });
+}
+
+async function tryUpdateBlitzPb(bot, m, { record, rank }) {
+  const score = Number(record.endcontext.score);
+  if (m.lastPersonalBest.blitz !== undefined && score <= m.lastPersonalBest.blitz) {
+    return { updated: false };
+  }
+  try {
+    sendNewPbMessage(bot, m, { record, rank, score }, 'biltz');
+    // eslint-disable-next-line no-param-reassign
+    m.lastPersonalBest.blitz = score;
+    await m.save();
+    return { updated: true };
+  } catch (error) {
+    logger.error(`Failed to update blitz pb: ${error.message}`);
+    throw error;
+  }
+}
+
+async function refreshUser(bot, m) {
+  const records = await tetrApi.getRecords(m.userId);
+  const jobs = await Promise.allSettled([tryUpdateBlitzPb(bot, m, records.blitz)]);
+  return { updated: jobs.some((j) => j.value.updated) };
+}
+
+async function refreshChannel(bot, channelId, monitors) {
+  const jobs = await Promise.allSettled(monitors.map((m) => refreshUser(bot, m)));
+  return { updated: jobs.some((j) => j.value.updated) };
+}
+
+async function refresh(bot, msg) {
+  const args = msg.content.split(' ');
+  if (args.length !== 2) {
+    msg.channel.send('wot');
+    return;
+  }
+
+  const channelId = msg.channel.id;
+  const monitors = await Monitor.find({ channelId }).exec();
+
+  const result = await refreshChannel(bot, msg.channel.id, monitors);
+
+  if (!result.updated) {
+    msg.channel.send('nothing to update');
+  }
+}
+
 const cmdMap = {
   help,
   monitor,
   list,
   remove,
+  refresh,
 };
 
 async function cmd(bot, msg) {

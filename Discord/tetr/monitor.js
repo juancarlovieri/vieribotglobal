@@ -5,6 +5,10 @@ const monitorSchema = new mongoose.Schema({
   userId: String,
   username: String,
   lastMatchId: String,
+  lastPersonalBest: {
+    blitz: Number,
+    '40l': Number,
+  },
 });
 
 monitorSchema.index({ channelId: 1, username: 1 }, { unique: true });

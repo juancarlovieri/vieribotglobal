@@ -43,8 +43,17 @@ async function getLastMatchId(userId) {
   return match.records[0]._id;
 }
 
+async function getRecords(userId) {
+  const records = await tetrClient.get(`users/${userId}/records`);
+  if (!records.success) {
+    throw new Error(`Unable to fetch records for ${userId}`);
+  }
+  return records.data.records;
+}
+
 module.exports = {
   fetchUser,
   getRecentMatch,
   getLastMatchId,
+  getRecords,
 };
