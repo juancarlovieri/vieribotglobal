@@ -1,4 +1,7 @@
 const winston = require('winston');
+require('winston-mongodb');
+
+const auth = require('./auth.json');
 
 const { format, transports } = winston;
 
@@ -19,6 +22,7 @@ const logger = winston.createLogger({
       filename: 'combined.log',
       format: format.combine(format.timestamp(), format.json()),
     }),
+    new transports.MongoDB({ db: auth.mongodb }),
   ],
 });
 
