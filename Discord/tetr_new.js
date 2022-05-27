@@ -129,7 +129,7 @@ async function cmd(bot, msg) {
   if (args.length === 1) return;
   if (!(args[1] in cmdMap)) return;
   try {
-    cmdMap[args[1]](bot, msg);
+    await cmdMap[args[1]](bot, msg);
   } catch (error) {
     logger.error(`${cmdName} error: ${error.message}`);
     msg.channel.send(`Unknown error occured: ${error.message}`);
