@@ -350,6 +350,8 @@ async function refresh(bot) {
         }
         await timeout(10000);
         var friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
+        cur.endcontext[0].user.username = cur.endcontext[0].user.username.toUpperCase();
+        if (friend.data.user.country != null) cur.endcontext[0].user.username += " :flag_" + friend.data.user.country.toLowerCase() + ":";
         var cfriend = friend;
         friend = friend.data.user.league;
         if (friend.rank == "z") friend.rank = "?";
@@ -357,6 +359,8 @@ async function refresh(bot) {
           friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
         }
         var foe = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id);
+        cur.endcontext[1].user.username = cur.endcontext[1].user.username.toUpperCase();
+        if (foe.data.user.country != null) cur.endcontext[1].user.username += " :flag_" + foe.data.user.country.toLowerCase() + ":";
         foe = foe.data.user.league;
         // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
         if (foe.rank == "z") foe.rank = "?";
@@ -369,12 +373,12 @@ async function refresh(bot) {
           url: 'https://tetr.io/#r:' + cur.replayid,
           description: cur.endcontext[0].wins.toFixed(0) + ' - ' + cur.endcontext[1].wins.toFixed(0),
           fields: [
-            { name: '\u200B', value: '**' + cur.endcontext[0].user.username.toUpperCase() + '**'},
+            { name: '\u200B', value: '**' + cur.endcontext[0].user.username + '**'},
             { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(2) + " TR", inline: true },
             { name: 'PPS', value: cur.endcontext[0].points.tertiary.toFixed(2), inline: true },
             { name: 'APM', value: cur.endcontext[0].points.secondary.toFixed(2), inline: true },
             { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(2), inline: true },
-            { name: '\u200B', value: '**' + cur.endcontext[1].user.username.toUpperCase() + '**'},
+            { name: '\u200B', value: '**' + cur.endcontext[1].user.username + '**'},
             { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(2) + " TR", inline: true },
             { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
             { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
