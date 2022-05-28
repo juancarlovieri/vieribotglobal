@@ -125,6 +125,7 @@ async function remove(bot, msg) {
 async function sendNewPbMessage(bot, m, { record, rank, score }, gameName) {
   const rankString = rank === null ? '#>1000' : `#${rank.toFixed(0)}`;
   const ec = record.endcontext;
+  const finesseValue = tetrApi.getFinesseValue(ec);
 
   const embed = {
     color: '#0394fc',
@@ -135,10 +136,10 @@ async function sendNewPbMessage(bot, m, { record, rank, score }, gameName) {
       { name: 'PPS', value: (ec.piecesplaced / 120).toFixed(2), inline: true },
       {
         name: 'Finesse',
-        value: `${((ec.finesse.perfectpieces * 100) / ec.piecesplaced).toFixed(2)}%`,
+        value: `${finesseValue.percentage.toFixed(2)}%`,
         inline: true,
       },
-      { name: 'Finesse faults', value: ec.finesse.faults.toFixed(0), inline: true },
+      { name: 'Finesse faults', value: finesseValue.faults.toFixed(0), inline: true },
       { name: 'Level', value: ec.level.toFixed(0), inline: true },
       { name: '\u200B', value: '**Clears**' },
       { name: 'Singles', value: ec.clears.singles.toFixed(0), inline: true },
@@ -170,13 +171,13 @@ async function tryUpdateBlitzPb(bot, m, { record, rank }) {
     return { updated: false };
   }
   try {
-    sendNewPbMessage(bot, m, { record, rank, score }, 'biltz');
+    await sendNewPbMessage(bot, m, { record, rank, score }, 'biltz');
     // eslint-disable-next-line no-param-reassign
     m.lastPersonalBest.blitz = score;
     await m.save();
     return { updated: true };
   } catch (error) {
-    logger.error(`Failed to update blitz pb: ${error.message}`);
+    logger.error(`Failed to update blitz pb for ${m.username}: ${error.message}`, { error });
     throw error;
   }
 }
@@ -184,12 +185,16 @@ async function tryUpdateBlitzPb(bot, m, { record, rank }) {
 async function refreshUser(bot, m) {
   const records = await tetrApi.getRecords(m.userId);
   const jobs = await Promise.allSettled([tryUpdateBlitzPb(bot, m, records.blitz)]);
-  return { updated: jobs.some((j) => j.value.updated) };
+  const updated = jobs.some((j) => j.value?.updated);
+  const failed = jobs.some((j) => j.status !== 'fulfilled');
+  return { updated, failed };
 }
 
 async function refreshChannel(bot, monitors) {
   const jobs = await Promise.allSettled(monitors.map((m) => refreshUser(bot, m)));
-  return { updated: jobs.some((j) => j.value.updated) };
+  const updated = jobs.some((j) => j.value?.updated);
+  const failed = jobs.some((j) => j.status !== 'fulfilled' || j.value?.failed);
+  return { updated, failed };
 }
 
 async function refresh(bot, msg) {
@@ -204,7 +209,9 @@ async function refresh(bot, msg) {
 
   const result = await refreshChannel(bot, monitors);
 
-  if (!result.updated) {
+  if (result.failed) {
+    msg.channel.send('refresh failed');
+  } else if (!result.updated) {
     msg.channel.send('nothing to update');
   }
 }

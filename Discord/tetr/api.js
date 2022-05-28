@@ -51,9 +51,20 @@ async function getRecords(userId) {
   return records.data.records;
 }
 
+function getFinesseValue(endcontext) {
+  if (!endcontext.finesse) {
+    return { percentage: 0, faults: 0 };
+  }
+  return {
+    percentage: (endcontext.finesse.perfectpieces * 100) / endcontext.piecesplaced,
+    faults: endcontext.faults,
+  };
+}
+
 module.exports = {
   fetchUser,
   getRecentMatch,
   getLastMatchId,
   getRecords,
+  getFinesseValue,
 };
