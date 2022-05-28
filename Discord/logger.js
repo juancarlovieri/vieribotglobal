@@ -10,6 +10,7 @@ const logFormat = format.printf(
 );
 
 const logger = winston.createLogger({
+  format: format.combine(format.metadata()),
   transports: [
     new transports.Console({
       format: format.combine(

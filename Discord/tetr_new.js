@@ -237,13 +237,13 @@ const cmdMap = {
 };
 
 async function cmd(bot, msg) {
-  const args = msg.content.split(' ');
-  if (args.length === 1) return;
-  if (!(args[1] in cmdMap)) return;
   try {
+    const args = msg.content.split(' ');
+    if (args.length === 1) return;
+    if (!(args[1] in cmdMap)) return;
     await cmdMap[args[1]](bot, msg);
   } catch (error) {
-    logger.error(`${cmdName} error: ${error.message}`);
+    logger.error(`${cmdName} error: ${error.message}`, { error });
     msg.channel.send(`Unknown error occured: ${error.message}`);
   }
 }
