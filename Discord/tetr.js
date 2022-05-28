@@ -119,18 +119,24 @@ var perms = new Map();
 var players = new Map();
 
 const https = require("https");
-
-function async_request(option) {
-  return new Promise( (resolve, reject) => {                    
-    let request = https.get( option, (response) => {
-        if (response.statusCode < 200 || response.statusCode > 299) {
-        reject( new Error('Failed to load page'+response.statusCode) );}
-        let data = "";
-        response.on( 'data', (chunk) => data += chunk );
-        response.on( 'end', () => resolve(JSON.parse(data)) );
-    } );
-    request.on( 'error', (err) => reject(err) );
- })
+const axios = require("axios");
+async function async_request(option) {
+ //  return new Promise( (resolve, reject) => {                    
+ //    let request = https.get( option, (response) => {
+ //        if (response.statusCode < 200 || response.statusCode > 299) {
+ //        reject( new Error('Failed to load page'+response.statusCode) );}
+ //        let data = "";
+ //        response.on( 'data', (chunk) => data += chunk );
+ //        response.on( 'end', () => resolve(JSON.parse(data)) );
+ //    } );
+ //    request.on( 'error', (err) => reject(err) );
+ // })
+ var temp = await axios.get(option);
+ temp = temp.data;
+ if (!temp.success) {
+  throw new Error('Unable to fetch data');
+ }
+ return temp;
 }
 
 async function save(){
@@ -256,7 +262,7 @@ async function refresh(bot) {
           if (perms.get(channel).blitz) {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
-            } catch (e) {console.error(e);}
+            } catch (e) {console.error(e);continue;}
           }
           val.blitz = newblitz;
         }
@@ -305,7 +311,7 @@ async function refresh(bot) {
          if (perms.get(channel)["40l"])  {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
-            } catch (e) {console.error(e);}
+            } catch (e) {console.error(e); continue;}
           }
           val["40l"] = new40l;
         }
@@ -349,7 +355,10 @@ async function refresh(bot) {
           color = "#32a844";
         }
         await timeout(10000);
-        var friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
+        var friend;
+        try {
+          friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
+        } catch (e) {console.error(e); continue;}
         cur.endcontext[0].user.username = cur.endcontext[0].user.username.toUpperCase();
         if (friend.data.user.country != null) cur.endcontext[0].user.username += " :flag_" + friend.data.user.country.toLowerCase() + ":";
         var cfriend = friend;
@@ -358,7 +367,10 @@ async function refresh(bot) {
         if (emoji.has(friend.rank)) {
           friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
         }
-        var foe = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id);
+        var foe;
+        try {
+          foe = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id);
+        } catch (e) {console.error(e); continue;}
         cur.endcontext[1].user.username = cur.endcontext[1].user.username.toUpperCase();
         if (foe.data.user.country != null) cur.endcontext[1].user.username += " :flag_" + foe.data.user.country.toLowerCase() + ":";
         foe = foe.data.user.league;
@@ -398,7 +410,7 @@ async function refresh(bot) {
         if (perms.get(channel).ranked) {
           try {
             bot.channels.cache.get(val.channel).send({ embeds: [embed] });
-          } catch(e) {console.error(e);}
+          } catch(e) {console.error(e); continue;}
         }
       }
       if (match.length == 0) match[0] = {_id: null};
@@ -490,7 +502,10 @@ const maxScoreChar = 8;
 async function updatePlayers(country) {
   var cur = parseInt(Date.now());
   if (players.has(country) == false || players.get(country).time + cacheTime < cur) {
-    var temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
+    var temp; 
+    try {
+      temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
+    } catch(e) {console.error(e); return;}
     temp = temp.data.users;
     var cnt = 1;
     var num = 0;
@@ -499,7 +514,9 @@ async function updatePlayers(country) {
       num += temp.length;
       if (temp.length == 0) break;
       for (var i = 0; i < temp.length; ++i) arr.push(temp[i]._id);
-      temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=" + temp[temp.length - 1].xp);
+      try {
+        temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=" + temp[temp.length - 1].xp);
+      } catch(e) {console.error(e); return;}
       temp = temp.data.users;
       ++cnt;
     }
@@ -512,7 +529,10 @@ async function blitzLb(bot, msg, country) {
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
-  var records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+  var records 
+  try {
+    records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+  } catch (e) {console.error(e); return;}
   records = records.data.records;
   var ans = [];
   for (var i = 0; i < records.length; ++i) {
@@ -545,7 +565,10 @@ async function fortyLinesLb(bot, msg, country) {
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
-  var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+  var records 
+  try {
+    records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+  } catch (e) {console.error(e); return;}
   records = records.data.records;
   var ans = [];
   for (var i = 0; i < records.length; ++i) {
@@ -582,7 +605,10 @@ async function playerCount(bot, msg, country) {
 
 async function printGlobal(bot, msg, args) {
   if (args[2] == "blitz") {
-    var records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+    var records 
+    try {
+      records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+    } catch (e) {console.error(e); return;}
     records = records.data.records;
     var ans = records;
     if (ans.length > 50) {
@@ -609,7 +635,10 @@ async function printGlobal(bot, msg, args) {
     };
     msg.channel.send({ embeds: [embed] });
   } else if (args[2] == "40l") {
-    var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+    var records 
+    try {
+      records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+    } catch (e) {console.error(e); return;}
     records = records.data.records;
     var ans = records;
     if (ans.length > 50) {
@@ -738,7 +767,10 @@ module.exports = {
           msg.channel.send("wot");
           return;
         }
-        var user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        var user;
+        try {
+          user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        } catch (e) {console.error(e); return;}
         if (user.success == false) {
           msg.channel.send("who is dat");
           return; 
@@ -753,7 +785,11 @@ module.exports = {
           msg.channel.send("bruh we have that guy");
           return;
         }
-        var match = await async_request("https://ch.tetr.io/api/streams/league_userrecent_" + id);
+
+        var match;
+        try {
+          match = await async_request("https://ch.tetr.io/api/streams/league_userrecent_" + id);
+        } catch (e) {console.error(e); return;}
         // console.log(match);
         match = match.data.records[0];
         if (match == undefined) {
@@ -834,7 +870,10 @@ module.exports = {
           msg.channel.send("wot");
           return;
         }
-        var user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        var user;
+        try {
+          user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        } catch (e) {console.error(e); return;}
         if (user.success == false) {
           msg.channel.send("who is dat");
           return; 
