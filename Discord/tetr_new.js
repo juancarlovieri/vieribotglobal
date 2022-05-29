@@ -10,6 +10,10 @@ function hasAdmin(msg) {
   return msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_CHANNELS);
 }
 
+function splitMsg(msg) {
+  return msg.content.split(/\s+/);
+}
+
 async function help(bot, msg) {
   const vieriImg = new Discord.MessageAttachment('../viericorp.png');
   const str = `**^${cmdName} monitor <user>** - spy on <user>, you will get notified when they play ranked or achieve new pbs
@@ -96,7 +100,7 @@ async function monitor(bot, msg) {
 }
 
 async function list(bot, msg) {
-  const args = msg.content.split(' ');
+  const args = splitMsg(msg);
   if (args.length !== 2) {
     msg.channel.send('wot');
     return;
@@ -120,7 +124,7 @@ async function list(bot, msg) {
 }
 
 async function remove(bot, msg) {
-  const args = msg.content.split(' ');
+  const args = splitMsg(msg);
   if (args.length !== 3) {
     msg.channel.send('wot');
     return;

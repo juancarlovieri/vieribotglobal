@@ -11,7 +11,7 @@ const monitorSchema = new mongoose.Schema({
   },
 });
 
-monitorSchema.index({ channelId: 1, username: 1 }, { unique: true });
+monitorSchema.index({ channelId: 1, userId: 1 }, { unique: true });
 
 const Monitor = mongoose.model('Monitor', monitorSchema);
 
