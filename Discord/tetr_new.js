@@ -309,7 +309,7 @@ async function refreshAll(bot) {
     const monitors = await Monitor.find().exec();
     await Promise.allSettled(monitors.map((m) => refreshUser(bot, m)));
   } catch (error) {
-    logger.error(`refreshAll failed: ${error.message}`);
+    logger.error(`refreshAll failed: ${error.message}`, { error });
   } finally {
     logger.info('refreshAll finished.');
     refreshAllStatus.running = false;
