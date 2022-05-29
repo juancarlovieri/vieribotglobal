@@ -37,7 +37,8 @@ tetrClient.interceptors.response.use(
 async function fetchUser(userName) {
   const user = await tetrClient.get(`/users/${userName}`);
   if (!user.success) {
-    return {};
+    logger.error(`fetchUser ${userName} failed`, { user });
+    throw new Error(`Failed to fetch user ${userName}`);
   }
   return user.data.user;
 }
