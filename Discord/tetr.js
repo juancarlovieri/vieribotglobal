@@ -503,6 +503,7 @@ const maxScoreChar = 8;
 async function updatePlayers(country) {
   var cur = parseInt(Date.now());
   if (players.has(country) == false || players.get(country).time + cacheTime < cur) {
+    console.log("updating players for " + country);
     var temp; 
     try {
       temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
