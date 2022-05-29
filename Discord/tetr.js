@@ -12,7 +12,7 @@ const prettyMilliseconds = require('pretty-ms');
 var ownerId = "455184547840262144";
 const MongoClient = require("mongodb").MongoClient;
 const token = require('./auth.json');
-
+const { MessageActionRow, MessageSelectMenu, MessageButton  } = require('discord.js');
 const countryCodes = require('country-codes-list')
 const allCountries = new Map(Object.entries(countryCodes.customList('countryCode', '{countryCode} {countryNameEn}')))
 
@@ -733,27 +733,99 @@ async function printMonitored(bot, msg, args) {
   msg.channel.send({ embeds: [embed] });
 }
 
+async function printCountries(bot, msg, args) {
+  var ans = [];
+  for (const all of allCountries) {
+    ans.push(all[1]);
+  }
+  // ans += "```";
+  var embeds = [];
+  var pg = 0;
+  while(ans.length > 0) {
+    var cur = ans.slice(0, 50);
+    ans = ans.slice(50);
+    var str = "```";
+    for (var i of cur) {
+      str += i + '\n'
+    }
+    str += '```';
+    ++pg;
+    const embed = {
+      color: "#ebc334",
+      title: "List of available countries pg. " + pg,
+      description: str,
+      timestamp: new Date(),
+      footer: {
+        text: "By Vieri Corp.™ All Rights Reserved"
+      }
+    }; 
+    embeds.push(embed);
+  }
+  // const embed = {
+  //   color: "#ebc334",
+  //   title: "List of available countries",
+  //   description: ans,
+  //   timestamp: new Date(),
+  //   footer: {
+  //     text: "By Vieri Corp.™ All Rights Reserved"
+  //   }
+  // };
+  const row = new MessageActionRow()
+    .addComponents(
+      new MessageButton()
+        .setCustomId('prev')
+        .setLabel('prev')
+        .setStyle('PRIMARY')
+        .setDisabled(true),
+    )
+    .addComponents(
+      new MessageButton()
+        .setCustomId('next')
+        .setLabel('next')
+        .setStyle('PRIMARY'),
+    );
+  msg.channel.send({ embeds: [embeds[0]], components: [row]});
+  bot.on('interactionCreate', interaction => {
+    if (!interaction.isButton()) return;
+    if (interaction.message.embeds.length == 0) return;
+    // console.log(interaction);
+    // interaction.update({embeds: [embeds[0]], components: [row]});
+    var idx = -1;
+    for (var i = 0; i < embeds.length; ++i) {
+      if (embeds[i].title == interaction.message.embeds[0].title) idx = i;
+    }
+    if (idx == -1) return;
+    if (interaction.customId == 'next') ++idx;
+    else --idx;
+    idx = Math.max(idx, 0);
+    idx = Math.min(idx, embeds.length - 1);
+    var prev = (idx == 0), next = (idx == embeds.length - 1);
+    const row = new MessageActionRow()
+      .addComponents(
+        new MessageButton()
+          .setCustomId('prev')
+          .setLabel('prev')
+          .setStyle('PRIMARY')
+          .setDisabled(prev)
+      )
+      .addComponents(
+        new MessageButton()
+          .setCustomId('next')
+          .setLabel('next')
+          .setStyle('PRIMARY')
+          .setDisabled(next)
+      );
+    interaction.update({embeds: [embeds[idx]], components: [row]});
+  });
+}
+
 module.exports = {
   cmd: async function(bot, msg) {
     var args = msg.content.split(" ");
     if (args.length == 1) return;
     switch (args[1]) {
       case 'countries':
-        var ans = "```\n";
-        for (const all of allCountries) {
-          ans +=  all[1] + '\n';
-        }
-        ans += "```";
-        const embed = {
-          color: "#ebc334",
-          title: "List of available countries",
-          description: ans,
-          timestamp: new Date(),
-          footer: {
-            text: "By Vieri Corp.™ All Rights Reserved"
-          }
-        };
-        msg.channel.send({ embeds: [embed] });
+        printCountries(bot, msg, args);
       break;
       case 'help':
           var vieri = new Discord.MessageAttachment('../viericorp.png');
