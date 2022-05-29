@@ -5,13 +5,13 @@ const httpAgent = new Agent({
   maxSockets: 256,
   maxFreeSockets: 256,
   timeout: 70000,
-  freeSocketTimeout: 4000,
+  freeSocketTimeout: 15000,
 });
 const httpsAgent = new Agent.HttpsAgent({
   maxSockets: 256,
   maxFreeSockets: 256,
   timeout: 70000,
-  freeSocketTimeout: 4000,
+  freeSocketTimeout: 15000,
 });
 
 const { logger } = require('../logger');
@@ -29,8 +29,10 @@ tetrClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    logger.error(`tetrClient ${error.request.path} failed: ${error.message}`);
-    return Promise.reject(error);
+    logger.error(`tetrClient ${error.request.path} failed: ${error.message}`, {
+      error: error.toJSON(),
+    });
+    return new Error(`tetrClient ${error.request.path} failed.`);
   }
 );
 
