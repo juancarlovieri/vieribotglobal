@@ -763,6 +763,7 @@ module.exports = {
           str    += '**^tetr lb <gameMode> <country>** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
           str    += '**^tetr lb <gameMode> monitored** - shows the <gameMode> leaderboard for spied users, <gameMode> can be blitz or 40l\n';
           str    += '**^tetr players <country>** - shows the number of players for <country>\n';
+          str    += '**^tetr countries** - lists all available countries, along with their codes\n';
           // console.log(str);
           var strAdmin = '**^tetr remove <user>** - remove <user> from monitor list\n'
           strAdmin    += '**^tetr toggle <gameMode>** - disables/enables notification for <gameMode>, gameMode can be blitz, 40l, or ranked\n';
