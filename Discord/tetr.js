@@ -13,6 +13,9 @@ var ownerId = "455184547840262144";
 const MongoClient = require("mongodb").MongoClient;
 const token = require('./auth.json');
 
+const countryCodes = require('country-codes-list')
+const allCountries = new Map(Object.entries(countryCodes.customList('countryCode', '{countryCode} {countryNameEn}')))
+
 const client = new MongoClient(token.mongodb, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -735,6 +738,23 @@ module.exports = {
     var args = msg.content.split(" ");
     if (args.length == 1) return;
     switch (args[1]) {
+      case 'countries':
+        var ans = "```\n";
+        for (const all of allCountries) {
+          ans +=  all[1] + '\n';
+        }
+        ans += "```";
+        const embed = {
+          color: "#ebc334",
+          title: "List of available countries",
+          description: ans,
+          timestamp: new Date(),
+          footer: {
+            text: "By Vieri Corp.™ All Rights Reserved"
+          }
+        };
+        msg.channel.send({ embeds: [embed] });
+      break;
       case 'help':
           var vieri = new Discord.MessageAttachment('../viericorp.png');
           var str = '**^tetr monitor <user>** - spy on <user>, you will get notified when they play ranked or achieve new pbs\n';
@@ -911,7 +931,11 @@ module.exports = {
           return;
         }
         if (country.length != 2) {
-          msg.channel.send("invalid country");
+          msg.channel.send("invalid country, list of available coutnries on ^tetr countries");
+          return;
+        }
+        if (allCountries.has(country.toUpperCase()) == false) {
+          msg.channel.send("invalid country, list of available coutnries on ^tetr countries");
           return;
         }
         if (args[2] == "blitz") {
