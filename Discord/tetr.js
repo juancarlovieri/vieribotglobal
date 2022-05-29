@@ -14,7 +14,7 @@ const MongoClient = require("mongodb").MongoClient;
 const token = require('./auth.json');
 const { MessageActionRow, MessageSelectMenu, MessageButton  } = require('discord.js');
 const countryCodes = require('country-codes-list')
-const allCountries = new Map(Object.entries(countryCodes.customList('countryCode', '{countryCode} {countryNameEn}')))
+const allCountries = new Map(Object.entries(countryCodes.customList('countryCode', '{countryCode} | {countryNameEn}')))
 
 const client = new MongoClient(token.mongodb, {
   useNewUrlParser: true,
