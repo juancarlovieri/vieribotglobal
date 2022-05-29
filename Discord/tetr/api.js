@@ -29,7 +29,7 @@ tetrClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    logger.error(`tetrClient ${error.request.path} failed: ${error.message}`, { error });
+    logger.error(`tetrClient ${error.request.path} failed: ${error.message}`);
     return Promise.reject(error);
   }
 );
