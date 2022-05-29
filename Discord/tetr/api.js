@@ -5,13 +5,13 @@ const httpAgent = new Agent({
   maxSockets: 256,
   maxFreeSockets: 256,
   timeout: 70000,
-  freeSocketTimeout: 70000,
+  freeSocketTimeout: 4000,
 });
 const httpsAgent = new Agent.HttpsAgent({
   maxSockets: 256,
   maxFreeSockets: 256,
   timeout: 70000,
-  freeSocketTimeout: 70000,
+  freeSocketTimeout: 4000,
 });
 
 const { logger } = require('../logger');

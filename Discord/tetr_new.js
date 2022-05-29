@@ -14,6 +14,19 @@ function splitMsg(msg) {
   return msg.content.split(/\s+/);
 }
 
+function logAndThrow(jobs, message) {
+  const errors = jobs
+    .filter((j) => j.status !== 'fulfilled')
+    .map((j) => j.reason);
+  errors.forEach((error) =>
+    logger.error(`${message} ${error.message}`, { error })
+  );
+  if (errors.length) {
+    throw new Error(message);
+  }
+  return jobs.filter((j) => j.status === 'fulfilled').map((j) => j.value);
+}
+
 async function help(bot, msg) {
   const vieriImg = new Discord.MessageAttachment('../viericorp.png');
   const str = `**^${cmdName} monitor <user>** - spy on <user>, you will get notified when they play ranked or achieve new pbs
@@ -233,6 +246,7 @@ async function sendNewPbMessage(bot, m, { record, rank, score }, gameName) {
 }
 
 async function tryUpdateBlitzPb(bot, m, { record, rank }) {
+  if (!record) return { updated: false };
   const score = Number(record.endcontext.score);
   if (
     m.lastPersonalBest.blitz !== undefined &&
@@ -255,6 +269,30 @@ async function tryUpdateBlitzPb(bot, m, { record, rank }) {
   }
 }
 
+async function tryUpdate40lPb(bot, m, { record, rank }) {
+  if (!record) return { updated: false };
+  const score = Number(record.endcontext.finalTime);
+  if (
+    m.lastPersonalBest['40l'] !== undefined &&
+    score >= m.lastPersonalBest['40l']
+  ) {
+    return { updated: false };
+  }
+  try {
+    await sendNewPbMessage(bot, m, { record, rank, score }, '40l');
+    // eslint-disable-next-line no-param-reassign
+    m.lastPersonalBest['40l'] = score;
+    await m.save();
+    return { updated: true };
+  } catch (error) {
+    logger.error(
+      `Failed to update 40l pb for ${m.username}: ${error.message}`,
+      { error }
+    );
+    throw error;
+  }
+}
+
 async function refreshUser(bot, m) {
   const user = await tetrApi.fetchUser(m.userId);
   const records = await tetrApi.getRecords(m.userId);
@@ -263,19 +301,20 @@ async function refreshUser(bot, m) {
   await checkUsernameChange(bot, refreshedMonitor, user);
   const jobs = await Promise.allSettled([
     tryUpdateBlitzPb(bot, refreshedMonitor, records.blitz),
+    tryUpdate40lPb(bot, refreshedMonitor, records['40l']),
   ]);
-  const updated = jobs.some((j) => j.value?.updated);
-  const failed = jobs.some((j) => j.status !== 'fulfilled');
-  return { updated, failed };
+  const results = logAndThrow(jobs, `refreshUser ${m.username} failed.`);
+  const updated = results.some((r) => r.updated);
+  return { updated };
 }
 
 async function refreshChannel(bot, monitors) {
   const jobs = await Promise.allSettled(
     monitors.map((m) => refreshUser(bot, m))
   );
-  const updated = jobs.some((j) => j.value?.updated);
-  const failed = jobs.some((j) => j.status !== 'fulfilled' || j.value?.failed);
-  return { updated, failed };
+  const results = logAndThrow(jobs, `refreshChannel failed.`);
+  const updated = results.some((r) => r.updated);
+  return { updated };
 }
 
 async function refresh(bot, msg) {
@@ -288,12 +327,15 @@ async function refresh(bot, msg) {
   const channelId = msg.channel.id;
   const monitors = await Monitor.find({ channelId }).exec();
 
-  const result = await refreshChannel(bot, monitors);
+  try {
+    const result = await refreshChannel(bot, monitors);
 
-  if (result.failed) {
+    if (!result.updated) {
+      msg.channel.send('nothing to update');
+    }
+  } catch (error) {
+    logger.error(`refresh failed: ${error.message}`, { error });
     msg.channel.send('refresh failed');
-  } else if (!result.updated) {
-    msg.channel.send('nothing to update');
   }
 }
 
@@ -307,7 +349,10 @@ async function refreshAll(bot) {
     refreshAllStatus.running = true;
     logger.info('refreshAll started.');
     const monitors = await Monitor.find().exec();
-    await Promise.allSettled(monitors.map((m) => refreshUser(bot, m)));
+    const jobs = await Promise.allSettled(
+      monitors.map((m) => refreshUser(bot, m))
+    );
+    logAndThrow(jobs);
   } catch (error) {
     logger.error(`refreshAll failed: ${error.message}`, { error });
   } finally {
