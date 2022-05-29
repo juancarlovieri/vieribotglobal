@@ -1,5 +1,7 @@
 const {Client, Intents} = require("discord.js");
 const Discord = require('discord.js');
+const mongoose = require('mongoose');
+
 var bot = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 var auth = require('./auth.json');
 const ytdl = require("ytdl-core");
@@ -29,9 +31,11 @@ const predict = require('./tlx/predict.js');
 const gamble = require('./gamble.js');
 // const music = require('./music.js');
 const tetr = require('./tetr.js');
-
+const tetrNew = require('./tetr_new');
 
 // console.log((1599715800000 - 3600000) - Date.now());
+
+mongoose.connect(auth.mongodb);
 
 function save(){
 }
@@ -343,6 +347,9 @@ function command(args, msg){
     case '^tetr':
       tetr.cmd(bot, msg);
     break;
+    case '^tetr2':
+      tetrNew.cmd(bot, msg);
+      break;
     case '^ping':
       msg.channel.send(`Pong! Latency is ${Date.now() - msg.createdTimestamp}ms. API Latency is ${Math.round(bot.ws.ping)}ms`)
     break;
@@ -459,6 +466,7 @@ bot.on("ready", msg =>{
   setInterval(setPresence, 3600000);
   launch.new(bot);
   tetr.startRefresh(bot);
+  tetrNew.startRefresh(bot);
 })
 
 bot.on("messageCreate", msg => {
