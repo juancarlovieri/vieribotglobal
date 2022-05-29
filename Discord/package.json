@@ -6,12 +6,13 @@
   "dependencies": {
     "@babel/core": "^7.18.2",
     "@discordjs/voice": "^0.7.5",
-    "@google-cloud/translate": "^6.0.2",
+    "@google-cloud/translate": "^6.3.1",
     "agentkeepalive": "^4.2.1",
     "all": "0.0.0",
     "axios": "^0.24.0",
     "body-parser": "^1.19.0",
     "child_process": "^1.0.2",
+    "country-codes-list": "^1.6.8",
     "crypto": "^1.0.1",
     "discord.js": "^13.7.0",
     "encodeurl": "^1.0.2",
@@ -45,9 +46,9 @@
     "util": "^0.12.4",
     "winston": "^3.7.2",
     "winston-mongodb": "^5.0.7",
-    "youtube-search-api": "^1.0.11",
-    "ytdl": "^1.3.5",
-    "ytdl-core": "^4.10.0"
+    "youtube-search-api": "^1.1.0",
+    "ytdl": "^1.4.1",
+    "ytdl-core": "^4.11.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

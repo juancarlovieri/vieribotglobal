@@ -13,6 +13,9 @@ var ownerId = "455184547840262144";
 const MongoClient = require("mongodb").MongoClient;
 const token = require('./auth.json');
 
+const countryCodes = require('country-codes-list')
+const allCountries = new Map(Object.entries(countryCodes.customList('countryCode', '{countryCode} {countryNameEn}')))
+
 const client = new MongoClient(token.mongodb, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -28,6 +31,7 @@ const emoji = new Map();
 emoji.set('x', "978615861575315536");
 emoji.set('u', "978615918332633098");
 emoji.set('ss', "978615896417378304");
+emoji.set('s+', "980356564600897586");
 emoji.set('s', "978615943238385674");
 emoji.set('s-', "978615963840827452");
 emoji.set('a+', "978616006874394648");
@@ -119,18 +123,24 @@ var perms = new Map();
 var players = new Map();
 
 const https = require("https");
-
-function async_request(option) {
-  return new Promise( (resolve, reject) => {                    
-    let request = https.get( option, (response) => {
-        if (response.statusCode < 200 || response.statusCode > 299) {
-        reject( new Error('Failed to load page'+response.statusCode) );}
-        let data = "";
-        response.on( 'data', (chunk) => data += chunk );
-        response.on( 'end', () => resolve(JSON.parse(data)) );
-    } );
-    request.on( 'error', (err) => reject(err) );
- })
+const axios = require("axios");
+async function async_request(option) {
+ //  return new Promise( (resolve, reject) => {                    
+ //    let request = https.get( option, (response) => {
+ //        if (response.statusCode < 200 || response.statusCode > 299) {
+ //        reject( new Error('Failed to load page'+response.statusCode) );}
+ //        let data = "";
+ //        response.on( 'data', (chunk) => data += chunk );
+ //        response.on( 'end', () => resolve(JSON.parse(data)) );
+ //    } );
+ //    request.on( 'error', (err) => reject(err) );
+ // })
+ var temp = await axios.get(option);
+ temp = temp.data;
+ if (!temp.success) {
+  throw new Error('Unable to fetch data');
+ }
+ return temp;
 }
 
 async function save(){
@@ -256,7 +266,7 @@ async function refresh(bot) {
           if (perms.get(channel).blitz) {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
-            } catch (e) {console.error(e);}
+            } catch (e) {console.error(e);continue;}
           }
           val.blitz = newblitz;
         }
@@ -305,7 +315,7 @@ async function refresh(bot) {
          if (perms.get(channel)["40l"])  {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
-            } catch (e) {console.error(e);}
+            } catch (e) {console.error(e); continue;}
           }
           val["40l"] = new40l;
         }
@@ -349,14 +359,24 @@ async function refresh(bot) {
           color = "#32a844";
         }
         await timeout(10000);
-        var friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
+        var friend;
+        try {
+          friend = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id);
+        } catch (e) {console.error(e); continue;}
+        cur.endcontext[0].user.username = cur.endcontext[0].user.username.toUpperCase();
+        if (friend.data.user.country != null) cur.endcontext[0].user.username += " :flag_" + friend.data.user.country.toLowerCase() + ":";
         var cfriend = friend;
         friend = friend.data.user.league;
         if (friend.rank == "z") friend.rank = "?";
         if (emoji.has(friend.rank)) {
           friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
         }
-        var foe = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id);
+        var foe;
+        try {
+          foe = await async_request('https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id);
+        } catch (e) {console.error(e); continue;}
+        cur.endcontext[1].user.username = cur.endcontext[1].user.username.toUpperCase();
+        if (foe.data.user.country != null) cur.endcontext[1].user.username += " :flag_" + foe.data.user.country.toLowerCase() + ":";
         foe = foe.data.user.league;
         // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;  
         if (foe.rank == "z") foe.rank = "?";
@@ -369,12 +389,12 @@ async function refresh(bot) {
           url: 'https://tetr.io/#r:' + cur.replayid,
           description: cur.endcontext[0].wins.toFixed(0) + ' - ' + cur.endcontext[1].wins.toFixed(0),
           fields: [
-            { name: '\u200B', value: '**' + cur.endcontext[0].user.username.toUpperCase() + '**'},
+            { name: '\u200B', value: '**' + cur.endcontext[0].user.username + '**'},
             { name: 'Rank', value: friend.rank + " / " + friend.rating.toFixed(2) + " TR", inline: true },
             { name: 'PPS', value: cur.endcontext[0].points.tertiary.toFixed(2), inline: true },
             { name: 'APM', value: cur.endcontext[0].points.secondary.toFixed(2), inline: true },
             { name: 'VS', value: cur.endcontext[0].points.extra.vs.toFixed(2), inline: true },
-            { name: '\u200B', value: '**' + cur.endcontext[1].user.username.toUpperCase() + '**'},
+            { name: '\u200B', value: '**' + cur.endcontext[1].user.username + '**'},
             { name: 'Rank', value: foe.rank + " / " + foe.rating.toFixed(2) + " TR", inline: true },
             { name: 'PPS', value: cur.endcontext[1].points.tertiary.toFixed(2), inline: true },
             { name: 'APM', value: cur.endcontext[1].points.secondary.toFixed(2), inline: true },
@@ -394,7 +414,7 @@ async function refresh(bot) {
         if (perms.get(channel).ranked) {
           try {
             bot.channels.cache.get(val.channel).send({ embeds: [embed] });
-          } catch(e) {console.error(e);}
+          } catch(e) {console.error(e); continue;}
         }
       }
       if (match.length == 0) match[0] = {_id: null};
@@ -486,7 +506,11 @@ const maxScoreChar = 8;
 async function updatePlayers(country) {
   var cur = parseInt(Date.now());
   if (players.has(country) == false || players.get(country).time + cacheTime < cur) {
-    var temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
+    console.log("updating players for " + country);
+    var temp; 
+    try {
+      temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=0");
+    } catch(e) {console.error(e); return;}
     temp = temp.data.users;
     var cnt = 1;
     var num = 0;
@@ -495,7 +519,9 @@ async function updatePlayers(country) {
       num += temp.length;
       if (temp.length == 0) break;
       for (var i = 0; i < temp.length; ++i) arr.push(temp[i]._id);
-      temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=" + temp[temp.length - 1].xp);
+      try {
+        temp = await async_request("https://ch.tetr.io/api/users/lists/xp?country=" + country + "&limit=100&after=" + temp[temp.length - 1].xp);
+      } catch(e) {console.error(e); return;}
       temp = temp.data.users;
       ++cnt;
     }
@@ -508,7 +534,10 @@ async function blitzLb(bot, msg, country) {
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
-  var records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+  var records 
+  try {
+    records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+  } catch (e) {console.error(e); return;}
   records = records.data.records;
   var ans = [];
   for (var i = 0; i < records.length; ++i) {
@@ -541,7 +570,10 @@ async function fortyLinesLb(bot, msg, country) {
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
-  var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+  var records 
+  try {
+    records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+  } catch (e) {console.error(e); return;}
   records = records.data.records;
   var ans = [];
   for (var i = 0; i < records.length; ++i) {
@@ -578,7 +610,10 @@ async function playerCount(bot, msg, country) {
 
 async function printGlobal(bot, msg, args) {
   if (args[2] == "blitz") {
-    var records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+    var records 
+    try {
+      records = await async_request("https://ch.tetr.io/api/streams/blitz_global");
+    } catch (e) {console.error(e); return;}
     records = records.data.records;
     var ans = records;
     if (ans.length > 50) {
@@ -605,7 +640,10 @@ async function printGlobal(bot, msg, args) {
     };
     msg.channel.send({ embeds: [embed] });
   } else if (args[2] == "40l") {
-    var records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+    var records 
+    try {
+      records = await async_request("https://ch.tetr.io/api/streams/40l_global");
+    } catch (e) {console.error(e); return;}
     records = records.data.records;
     var ans = records;
     if (ans.length > 50) {
@@ -700,6 +738,23 @@ module.exports = {
     var args = msg.content.split(" ");
     if (args.length == 1) return;
     switch (args[1]) {
+      case 'countries':
+        var ans = "```\n";
+        for (const all of allCountries) {
+          ans +=  all[1] + '\n';
+        }
+        ans += "```";
+        const embed = {
+          color: "#ebc334",
+          title: "List of available countries",
+          description: ans,
+          timestamp: new Date(),
+          footer: {
+            text: "By Vieri Corp.™ All Rights Reserved"
+          }
+        };
+        msg.channel.send({ embeds: [embed] });
+      break;
       case 'help':
           var vieri = new Discord.MessageAttachment('../viericorp.png');
           var str = '**^tetr monitor <user>** - spy on <user>, you will get notified when they play ranked or achieve new pbs\n';
@@ -708,6 +763,7 @@ module.exports = {
           str    += '**^tetr lb <gameMode> <country>** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
           str    += '**^tetr lb <gameMode> monitored** - shows the <gameMode> leaderboard for spied users, <gameMode> can be blitz or 40l\n';
           str    += '**^tetr players <country>** - shows the number of players for <country>\n';
+          str    += '**^tetr countries** - lists all available countries, along with their codes[\n';
           // console.log(str);
           var strAdmin = '**^tetr remove <user>** - remove <user> from monitor list\n'
           strAdmin    += '**^tetr toggle <gameMode>** - disables/enables notification for <gameMode>, gameMode can be blitz, 40l, or ranked\n';
@@ -734,7 +790,10 @@ module.exports = {
           msg.channel.send("wot");
           return;
         }
-        var user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        var user;
+        try {
+          user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        } catch (e) {console.error(e); return;}
         if (user.success == false) {
           msg.channel.send("who is dat");
           return; 
@@ -749,7 +808,11 @@ module.exports = {
           msg.channel.send("bruh we have that guy");
           return;
         }
-        var match = await async_request("https://ch.tetr.io/api/streams/league_userrecent_" + id);
+
+        var match;
+        try {
+          match = await async_request("https://ch.tetr.io/api/streams/league_userrecent_" + id);
+        } catch (e) {console.error(e); return;}
         // console.log(match);
         match = match.data.records[0];
         if (match == undefined) {
@@ -830,7 +893,10 @@ module.exports = {
           msg.channel.send("wot");
           return;
         }
-        var user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        var user;
+        try {
+          user = await async_request("https://ch.tetr.io/api/users/" + args[2]);
+        } catch (e) {console.error(e); return;}
         if (user.success == false) {
           msg.channel.send("who is dat");
           return; 
@@ -866,7 +932,11 @@ module.exports = {
           return;
         }
         if (country.length != 2) {
-          msg.channel.send("invalid country");
+          msg.channel.send("invalid country, list of available coutnries on ^tetr countries");
+          return;
+        }
+        if (allCountries.has(country.toUpperCase()) == false) {
+          msg.channel.send("invalid country, list of available coutnries on ^tetr countries");
           return;
         }
         if (args[2] == "blitz") {
