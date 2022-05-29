@@ -133,7 +133,7 @@ async function list(bot, msg) {
     return;
   }
 
-  const reply = ['**List of monitored people**:'].concat(
+  const reply = [`**List of monitored people (${monitors.length})**:`].concat(
     monitors.map((m) => m.username)
   );
   msg.channel.send(reply.join('\n'));
