@@ -45,6 +45,28 @@ async function help(bot, msg) {
   });
 }
 
+/**
+ * @param {Monitor} m
+ * @returns boolean
+ */
+async function checkUsernameChange(bot, m, user) {
+  // eslint-disable-next-line no-underscore-dangle
+  const userId = user._id;
+  if (m.userId !== userId) {
+    throw new Error(`checkUsernameChange ids mismatch: ${m.userId}, ${userId}`);
+  }
+  if (m.username !== user.username) {
+    bot.channels.cache
+      .get(m.channelId)
+      .send(`username change detected, ${m.username} => ${user.username}`);
+    // eslint-disable-next-line no-param-reassign
+    m.username = user.username;
+    await m.save();
+    return true;
+  }
+  return false;
+}
+
 async function monitorOne(bot, msg, username) {
   const user = await tetrApi.fetchUser(username);
   // eslint-disable-next-line no-underscore-dangle
@@ -59,13 +81,7 @@ async function monitorOne(bot, msg, username) {
   const existingMonitor = await Monitor.findOne({ channelId, userId }).exec();
 
   if (existingMonitor) {
-    if (existingMonitor.username !== username) {
-      msg.channel.send(
-        `username change detected, ${existingMonitor.username} -> ${username}`
-      );
-      existingMonitor.username = username;
-      existingMonitor.save();
-    } else {
+    if (!(await checkUsernameChange(bot, existingMonitor, user))) {
       msg.channel.send(`bruh we have ${username}`);
     }
     return;
@@ -240,8 +256,11 @@ async function tryUpdateBlitzPb(bot, m, { record, rank }) {
 }
 
 async function refreshUser(bot, m) {
+  const user = await tetrApi.fetchUser(m.userId);
   const records = await tetrApi.getRecords(m.userId);
+  // m can be stale since getRecords may be slow
   const refreshedMonitor = await Monitor.findById(m.id);
+  await checkUsernameChange(bot, refreshedMonitor, user);
   const jobs = await Promise.allSettled([
     tryUpdateBlitzPb(bot, refreshedMonitor, records.blitz),
   ]);
@@ -260,7 +279,7 @@ async function refreshChannel(bot, monitors) {
 }
 
 async function refresh(bot, msg) {
-  const args = msg.content.split(' ');
+  const args = splitMsg(msg);
   if (args.length !== 2) {
     msg.channel.send('wot');
     return;
