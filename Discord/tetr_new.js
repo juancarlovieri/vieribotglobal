@@ -41,27 +41,29 @@ async function help(bot, msg) {
   });
 }
 
-async function monitor(bot, msg) {
-  const args = msg.content.split(' ');
-  if (args.length !== 3) {
-    msg.channel.send('wot');
-    return;
-  }
-  const user = await tetrApi.fetchUser(args[2]);
+async function monitorOne(bot, msg, username) {
+  const user = await tetrApi.fetchUser(username);
   // eslint-disable-next-line no-underscore-dangle
   const userId = user._id;
-  const { username } = user;
   if (!userId) {
-    msg.channel.send('who is dat');
+    msg.channel.send(`who is ${username}`);
     return;
   }
 
   const channelId = msg.channel.id;
 
-  const existingMonitor = await Monitor.findOne({ channelId, username }).exec();
+  const existingMonitor = await Monitor.findOne({ channelId, userId }).exec();
 
   if (existingMonitor) {
-    msg.channel.send('bruh we have that guy');
+    if (existingMonitor.username !== username) {
+      msg.channel.send(
+        `username change detected, ${existingMonitor.username} -> ${username}`
+      );
+      existingMonitor.username = username;
+      existingMonitor.save();
+    } else {
+      msg.channel.send(`bruh we have ${username}`);
+    }
     return;
   }
 
@@ -73,8 +75,24 @@ async function monitor(bot, msg) {
     lastMatchId,
   });
   await newMonitor.save();
+  msg.channel.send(`saved ${username}`);
+}
 
-  msg.channel.send('saved!');
+async function monitor(bot, msg) {
+  const args = msg.content.split(/\s+/);
+  if (args.length < 3) {
+    msg.channel.send('wot');
+    return;
+  }
+
+  const usernames = args.slice(2);
+  const jobs = await Promise.allSettled(
+    usernames.map((u) => monitorOne(bot, msg, u))
+  );
+  jobs
+    .filter((j) => j.status !== 'fulfilled')
+    .forEach((j) => logger.error('Failed to monitor.', { error: j.reason }));
+  msg.channel.send('monitor done');
 }
 
 async function list(bot, msg) {
@@ -285,7 +303,7 @@ const cmdMap = {
 
 async function cmd(bot, msg) {
   try {
-    const args = msg.content.split(' ');
+    const args = msg.content.split(/\s+/);
     if (args.length === 1) return;
     if (!(args[1] in cmdMap)) return;
     await cmdMap[args[1]](bot, msg);
