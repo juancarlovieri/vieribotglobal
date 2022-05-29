@@ -95,7 +95,9 @@ async function list(bot, msg) {
     return;
   }
 
-  const reply = ['**List of monitored people**:'].concat(monitors.map((m) => m.username));
+  const reply = ['**List of monitored people**:'].concat(
+    monitors.map((m) => m.username)
+  );
   msg.channel.send(reply.join('\n'));
 }
 
@@ -136,10 +138,14 @@ async function sendNewPbMessage(bot, m, { record, rank, score }, gameName) {
       { name: 'PPS', value: (ec.piecesplaced / 120).toFixed(2), inline: true },
       {
         name: 'Finesse',
-        value: `${finesseValue.percentage.toFixed(2)}%`,
+        value: `${finesseValue.percentage}%`,
         inline: true,
       },
-      { name: 'Finesse faults', value: finesseValue.faults.toFixed(0), inline: true },
+      {
+        name: 'Finesse faults',
+        value: finesseValue.faults,
+        inline: true,
+      },
       { name: 'Level', value: ec.level.toFixed(0), inline: true },
       { name: '\u200B', value: '**Clears**' },
       { name: 'Singles', value: ec.clears.singles.toFixed(0), inline: true },
@@ -149,13 +155,36 @@ async function sendNewPbMessage(bot, m, { record, rank, score }, gameName) {
       { name: '\u200B', value: '**T-spins**' },
       { name: 'Real', value: ec.clears.realtspins.toFixed(0), inline: true },
       { name: 'Mini', value: ec.clears.minitspins.toFixed(0), inline: true },
-      { name: 'Mini Singles', value: ec.clears.minitspinsingles.toFixed(0), inline: true },
-      { name: 'Singles', value: ec.clears.tspinsingles.toFixed(0), inline: true },
-      { name: 'Mini Doubles', value: ec.clears.minitspindoubles.toFixed(0), inline: true },
-      { name: 'Doubles', value: ec.clears.tspindoubles.toFixed(0), inline: true },
-      { name: 'Triples', value: ec.clears.tspintriples.toFixed(0), inline: true },
+      {
+        name: 'Mini Singles',
+        value: ec.clears.minitspinsingles.toFixed(0),
+        inline: true,
+      },
+      {
+        name: 'Singles',
+        value: ec.clears.tspinsingles.toFixed(0),
+        inline: true,
+      },
+      {
+        name: 'Mini Doubles',
+        value: ec.clears.minitspindoubles.toFixed(0),
+        inline: true,
+      },
+      {
+        name: 'Doubles',
+        value: ec.clears.tspindoubles.toFixed(0),
+        inline: true,
+      },
+      {
+        name: 'Triples',
+        value: ec.clears.tspintriples.toFixed(0),
+        inline: true,
+      },
       { name: 'All clears', value: ec.clears.allclear.toFixed(0) },
-      { name: '\u200B', value: `[replay link](https://tetr.io/#r:${record.replayid})` },
+      {
+        name: '\u200B',
+        value: `[replay link](https://tetr.io/#r:${record.replayid})`,
+      },
     ],
     timestamp: new Date(),
     footer: {
@@ -167,7 +196,10 @@ async function sendNewPbMessage(bot, m, { record, rank, score }, gameName) {
 
 async function tryUpdateBlitzPb(bot, m, { record, rank }) {
   const score = Number(record.endcontext.score);
-  if (m.lastPersonalBest.blitz !== undefined && score <= m.lastPersonalBest.blitz) {
+  if (
+    m.lastPersonalBest.blitz !== undefined &&
+    score <= m.lastPersonalBest.blitz
+  ) {
     return { updated: false };
   }
   try {
@@ -177,21 +209,29 @@ async function tryUpdateBlitzPb(bot, m, { record, rank }) {
     await m.save();
     return { updated: true };
   } catch (error) {
-    logger.error(`Failed to update blitz pb for ${m.username}: ${error.message}`, { error });
+    logger.error(
+      `Failed to update blitz pb for ${m.username}: ${error.message}`,
+      { error }
+    );
     throw error;
   }
 }
 
 async function refreshUser(bot, m) {
   const records = await tetrApi.getRecords(m.userId);
-  const jobs = await Promise.allSettled([tryUpdateBlitzPb(bot, m, records.blitz)]);
+  const refreshedMonitor = await Monitor.findById(m.id);
+  const jobs = await Promise.allSettled([
+    tryUpdateBlitzPb(bot, refreshedMonitor, records.blitz),
+  ]);
   const updated = jobs.some((j) => j.value?.updated);
   const failed = jobs.some((j) => j.status !== 'fulfilled');
   return { updated, failed };
 }
 
 async function refreshChannel(bot, monitors) {
-  const jobs = await Promise.allSettled(monitors.map((m) => refreshUser(bot, m)));
+  const jobs = await Promise.allSettled(
+    monitors.map((m) => refreshUser(bot, m))
+  );
   const updated = jobs.some((j) => j.value?.updated);
   const failed = jobs.some((j) => j.status !== 'fulfilled' || j.value?.failed);
   return { updated, failed };

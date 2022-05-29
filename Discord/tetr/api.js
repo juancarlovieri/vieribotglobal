@@ -1,10 +1,26 @@
 const axios = require('axios');
+const Agent = require('agentkeepalive');
+
+const httpAgent = new Agent({
+  maxSockets: 256,
+  maxFreeSockets: 256,
+  timeout: 70000,
+  freeSocketTimeout: 70000,
+});
+const httpsAgent = new Agent.HttpsAgent({
+  maxSockets: 256,
+  maxFreeSockets: 256,
+  timeout: 70000,
+  freeSocketTimeout: 70000,
+});
 
 const { logger } = require('../logger');
 
 const tetrClient = axios.create({
   baseURL: 'https://ch.tetr.io/api/',
   timeout: 10000,
+  httpAgent,
+  httpsAgent,
 });
 
 tetrClient.interceptors.response.use(
@@ -15,7 +31,7 @@ tetrClient.interceptors.response.use(
   (error) => {
     logger.error(`tetrClient ${error.request.path} failed: ${error.message}`);
     return Promise.reject(error);
-  },
+  }
 );
 
 async function fetchUser(userName) {
@@ -51,13 +67,20 @@ async function getRecords(userId) {
   return records.data.records;
 }
 
-function getFinesseValue(endcontext) {
-  if (!endcontext.finesse) {
-    return { percentage: 0, faults: 0 };
+function formatNumber(str, precision) {
+  if (Number.isNaN(str)) {
+    return '-';
   }
+  return Number(str).toFixed(precision);
+}
+
+function getFinesseValue(endcontext) {
+  const percentage =
+    (Number(endcontext?.finesse?.perfectpieces) * 100.0) /
+    Number(endcontext?.piecesplaced);
   return {
-    percentage: (endcontext.finesse.perfectpieces * 100) / endcontext.piecesplaced,
-    faults: endcontext.faults,
+    percentage: formatNumber(percentage, 2),
+    faults: formatNumber(endcontext?.finesse?.faults, 0),
   };
 }
 
