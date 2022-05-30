@@ -26,7 +26,7 @@ const wolfram = require('./wolfram.js');
 // const activity = require('./activity.js');
 const status = "do not disturb";
 const si = require('systeminformation');
-const mc = require('minecraft-server-util');
+const mc = require('./mc');
 const predict = require('./tlx/predict.js');
 const gamble = require('./gamble.js');
 // const music = require('./music.js');
@@ -180,22 +180,23 @@ function command(args, msg){
       predict.calc(bot, msg, args[1], args[2]);
     break;
     case '^mc':
-      console.log(args.length);
-      if(args.length != 3)return;
-      mc.status(args[1], { port: parseInt(args[2]) })
-        .then((response) => {
-          var hasil = response.description.descriptionText + '\n';
-          hasil += 'version: ' + response.version + '\n';
-          hasil += 'online players: ' + response.onlinePlayers + '\n';
-          hasil += 'max players: ' + response.maxPlayers + '\n';
-          msg.channel.send(hasil);
-          console.log(response);
-        })
-        .catch((error) => {
-          console.error(error);
-          msg.channel.send('server not found');
-          return;
-      });
+      mc.cmd(bot, msg);
+      // console.log(args.length);
+      // if(args.length != 3)return;
+      // mc.status(args[1], { port: parseInt(args[2]) })
+      //   .then((response) => {
+      //     var hasil = response.description.descriptionText + '\n';
+      //     hasil += 'version: ' + response.version + '\n';
+      //     hasil += 'online players: ' + response.onlinePlayers + '\n';
+      //     hasil += 'max players: ' + response.maxPlayers + '\n';
+      //     msg.channel.send(hasil);
+      //     console.log(response);
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //     msg.channel.send('server not found');
+      //     return;
+      // });
       // ping(args[1], parseInt(args[2]), (error, response) => {
       //   console.error(error);
       //   if (error){

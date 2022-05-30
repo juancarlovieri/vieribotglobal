@@ -125,22 +125,22 @@ var players = new Map();
 const https = require("https");
 const axios = require("axios");
 async function async_request(option) {
- //  return new Promise( (resolve, reject) => {                    
- //    let request = https.get( option, (response) => {
- //        if (response.statusCode < 200 || response.statusCode > 299) {
- //        reject( new Error('Failed to load page'+response.statusCode) );}
- //        let data = "";
- //        response.on( 'data', (chunk) => data += chunk );
- //        response.on( 'end', () => resolve(JSON.parse(data)) );
- //    } );
- //    request.on( 'error', (err) => reject(err) );
- // })
- var temp = await axios.get(option);
- temp = temp.data;
- if (!temp.success) {
-  throw new Error('Unable to fetch data');
- }
- return temp;
+  //  return new Promise( (resolve, reject) => {                    
+  //    let request = https.get( option, (response) => {
+  //        if (response.statusCode < 200 || response.statusCode > 299) {
+  //        reject( new Error('Failed to load page'+response.statusCode) );}
+  //        let data = "";
+  //        response.on( 'data', (chunk) => data += chunk );
+  //        response.on( 'end', () => resolve(JSON.parse(data)) );
+  //    } );
+  //    request.on( 'error', (err) => reject(err) );
+  // })
+  var temp = await axios.get(option);
+  temp = temp.data;
+  if (!temp.success) {
+    throw new Error('Unable to fetch data');
+  }
+  return temp;
 }
 
 async function save(){
