@@ -184,6 +184,7 @@ async function sendNewPbMessage(bot, m, { record, rank, scoreStr }, gameName) {
   const embed = {
     color: '#0394fc',
     title: `${m.username.toUpperCase()} just achieved a new ${gameName} personal best!`,
+    url: `https://tetr.io/#r:${record.replayid}`,
     description: `**${scoreStr}**`,
     fields: [
       { name: 'Rank', value: rankString, inline: true },

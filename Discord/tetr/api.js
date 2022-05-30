@@ -18,7 +18,7 @@ const { logger } = require('../logger');
 
 const tetrClient = axios.create({
   baseURL: 'https://ch.tetr.io/api/',
-  timeout: 10000,
+  timeout: 15000,
   httpAgent,
   httpsAgent,
 });
