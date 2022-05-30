@@ -81,6 +81,12 @@ async function checkUsernameChange(bot, m, user) {
   return false;
 }
 
+function createAvatar(userId) {
+  return {
+    url: `https://tetr.io/user-content/avatars/${userId}.jpg`,
+  };
+}
+
 async function monitorOne(bot, msg, username) {
   const user = await tetrApi.fetchUser(username);
   // eslint-disable-next-line no-underscore-dangle
@@ -109,7 +115,11 @@ async function monitorOne(bot, msg, username) {
     lastMatchId,
   });
   await newMonitor.save();
-  msg.channel.send(`saved ${username}`);
+  const embed = {
+    title: `Saved ${username}`,
+    thumbnail: createAvatar(userId),
+  };
+  msg.channel.send({ embeds: [embed] });
 }
 
 async function monitor(bot, msg) {
@@ -244,9 +254,7 @@ async function sendNewPbMessage(bot, m, { record, rank, scoreStr }, gameName) {
     footer: {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
-  };
-  embed.thumbnail = {
-    url: `https://tetr.io/user-content/avatars/${m.userId}.jpg`,
+    thumbnail: createAvatar(m.userId),
   };
   bot.channels.cache.get(m.channelId).send({ embeds: [embed] });
 }
