@@ -18,7 +18,7 @@ const { logger } = require('../logger');
 
 const tetrClient = axios.create({
   baseURL: 'https://ch.tetr.io/api/',
-  timeout: 10000,
+  timeout: 15000,
   httpAgent,
   httpsAgent,
 });
@@ -38,7 +38,7 @@ async function fetchUser(userName) {
   const user = await tetrClient.get(`/users/${userName}`);
   if (!user.success) {
     logger.error(`fetchUser ${userName} failed`, { user });
-    throw new Error(`Failed to fetch user ${userName}`);
+    return null;
   }
   return user.data.user;
 }
@@ -85,10 +85,24 @@ function getFinesseValue(endcontext) {
   };
 }
 
+function getPpsValue(endcontext, gameName) {
+  if (!endcontext) {
+    return '-';
+  }
+  if (gameName === 'blitz') {
+    return formatNumber(endcontext.piecesplaced / 120, 2);
+  }
+  if (gameName === '40l') {
+    return formatNumber(endcontext.piecesplaced * 1000.0 / endcontext.finalTime, 2);
+  }
+  throw new Error(`gameName invalid ${gameName}`);
+}
+
 module.exports = {
   fetchUser,
   getRecentMatch,
   getLastMatchId,
   getRecords,
   getFinesseValue,
+  getPpsValue,
 };
