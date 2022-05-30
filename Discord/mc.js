@@ -72,7 +72,6 @@ async function sendServer(msg, dat, ip) {
   const color = isOnline ? green : red;
   const status = isOnline ? `Online` : `Offline`;
   const version = isOnline ? `${dat.software} ${dat.version}` : `Unknown`;
-  const avatar = 
   const embed = {
     color: color,
     title: `Server Status for ${ip}`,
