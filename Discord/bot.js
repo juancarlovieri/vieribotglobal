@@ -53,6 +53,7 @@ function command(args, msg){
     case '^help':
       var vieri = new Discord.MessageAttachment('../viericorp.png');
       var str = '**^tetr help** - help page for tetris section\n';
+      str    += '**^mc help** - help page for minecraft section\n';
       str    += '**^gamble help** - help page for gamble section\n';
       str    += '**^coinflip** - do a coinflip, obviously\n';
       str    += '**^uptime** - see the bot\'s uptime\n';
