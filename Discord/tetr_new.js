@@ -258,7 +258,9 @@ async function tryUpdateBlitzPb(bot, m, { record, rank }) {
   try {
     const scoreStr = score.toFixed(0);
     await sendNewPbMessage(bot, m, { record, rank, scoreStr }, 'biltz');
-    await Monitor.findByIdAndUpdate(m.id, { 'lastPersonalBest.blitz': score }).exec();
+    await Monitor.findByIdAndUpdate(m.id, {
+      'lastPersonalBest.blitz': score,
+    }).exec();
     return { updated: true };
   } catch (error) {
     logger.error(
@@ -281,7 +283,9 @@ async function tryUpdate40lPb(bot, m, { record, rank }) {
   try {
     const scoreStr = prettyMilliseconds(score);
     await sendNewPbMessage(bot, m, { record, rank, scoreStr }, '40l');
-    await Monitor.findByIdAndUpdate(m.id, { 'lastPersonalBest.40l': score }).exec();
+    await Monitor.findByIdAndUpdate(m.id, {
+      'lastPersonalBest.40l': score,
+    }).exec();
     return { updated: true };
   } catch (error) {
     logger.error(
@@ -319,6 +323,8 @@ async function refreshChannel(bot, monitors) {
   return { updated };
 }
 
+const refreshLock = {};
+
 async function refresh(bot, msg) {
   const args = splitMsg(msg);
   if (args.length !== 2) {
@@ -327,9 +333,15 @@ async function refresh(bot, msg) {
   }
 
   const channelId = msg.channel.id;
-  const monitors = await Monitor.find({ channelId }).exec();
-
+  if (refreshLock.channelId) {
+    msg.channel.send('fast hand');
+    return;
+  }
   try {
+    refreshLock.channelId = 1;
+
+    const monitors = await Monitor.find({ channelId }).exec();
+
     const result = await refreshChannel(bot, monitors);
 
     if (!result.updated) {
@@ -340,6 +352,8 @@ async function refresh(bot, msg) {
   } catch (error) {
     logger.error(`refresh failed: ${error.message}`, { error });
     msg.channel.send('refresh failed');
+  } finally {
+    refreshLock.channelId = 0;
   }
 }
 
