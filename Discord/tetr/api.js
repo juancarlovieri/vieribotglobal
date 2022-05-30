@@ -38,7 +38,7 @@ async function fetchUser(userName) {
   const user = await tetrClient.get(`/users/${userName}`);
   if (!user.success) {
     logger.error(`fetchUser ${userName} failed`, { user });
-    throw new Error(`Failed to fetch user ${userName}`);
+    return null;
   }
   return user.data.user;
 }
