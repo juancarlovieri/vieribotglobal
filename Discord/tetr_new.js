@@ -245,6 +245,9 @@ async function sendNewPbMessage(bot, m, { record, rank, scoreStr }, gameName) {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
   };
+  embed.thumbnail = {
+    url: `https://tetr.io/user-content/avatars/${m.userId}.jpg`,
+  };
   bot.channels.cache.get(m.channelId).send({ embeds: [embed] });
 }
 
