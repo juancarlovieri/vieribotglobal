@@ -3,8 +3,10 @@ const Discord = require('discord.js');
 const mcApi = require('./mc/api');
 const { Server } = require('./mc/server');
 const { logger } = require('./logger');
+
 const cmdName = 'mc';
-const green = '#32a844', red = '#a83232';
+const green = '#32a844';
+const red = '#a83232';
 
 function hasAdmin(msg) {
   return msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_CHANNELS);
@@ -14,9 +16,7 @@ function splitMsg(msg) {
   return msg.content.split(/\s+/);
 }
 
-
 async function help(bot, msg) {
-
   const vieriImg = new Discord.MessageAttachment('../viericorp.png');
   const str = `**^${cmdName} status** - check server status`;
   const strAdmin = `**^${cmdName} set <ip>** - watch <ip>`;
@@ -43,42 +43,43 @@ async function help(bot, msg) {
 
 async function set(bot, msg) {
   const args = splitMsg(msg);
-  if (args.length != 3) {
+  if (args.length !== 3) {
     msg.channel.send('wot');
+    return;
+  }
+
+  if (!hasAdmin(msg)) {
+    msg.channel.send('no');
     return;
   }
 
   const ip = args[2];
   const channelId = msg.channel.id;
-  
-  const existingServer = await Server.findOne({channelId}).exec();
-  if (existingServer) {
-    existingServer.ip = ip;
-    await existingServer.save();
-    msg.channel.send(`saved!`);
-    return;
-  }
 
-  const newServer = new Server({
-    channelId,
-    ip,
-  });
-  await newServer.save();
+  await Server.findOneAndUpdate(
+    { channelId },
+    { channelId, ip },
+    { new: true, upsert: true }
+  ).exec();
   msg.channel.send(`saved!`);
 }
 
 async function sendServer(msg, dat, ip) {
-  const isOnline = (dat.online == true);
+  const isOnline = dat.online === true;
   const color = isOnline ? green : red;
-  const status = isOnline ? `Online` : `Offline`;
+  const srvStatus = isOnline ? `Online` : `Offline`;
   const version = isOnline ? `${dat.version}` : `Unknown`;
-  const players = isOnline ? dat.players : {online: 0, max: 0};
+  const players = isOnline ? dat.players : { online: 0, max: 0 };
   const embed = {
-    color: color,
+    color,
     title: `Server Status for ${ip}`,
     fields: [
-      { name: 'Status', value: status, inline: false },
-      { name: 'Player Count', value: `${players.online}/${players.max}`, inline: false },
+      { name: 'Status', value: srvStatus, inline: false },
+      {
+        name: 'Player Count',
+        value: `${players.online}/${players.max}`,
+        inline: false,
+      },
       { name: 'Version', value: `${version}`, inline: false },
     ],
     timestamp: new Date(),
@@ -86,26 +87,29 @@ async function sendServer(msg, dat, ip) {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
   };
-  msg.channel.send({embeds: [embed]});
+  msg.channel.send({ embeds: [embed] });
 }
 
 async function status(bot, msg) {
   const args = splitMsg(msg);
+  if (args.length !== 2) {
+    msg.channel.send('wot');
+    return;
+  }
   const channelId = msg.channel.id;
-  const server = await Server.findOne({channelId}).exec();
+  const server = await Server.findOne({ channelId }).exec();
   if (!server) {
     msg.channel.send(`set a server first`);
     return;
   }
-  const ip = server.ip
+  const { ip } = server;
   const dat = await mcApi.fetchServer(ip);
   try {
     await sendServer(msg, dat, ip);
   } catch (error) {
-    logger.error(
-      `Failed to send server for ${ip}: ${error.message}`,
-      {error}
-    );
+    logger.error(`Failed to send server for ${ip}: ${error.message}`, {
+      error,
+    });
     throw error;
   }
 }
@@ -113,7 +117,7 @@ async function status(bot, msg) {
 const cmdMap = {
   help,
   set,
-  status
+  status,
 };
 
 async function cmd(bot, msg) {

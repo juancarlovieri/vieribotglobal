@@ -181,31 +181,7 @@ function command(args, msg){
     break;
     case '^mc':
       mc.cmd(bot, msg);
-      // console.log(args.length);
-      // if(args.length != 3)return;
-      // mc.status(args[1], { port: parseInt(args[2]) })
-      //   .then((response) => {
-      //     var hasil = response.description.descriptionText + '\n';
-      //     hasil += 'version: ' + response.version + '\n';
-      //     hasil += 'online players: ' + response.onlinePlayers + '\n';
-      //     hasil += 'max players: ' + response.maxPlayers + '\n';
-      //     msg.channel.send(hasil);
-      //     console.log(response);
-      //   })
-      //   .catch((error) => {
-      //     console.error(error);
-      //     msg.channel.send('server not found');
-      //     return;
-      // });
-      // ping(args[1], parseInt(args[2]), (error, response) => {
-      //   console.error(error);
-      //   if (error){
-      //     msg.channel.send('server not found');
-      //     // throw error;
-      //     return;
-      //   }
-      // });
-    break;
+      break;
     case '^isup':
       (async () => {
         try {
