@@ -68,16 +68,17 @@ async function set(bot, msg) {
 }
 
 async function sendServer(msg, dat, ip) {
-  const isOnline = dat.online == true;
+  const isOnline = (dat.online == true);
   const color = isOnline ? green : red;
   const status = isOnline ? `Online` : `Offline`;
-  const version = isOnline ? `${dat.software} ${dat.version}` : `Unknown`;
+  const version = isOnline ? `${dat.version}` : `Unknown`;
+  const players = isOnline ? dat.players : {online: 0, max: 0};
   const embed = {
     color: color,
     title: `Server Status for ${ip}`,
     fields: [
       { name: 'Status', value: status, inline: false },
-      { name: 'Player Count', value: `${dat.players.online}/${dat.players.max}`, inline: false },
+      { name: 'Player Count', value: `${players.online}/${players.max}`, inline: false },
       { name: 'Version', value: `${version}`, inline: false },
     ],
     timestamp: new Date(),
@@ -100,9 +101,9 @@ async function status(bot, msg) {
   const dat = await mcApi.fetchServer(ip);
   try {
     await sendServer(msg, dat, ip);
-  } catch (e) {
+  } catch (error) {
     logger.error(
-      `Failed to send server for ${ip}: ${e.message}`,
+      `Failed to send server for ${ip}: ${error.message}`,
       {error}
     );
     throw error;
