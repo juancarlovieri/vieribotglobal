@@ -85,10 +85,24 @@ function getFinesseValue(endcontext) {
   };
 }
 
+function getPpsValue(endcontext, gameName) {
+  if (!endcontext) {
+    return '-';
+  }
+  if (gameName === 'blitz') {
+    return formatNumber(endcontext.piecesplaced / 120, 2);
+  }
+  if (gameName === '40l') {
+    return formatNumber(endcontext.piecesplaced * 1000.0 / endcontext.finalTime, 2);
+  }
+  throw new Error(`gameName invalid ${gameName}`);
+}
+
 module.exports = {
   fetchUser,
   getRecentMatch,
   getLastMatchId,
   getRecords,
   getFinesseValue,
+  getPpsValue,
 };

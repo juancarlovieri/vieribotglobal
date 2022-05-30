@@ -180,6 +180,7 @@ async function sendNewPbMessage(bot, m, { record, rank, scoreStr }, gameName) {
   const rankString = rank === null ? '#>1000' : `#${rank.toFixed(0)}`;
   const ec = record.endcontext;
   const finesseValue = tetrApi.getFinesseValue(ec);
+  const ppsValue = tetrApi.getPpsValue(ec, gameName);
 
   const embed = {
     color: '#0394fc',
@@ -188,7 +189,7 @@ async function sendNewPbMessage(bot, m, { record, rank, scoreStr }, gameName) {
     description: `**${scoreStr}**`,
     fields: [
       { name: 'Rank', value: rankString, inline: true },
-      { name: 'PPS', value: (ec.piecesplaced / 120).toFixed(2), inline: true },
+      { name: 'PPS', value: ppsValue, inline: true },
       {
         name: 'Finesse',
         value: `${finesseValue.percentage}%`,
@@ -258,7 +259,7 @@ async function tryUpdateBlitzPb(bot, m, { record, rank }) {
   }
   try {
     const scoreStr = score.toFixed(0);
-    await sendNewPbMessage(bot, m, { record, rank, scoreStr }, 'biltz');
+    await sendNewPbMessage(bot, m, { record, rank, scoreStr }, 'blitz');
     await Monitor.findByIdAndUpdate(m.id, {
       'lastPersonalBest.blitz': score,
     }).exec();
