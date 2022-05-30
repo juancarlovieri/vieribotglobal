@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const monitorSchema = new mongoose.Schema({
+const serverSchema = new mongoose.Schema({
   channelId: String,
   ip: String,
 });
 
-monitorSchema.index({ channelId: 1, ip: 1 }, { unique: true });
+serverSchema.index({ channelId: 1}, { unique: true });
 
-const Server = mongoose.model('Server', monitorSchema);
+const Server = mongoose.model('Server', serverSchema);
 
 module.exports = { Server };

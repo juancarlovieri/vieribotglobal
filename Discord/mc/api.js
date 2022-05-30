@@ -2,23 +2,23 @@ const axios = require('axios');
 const Agent = require('agentkeepalive');
 
 const httpAgent = new Agent({
-  maxSockets: 256,
-  maxFreeSockets: 256,
-  timeout: 70000,
-  freeSocketTimeout: 15000,
+  maxSockets: 64,
+  maxFreeSockets: 32,
+  timeout: 30000,
+  freeSocketTimeout: 4000,
 });
 const httpsAgent = new Agent.HttpsAgent({
-  maxSockets: 256,
-  maxFreeSockets: 256,
-  timeout: 70000,
-  freeSocketTimeout: 15000,
+  maxSockets: 64,
+  maxFreeSockets: 32,
+  timeout: 30000,
+  freeSocketTimeout: 4000,
 });
 
 const { logger } = require('../logger');
 
 const mcClient = axios.create({
   baseURL: 'https://api.mcsrvstat.us/2/',
-  timeout: 15000,
+  timeout: 10000,
   httpAgent,
   httpsAgent,
 });
