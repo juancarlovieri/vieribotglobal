@@ -387,11 +387,8 @@ module.exports = {
           var request = require('request');
           console.log(mesg.url);
           download(mesg.url + '.jpeg', 'display.png', function(){
-            msg.channel.send(names, {
-              files: [
-              "display.png"
-            ]
-          });
+            const embed = new Discord.MessageEmbed().setTitle('Attachment').setImage('attachment://display.png');
+            msg.channel.send({ embeds: [embed], files: ['./display.png'] });
           });
         });
       break;
