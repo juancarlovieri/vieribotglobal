@@ -5,7 +5,7 @@ const serverSchema = new mongoose.Schema({
   ip: String,
 });
 
-serverSchema.index({ channelId: 1}, { unique: true });
+serverSchema.index({ channelId: 1 }, { unique: true });
 
 const Server = mongoose.model('Server', serverSchema);
 

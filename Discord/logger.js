@@ -6,7 +6,7 @@ const auth = require('./auth.json');
 const { format, transports } = winston;
 
 const logFormat = format.printf(
-  ({ level, message, timestamp }) => `${timestamp} ${level}: ${message}`,
+  ({ level, message, timestamp }) => `${timestamp} ${level}: ${message}`
 );
 
 const logger = winston.createLogger({
@@ -16,7 +16,7 @@ const logger = winston.createLogger({
       format: format.combine(
         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
         format.cli(),
-        logFormat,
+        logFormat
       ),
     }),
     new transports.File({

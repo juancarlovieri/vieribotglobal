@@ -36,7 +36,7 @@ mcClient.interceptors.response.use(
 
 async function fetchServer(ip) {
   const server = await mcClient.get(`${ip}`);
-  return server
+  return server;
 }
 
 module.exports = {
