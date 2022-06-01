@@ -93,7 +93,10 @@ function getPpsValue(endcontext, gameName) {
     return formatNumber(endcontext.piecesplaced / 120, 2);
   }
   if (gameName === '40l') {
-    return formatNumber(endcontext.piecesplaced * 1000.0 / endcontext.finalTime, 2);
+    return formatNumber(
+      (endcontext.piecesplaced * 1000.0) / endcontext.finalTime,
+      2
+    );
   }
   throw new Error(`gameName invalid ${gameName}`);
 }

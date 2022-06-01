@@ -1,43 +1,47 @@
 const fs = require('fs');
 const linksPath = 'datas/links.json';
-var obj = JSON.parse(fs.readFileSync(linksPath, "utf8"));
+var obj = JSON.parse(fs.readFileSync(linksPath, 'utf8'));
 var links = new Map(Object.entries(obj));
 
-function save(){
+function save() {
   var jsonObj = Object.fromEntries(links);
   var jsonContent = JSON.stringify(jsonObj);
-  fs.writeFileSync(linksPath, jsonContent, "utf8", function(err) {
+  fs.writeFileSync(linksPath, jsonContent, 'utf8', function (err) {
     if (err) {
-      console.log("An errr occured while writing JSON jsonObj to File.");
+      console.log('An errr occured while writing JSON jsonObj to File.');
       return console.log(err);
     }
-    console.log("saved");
+    console.log('saved');
   });
 }
 
 module.exports = {
-  run: function(bot, msg){
+  run: function (bot, msg) {
     var args = msg.content.split(' ');
-    switch(args[1]){
+    switch (args[1]) {
       case 'rm':
-        if(args.length != 3)return;
-        if(links.has(args[2]) == false){
+        if (args.length != 3) return;
+        if (links.has(args[2]) == false) {
           msg.channel.send('not found');
           return;
         }
         links.delete(args[2]);
         msg.channel.send('deleted!');
         save();
-      break;
+        break;
       case 'set':
-        if(msg.author.id != 576022362642841621 && msg.author.id != 455184547840262144)return;
-        if(args.length != 4)return;
+        if (
+          msg.author.id != 576022362642841621 &&
+          msg.author.id != 455184547840262144
+        )
+          return;
+        if (args.length != 4) return;
         links.set(args[2], args[3]);
         save();
         msg.channel.send('saved!');
-      break;
+        break;
       case 'get':
-        if(args.length != 3)return;
+        if (args.length != 3) return;
         // if(links.has(args[2]) == false){
         //   msg.channel.send('not found!');
         //   return;
@@ -46,29 +50,29 @@ module.exports = {
         var name = -1;
         var mini = 1000000000;
         var minLength = 1000000000;
-        links.forEach(function lol(value, key){
-          if(key.toLowerCase().indexOf(args[2].toLowerCase()) != -1){
+        links.forEach(function lol(value, key) {
+          if (key.toLowerCase().indexOf(args[2].toLowerCase()) != -1) {
             console.log('found');
-            if(minLength > key.length) {
+            if (minLength > key.length) {
               minLength = key.length;
               indx = value;
               name = key;
             }
           }
         });
-        if(indx === -1){
+        if (indx === -1) {
           msg.channel.send('not found!');
           return;
         }
         msg.channel.send('link for ' + name + ': <' + indx + '>');
-      break;
+        break;
       case 'list':
-        var hasil = "";
-        links.forEach(function print(value, key){
+        var hasil = '';
+        links.forEach(function print(value, key) {
           hasil += key + '\n';
         });
         msg.channel.send(hasil);
-      break;
+        break;
     }
-  }
-}
+  },
+};
