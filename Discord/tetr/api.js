@@ -25,7 +25,6 @@ const tetrClient = axios.create({
 
 tetrClient.interceptors.response.use(
   (response) => {
-    logger.info(`tetrClient ${response.request.path} finished.`);
     return response.data;
   },
   (error) => {
