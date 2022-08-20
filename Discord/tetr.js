@@ -12,6 +12,7 @@ const prettyMilliseconds = require('pretty-ms');
 var ownerId = '455184547840262144';
 const MongoClient = require('mongodb').MongoClient;
 const token = require('./auth.json');
+const refreshTime = 300000;
 const {
   MessageActionRow,
   MessageSelectMenu,
@@ -1430,6 +1431,6 @@ module.exports = {
         .on('error', function (e) {
           console.error(e);
         });
-    }, 60000);
+    }, refreshTime);
   },
 };
