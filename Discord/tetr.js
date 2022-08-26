@@ -207,7 +207,7 @@ async function save() {
 
 var load_next = 1;
 var last_load = 1;
-var force_load = 600000;
+var force_load = 1200000;
 
 async function refresh(bot) {
   var cur = parseInt(Date.now());
@@ -216,7 +216,7 @@ async function refresh(bot) {
     return;
   }
   last_load = cur;
-  console.log(last_load);
+  console.log(`Refreshing, time: ${last_load}`);
   load_next = 0;
   for (var curm of monitor) {
     var channel = curm[0];
@@ -229,6 +229,13 @@ async function refresh(bot) {
         username = null;
       try {
         username = await async_request('https://ch.tetr.io/api/users/' + id);
+        var newGametime = username.data.user.gametime;
+        if (val.lastLoad != newGametime) {
+          val.lastLoad = newGametime;
+        } else {
+          // console.log(`skipping refresh for ${val.username}`);
+          continue;
+        }
         username = username.data.user.username;
         record = await async_request(
           'https://ch.tetr.io/api/users/' + id + '/records'
@@ -660,10 +667,20 @@ async function refresh(bot) {
     monitor.set(channel, curm);
   }
   save();
+  console.log(`Done refresh`);
   load_next = 1;
 }
 
 async function forceRefresh(bot) {
+  var cur = parseInt(Date.now());
+  if (load_next == 0 && last_load + force_load > cur) {
+    console.log('denied refresh');
+    return;
+  }
+  last_load = cur;
+  console.log(`Force refreshing, time: ${last_load}`);
+  load_next = 0;
+
   for (var curm of monitor) {
     var channel = curm[0];
     checkPerms(channel);
@@ -715,6 +732,8 @@ async function forceRefresh(bot) {
     monitor.set(channel, curm);
   }
   save();
+  console.log(`Done force refresh`);
+  load_next = 1;
 }
 
 function hasAdmin(msg) {

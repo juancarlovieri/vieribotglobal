@@ -413,7 +413,7 @@ async function cmd(bot, msg) {
 }
 
 function startRefresh(bot) {
-  setInterval(() => refreshAll(bot), 60000);
+  setInterval(() => refreshAll(bot), 600000);
 }
 
 module.exports = {

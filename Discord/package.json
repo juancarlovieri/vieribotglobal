@@ -44,7 +44,7 @@
     "translate": "^1.4.1",
     "url": "^0.11.0",
     "util": "^0.12.4",
-    "winston": "^3.7.2",
+    "winston": "^3.8.1",
     "winston-mongodb": "^5.0.7",
     "youtube-search-api": "^1.1.0",
     "ytdl": "^1.4.1",
