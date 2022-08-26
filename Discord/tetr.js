@@ -13,6 +13,8 @@ var ownerId = '455184547840262144';
 const MongoClient = require('mongodb').MongoClient;
 const token = require('./auth.json');
 const refreshTime = 600000;
+var startupTime = parseInt(Date.now());
+var reqcnt = 0;
 const {
   MessageActionRow,
   MessageSelectMenu,
@@ -132,6 +134,7 @@ var players = new Map();
 const https = require('https');
 const axios = require('axios');
 async function async_request(option) {
+  reqcnt += 1;
   //  return new Promise( (resolve, reject) => {
   //    let request = https.get( option, (response) => {
   //        if (response.statusCode < 200 || response.statusCode > 299) {
@@ -1438,6 +1441,13 @@ module.exports = {
         }
         playerCount(bot, msg, country);
         break;
+      case 'rpm':
+        var rpm = reqcnt / ((parseInt(Date.now()) - startupTime) / 60000);
+        msg.channel.send(
+          `RPM: ${rpm}\nRequests: ${reqcnt}\nUptime: ${
+            (parseInt(Date.now()) - startupTime) / 1000
+          } s`
+        );
     }
   },
   startRefresh: function (bot) {
