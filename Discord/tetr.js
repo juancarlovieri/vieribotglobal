@@ -495,19 +495,7 @@ async function refresh(bot) {
           val['40l'] = new40l;
         }
       }
-      val.username = username;
-      curm.set(id, val);
-    }
-    monitor.set(channel, curm);
-  }
-  save();
 
-  for (var curm of monitor) {
-    var channel = curm[0];
-    curm = curm[1];
-    for (var temp of curm) {
-      var val = temp[1],
-        id = temp[0];
       var match;
       try {
         match = await async_request(
@@ -665,6 +653,7 @@ async function refresh(bot) {
       }
       if (match.length == 0) match[0] = { _id: null };
       val.last = match[0]._id;
+      val.username = username;
       curm.set(id, val);
     }
     monitor.set(channel, curm);
