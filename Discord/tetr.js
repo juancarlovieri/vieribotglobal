@@ -123,6 +123,7 @@ async function init() {
     console.error(err);
   }
   save();
+  forceRefresh();
 }
 
 init();
@@ -670,7 +671,7 @@ async function refresh(bot) {
   load_next = 1;
 }
 
-async function forceRefresh(bot) {
+async function forceRefresh() {
   var cur = parseInt(Date.now());
   if (load_next == 0 && last_load + force_load > cur) {
     console.log('denied refresh');
