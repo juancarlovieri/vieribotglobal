@@ -13,6 +13,8 @@ var ownerId = '455184547840262144';
 const MongoClient = require('mongodb').MongoClient;
 const token = require('./auth.json');
 const refreshTime = 600000;
+var startupTime = parseInt(Date.now());
+var reqcnt = 0;
 const {
   MessageActionRow,
   MessageSelectMenu,
@@ -121,6 +123,7 @@ async function init() {
     console.error(err);
   }
   save();
+  forceRefresh();
 }
 
 init();
@@ -132,6 +135,7 @@ var players = new Map();
 const https = require('https');
 const axios = require('axios');
 async function async_request(option) {
+  reqcnt += 1;
   //  return new Promise( (resolve, reject) => {
   //    let request = https.get( option, (response) => {
   //        if (response.statusCode < 200 || response.statusCode > 299) {
@@ -207,7 +211,7 @@ async function save() {
 
 var load_next = 1;
 var last_load = 1;
-var force_load = 600000;
+var force_load = 1200000;
 
 async function refresh(bot) {
   var cur = parseInt(Date.now());
@@ -216,7 +220,7 @@ async function refresh(bot) {
     return;
   }
   last_load = cur;
-  console.log(last_load);
+  console.log(`Refreshing, time: ${last_load}`);
   load_next = 0;
   for (var curm of monitor) {
     var channel = curm[0];
@@ -227,8 +231,17 @@ async function refresh(bot) {
         id = temp[0];
       var record = null,
         username = null;
+      var userData;
       try {
         username = await async_request('https://ch.tetr.io/api/users/' + id);
+        userData = username;
+        var newGametime = username.data.user.gametime;
+        if (val.lastLoad != newGametime) {
+          val.lastLoad = newGametime;
+        } else {
+          // console.log(`skipping refresh for ${val.username}`);
+          continue;
+        }
         username = username.data.user.username;
         record = await async_request(
           'https://ch.tetr.io/api/users/' + id + '/records'
@@ -485,185 +498,189 @@ async function refresh(bot) {
           val['40l'] = new40l;
         }
       }
+
+      if (val.gamesplayed != userData.data.user.league.gamesplayed) {
+        val.gamesplayed = userData.data.user.league.gamesplayed;
+        var match;
+        try {
+          match = await async_request(
+            'https://ch.tetr.io/api/streams/league_userrecent_' + id
+          );
+        } catch (e) {
+          console.error(e);
+          continue;
+        }
+        match = match.data.records;
+        var last = match.length;
+        for (var i = 0; i < match.length; ++i) {
+          if (match[i]._id == val.last) {
+            last = i;
+            break;
+          }
+        }
+        for (var i = last - 1; i >= 0; --i) {
+          var cur = match[i];
+          var color, state;
+          if (cur.endcontext[0].user.username != cur.user.username) {
+            state = 'lost';
+            color = '#a83232';
+            cur.endcontext[1] = [
+              cur.endcontext[0],
+              (cur.endcontext[0] = cur.endcontext[1]),
+            ][0];
+          } else {
+            state = 'won';
+            color = '#32a844';
+          }
+          await timeout(10000);
+          var friend;
+          try {
+            friend = await async_request(
+              'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id
+            );
+          } catch (e) {
+            console.error(e);
+            continue;
+          }
+          cur.endcontext[0].user.username =
+            cur.endcontext[0].user.username.toUpperCase();
+          if (friend.data.user.country != null)
+            cur.endcontext[0].user.username +=
+              ' :flag_' + friend.data.user.country.toLowerCase() + ':';
+          var cfriend = friend;
+          friend = friend.data.user.league;
+          if (friend.rank == 'z') friend.rank = '?';
+          if (emoji.has(friend.rank)) {
+            friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
+          }
+          var foe;
+          try {
+            foe = await async_request(
+              'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id
+            );
+          } catch (e) {
+            console.error(e);
+            continue;
+          }
+          cur.endcontext[1].user.username =
+            cur.endcontext[1].user.username.toUpperCase();
+          if (foe.data.user.country != null)
+            cur.endcontext[1].user.username +=
+              ' :flag_' + foe.data.user.country.toLowerCase() + ':';
+          foe = foe.data.user.league;
+          // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;
+          if (foe.rank == 'z') foe.rank = '?';
+          if (emoji.has(foe.rank)) {
+            foe.rank = '<:a:' + emoji.get(foe.rank) + '>';
+          }
+          const embed = {
+            color: color,
+            title:
+              cur.user.username.toUpperCase() + ' just ' + state + ' a game',
+            url: 'https://tetr.io/#r:' + cur.replayid,
+            description:
+              cur.endcontext[0].wins.toFixed(0) +
+              ' - ' +
+              cur.endcontext[1].wins.toFixed(0),
+            fields: [
+              {
+                name: '\u200B',
+                value: '**' + cur.endcontext[0].user.username + '**',
+              },
+              {
+                name: 'Rank',
+                value: friend.rank + ' / ' + friend.rating.toFixed(2) + ' TR',
+                inline: true,
+              },
+              {
+                name: 'PPS',
+                value: cur.endcontext[0].points.tertiary.toFixed(2),
+                inline: true,
+              },
+              {
+                name: 'APM',
+                value: cur.endcontext[0].points.secondary.toFixed(2),
+                inline: true,
+              },
+              {
+                name: 'VS',
+                value: cur.endcontext[0].points.extra.vs.toFixed(2),
+                inline: true,
+              },
+              {
+                name: '\u200B',
+                value: '**' + cur.endcontext[1].user.username + '**',
+              },
+              {
+                name: 'Rank',
+                value: foe.rank + ' / ' + foe.rating.toFixed(2) + ' TR',
+                inline: true,
+              },
+              {
+                name: 'PPS',
+                value: cur.endcontext[1].points.tertiary.toFixed(2),
+                inline: true,
+              },
+              {
+                name: 'APM',
+                value: cur.endcontext[1].points.secondary.toFixed(2),
+                inline: true,
+              },
+              {
+                name: 'VS',
+                value: cur.endcontext[1].points.extra.vs.toFixed(2),
+                inline: true,
+              },
+              {
+                name: '\u200B',
+                value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
+              },
+            ],
+            timestamp: new Date(),
+            footer: {
+              text: 'By Vieri Corp.™ All Rights Reserved',
+            },
+          };
+          cfriend = cfriend.data.user;
+          if (cfriend.avatar_revision != undefined) {
+            embed.thumbnail = {
+              url:
+                'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
+            };
+          }
+
+          if (perms.get(channel).ranked) {
+            try {
+              bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+            } catch (e) {
+              console.error(e);
+              continue;
+            }
+          }
+        }
+        if (match.length == 0) match[0] = { _id: null };
+        val.last = match[0]._id;
+      }
       val.username = username;
       curm.set(id, val);
     }
     monitor.set(channel, curm);
   }
   save();
-
-  for (var curm of monitor) {
-    var channel = curm[0];
-    curm = curm[1];
-    for (var temp of curm) {
-      var val = temp[1],
-        id = temp[0];
-      var match;
-      try {
-        match = await async_request(
-          'https://ch.tetr.io/api/streams/league_userrecent_' + id
-        );
-      } catch (e) {
-        console.error(e);
-        continue;
-      }
-      match = match.data.records;
-      var last = match.length;
-      for (var i = 0; i < match.length; ++i) {
-        if (match[i]._id == val.last) {
-          last = i;
-          break;
-        }
-      }
-      for (var i = last - 1; i >= 0; --i) {
-        var cur = match[i];
-        var color, state;
-        if (cur.endcontext[0].user.username != cur.user.username) {
-          state = 'lost';
-          color = '#a83232';
-          cur.endcontext[1] = [
-            cur.endcontext[0],
-            (cur.endcontext[0] = cur.endcontext[1]),
-          ][0];
-        } else {
-          state = 'won';
-          color = '#32a844';
-        }
-        await timeout(10000);
-        var friend;
-        try {
-          friend = await async_request(
-            'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id
-          );
-        } catch (e) {
-          console.error(e);
-          continue;
-        }
-        cur.endcontext[0].user.username =
-          cur.endcontext[0].user.username.toUpperCase();
-        if (friend.data.user.country != null)
-          cur.endcontext[0].user.username +=
-            ' :flag_' + friend.data.user.country.toLowerCase() + ':';
-        var cfriend = friend;
-        friend = friend.data.user.league;
-        if (friend.rank == 'z') friend.rank = '?';
-        if (emoji.has(friend.rank)) {
-          friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
-        }
-        var foe;
-        try {
-          foe = await async_request(
-            'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id
-          );
-        } catch (e) {
-          console.error(e);
-          continue;
-        }
-        cur.endcontext[1].user.username =
-          cur.endcontext[1].user.username.toUpperCase();
-        if (foe.data.user.country != null)
-          cur.endcontext[1].user.username +=
-            ' :flag_' + foe.data.user.country.toLowerCase() + ':';
-        foe = foe.data.user.league;
-        // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;
-        if (foe.rank == 'z') foe.rank = '?';
-        if (emoji.has(foe.rank)) {
-          foe.rank = '<:a:' + emoji.get(foe.rank) + '>';
-        }
-        const embed = {
-          color: color,
-          title: cur.user.username.toUpperCase() + ' just ' + state + ' a game',
-          url: 'https://tetr.io/#r:' + cur.replayid,
-          description:
-            cur.endcontext[0].wins.toFixed(0) +
-            ' - ' +
-            cur.endcontext[1].wins.toFixed(0),
-          fields: [
-            {
-              name: '\u200B',
-              value: '**' + cur.endcontext[0].user.username + '**',
-            },
-            {
-              name: 'Rank',
-              value: friend.rank + ' / ' + friend.rating.toFixed(2) + ' TR',
-              inline: true,
-            },
-            {
-              name: 'PPS',
-              value: cur.endcontext[0].points.tertiary.toFixed(2),
-              inline: true,
-            },
-            {
-              name: 'APM',
-              value: cur.endcontext[0].points.secondary.toFixed(2),
-              inline: true,
-            },
-            {
-              name: 'VS',
-              value: cur.endcontext[0].points.extra.vs.toFixed(2),
-              inline: true,
-            },
-            {
-              name: '\u200B',
-              value: '**' + cur.endcontext[1].user.username + '**',
-            },
-            {
-              name: 'Rank',
-              value: foe.rank + ' / ' + foe.rating.toFixed(2) + ' TR',
-              inline: true,
-            },
-            {
-              name: 'PPS',
-              value: cur.endcontext[1].points.tertiary.toFixed(2),
-              inline: true,
-            },
-            {
-              name: 'APM',
-              value: cur.endcontext[1].points.secondary.toFixed(2),
-              inline: true,
-            },
-            {
-              name: 'VS',
-              value: cur.endcontext[1].points.extra.vs.toFixed(2),
-              inline: true,
-            },
-            {
-              name: '\u200B',
-              value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
-            },
-          ],
-          timestamp: new Date(),
-          footer: {
-            text: 'By Vieri Corp.™ All Rights Reserved',
-          },
-        };
-        cfriend = cfriend.data.user;
-        if (cfriend.avatar_revision != undefined) {
-          embed.thumbnail = {
-            url: 'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
-          };
-        }
-
-        if (perms.get(channel).ranked) {
-          try {
-            bot.channels.cache.get(val.channel).send({ embeds: [embed] });
-          } catch (e) {
-            console.error(e);
-            continue;
-          }
-        }
-      }
-      if (match.length == 0) match[0] = { _id: null };
-      val.last = match[0]._id;
-      curm.set(id, val);
-    }
-    monitor.set(channel, curm);
-  }
-  save();
+  console.log(`Done refresh`);
   load_next = 1;
 }
 
-async function forceRefresh(bot) {
+async function forceRefresh() {
+  var cur = parseInt(Date.now());
+  if (load_next == 0 && last_load + force_load > cur) {
+    console.log('denied refresh');
+    return;
+  }
+  last_load = cur;
+  console.log(`Force refreshing, time: ${last_load}`);
+  load_next = 0;
+
   for (var curm of monitor) {
     var channel = curm[0];
     checkPerms(channel);
@@ -715,6 +732,8 @@ async function forceRefresh(bot) {
     monitor.set(channel, curm);
   }
   save();
+  console.log(`Done force refresh`);
+  load_next = 1;
 }
 
 function hasAdmin(msg) {
@@ -1419,6 +1438,13 @@ module.exports = {
         }
         playerCount(bot, msg, country);
         break;
+      case 'rpm':
+        var rpm = reqcnt / ((parseInt(Date.now()) - startupTime) / 60000);
+        msg.channel.send(
+          `RPM: ${rpm}\nRequests: ${reqcnt}\nUptime: ${
+            (parseInt(Date.now()) - startupTime) / 1000
+          } s`
+        );
     }
   },
   startRefresh: function (bot) {
