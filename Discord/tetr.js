@@ -13,6 +13,8 @@ var ownerId = '455184547840262144';
 const MongoClient = require('mongodb').MongoClient;
 const token = require('./auth.json');
 const refreshTime = 600000;
+const warnInterval = 600000;
+const failrateLimit = 0.1;
 var startupTime = parseInt(Date.now());
 var reqcnt = 0,
   failedreq = 0;
@@ -137,6 +139,11 @@ var players = new Map();
 
 const https = require('https');
 const axios = require('axios');
+
+var lastwarn = 0;
+
+logger.info(token.opchannel);
+
 async function async_request(option) {
   reqcnt += 1;
   //  return new Promise( (resolve, reject) => {
@@ -153,6 +160,20 @@ async function async_request(option) {
   temp = temp.data;
   if (!temp.success) {
     failedreq += 1;
+    var curtime = parseInt(Date.now());
+    if (
+      failedreq / reqcnt > failrateLimit &&
+      curtime - lastwarn > warnInterval
+    ) {
+      lastwarn = curtime;
+      try {
+        var msg = `WARNING, request fail rate: ${(failedreq / reqcnt) * 100}%`;
+        bot.channels.cache.get(token.opchannel).send(msg);
+      } catch (err) {
+        logger.error(`Unable to send warning message.`, { err });
+        lastwarn = 0;
+      }
+    }
     throw new Error('Unable to fetch data');
   }
   return temp;
@@ -1451,7 +1472,8 @@ module.exports = {
         );
     }
   },
-  startRefresh: function (bot) {
+  startRefresh: function (Bot) {
+    bot = Bot;
     setInterval(() => {
       var http = require('http');
       http
