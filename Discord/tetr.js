@@ -14,6 +14,7 @@ const MongoClient = require('mongodb').MongoClient;
 const token = require('./auth.json');
 const refreshTime = 600000;
 const warnInterval = 600000;
+const keepReq = 3600000;
 const failrateLimit = 0.1;
 var startupTime = parseInt(Date.now());
 var reqcnt = 0,
@@ -140,6 +141,8 @@ var players = new Map();
 const https = require('https');
 const axios = require('axios');
 
+var reqs = [];
+var failedreqs = [];
 var lastwarn = 0;
 
 async function async_request(option) {
@@ -156,16 +159,25 @@ async function async_request(option) {
   // })
   var temp = await axios.get(option);
   temp = temp.data;
+  var curtime = parseInt(Date.now());
+  reqs.push(curtime);
+
+  while (reqs.length > 0 && reqs[0] + keepReq < curtime) reqs.shift();
+
   if (!temp.success) {
     failedreq += 1;
-    var curtime = parseInt(Date.now());
+    failedreqs.push(curtime);
+    while (failedreqs.length > 0 && failedreqs[0] + keepReq < curtime)
+      failedreqs.shift();
     if (
-      failedreq / reqcnt > failrateLimit &&
+      failedreqs.length / reqs.length > failrateLimit &&
       curtime - lastwarn > warnInterval
     ) {
       lastwarn = curtime;
       try {
-        var msg = `WARNING, request fail rate: ${(failedreq / reqcnt) * 100}%`;
+        var msg = `WARNING, request fail rate: ${
+          (failedreqs.length / reqs.length) * 100
+        }% for the past hour`;
         bot.channels.cache.get(token.opchannel).send(msg);
       } catch (err) {
         logger.error(`Unable to send warning message.`, { err });
@@ -1462,10 +1474,15 @@ module.exports = {
         playerCount(bot, msg, country);
         break;
       case 'rpm':
-        var rpm = reqcnt / ((parseInt(Date.now()) - startupTime) / 60000);
+        var hours = (parseInt(Date.now()) - startupTime) / 60000;
+        var rpm = reqcnt / hours;
         msg.channel.send(
-          `RPM: ${rpm}\nRequests: ${reqcnt}\nFailed requests: ${failedreq}\nFail rate: ${
+          `RPM: ${rpm}\nRPM for last hour: ${
+            reqs.length / hours
+          }\nRequests: ${reqcnt}\nFailed requests: ${failedreq}\nFail rate: ${
             (failedreq / reqcnt) * 100
+          }%\nFail rate for last hour: ${
+            (failedreqs.length / reqs.length) * 100
           }%\nUptime: ${(parseInt(Date.now()) - startupTime) / 1000} s`
         );
     }
