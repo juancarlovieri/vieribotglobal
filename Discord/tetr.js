@@ -14,7 +14,9 @@ const MongoClient = require('mongodb').MongoClient;
 const token = require('./auth.json');
 const refreshTime = 600000;
 var startupTime = parseInt(Date.now());
-var reqcnt = 0;
+var reqcnt = 0,
+  failedreq = 0;
+const { logger } = require('./logger');
 const {
   MessageActionRow,
   MessageSelectMenu,
@@ -63,7 +65,7 @@ async function init() {
   col = database.collection('tetr');
   // try {
   //   // var obj = JSON.parse(fs.readFileSync(pathMonitor, "utf8"));
-  //   // console.log(await col.findOne({title: 'monitor'}).val);
+  //   // logger.info(await col.findOne({title: 'monitor'}).val);
   //   var temp = await col.findOne({title: "monitor"});
   //   monitor = new Map(Object.entries(JSON.parse(temp.val)));
   //   var temp = new Map();
@@ -79,7 +81,7 @@ async function init() {
   //   var temp = await col.findOne({title: "perms"});
   //   var obj = JSON.parse(temp.val);
   //   perms = new Map(Object.entries(obj));
-  //     // console.log(perms);
+  //     // logger.info(perms);
   // } catch(err) {
   //   console.error(err);
   // }
@@ -102,7 +104,8 @@ async function init() {
       monitor = temp;
     }
   } catch (err) {
-    console.error(err);
+    // console.error(err);
+    logger.error(`Reading file failed`, { err });
   }
 
   try {
@@ -111,7 +114,7 @@ async function init() {
       perms = new Map(Object.entries(obj));
     }
   } catch (err) {
-    console.error(err);
+    logger.error(`Reading file failed`, { err });
   }
 
   try {
@@ -120,7 +123,7 @@ async function init() {
       players = new Map(Object.entries(obj));
     }
   } catch (err) {
-    console.error(err);
+    logger.error(`Reading file failed`, { err });
   }
   save();
   forceRefresh();
@@ -149,6 +152,7 @@ async function async_request(option) {
   var temp = await axios.get(option);
   temp = temp.data;
   if (!temp.success) {
+    failedreq += 1;
     throw new Error('Unable to fetch data');
   }
   return temp;
@@ -163,8 +167,9 @@ async function save() {
   var jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(pathMonitor, jsonContent, 'utf8', function (err) {
     if (err) {
-      console.log('An errr occured while writing JSON jsonObj to File.');
-      return console.log(err);
+      return logger.error(`An err occured while writing JSON jsonObj to file`, {
+        err,
+      });
     }
   });
 
@@ -173,8 +178,7 @@ async function save() {
     { $set: { title: 'monitor', val: jsonContent } },
     (err, res) => {
       if (err) {
-        console.error(err);
-        return;
+        return logger.error(`An err occured while updating mongoDB`, { err });
       }
     }
   );
@@ -183,8 +187,9 @@ async function save() {
   jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(pathPerms, jsonContent, 'utf8', function (err) {
     if (err) {
-      console.log('An errr occured while writing JSON jsonObj to File.');
-      return console.log(err);
+      return logger.error(`An err occured while writing JSON jsonObj to file`, {
+        err,
+      });
     }
   });
 
@@ -193,8 +198,7 @@ async function save() {
     { $set: { title: 'perms', val: jsonContent } },
     (err, res) => {
       if (err) {
-        console.error(err);
-        return;
+        return logger.error(`An err occured while updating mongoDB`, { err });
       }
     }
   );
@@ -203,8 +207,9 @@ async function save() {
   jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(pathPlayers, jsonContent, 'utf8', function (err) {
     if (err) {
-      console.log('An errr occured while writing JSON jsonObj to File.');
-      return console.log(err);
+      return logger.error(`An err occured while writing JSON jsonObj to file`, {
+        err,
+      });
     }
   });
 }
@@ -216,11 +221,11 @@ var force_load = 1200000;
 async function refresh(bot) {
   var cur = parseInt(Date.now());
   if (load_next == 0 && last_load + force_load > cur) {
-    console.log('denied refresh');
+    logger.info('denied refresh');
     return;
   }
   last_load = cur;
-  console.log(`Refreshing, time: ${last_load}`);
+  logger.info(`Normal refreshing`);
   load_next = 0;
   for (var curm of monitor) {
     var channel = curm[0];
@@ -239,7 +244,6 @@ async function refresh(bot) {
         if (val.lastLoad != newGametime) {
           val.lastLoad = newGametime;
         } else {
-          // console.log(`skipping refresh for ${val.username}`);
           continue;
         }
         username = username.data.user.username;
@@ -248,7 +252,7 @@ async function refresh(bot) {
         );
         record = record.data.records;
       } catch (e) {
-        console.error(e);
+        logger.error(`Error getting user data records`, { e });
         continue;
       }
       if (val.blitz == undefined) {
@@ -369,7 +373,7 @@ async function refresh(bot) {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
             } catch (e) {
-              console.error(e);
+              logger.error(`Failed to send message`, { e });
               continue;
             }
           }
@@ -491,7 +495,7 @@ async function refresh(bot) {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
             } catch (e) {
-              console.error(e);
+              logger.error(`Failed to send message`, { e });
               continue;
             }
           }
@@ -507,7 +511,7 @@ async function refresh(bot) {
             'https://ch.tetr.io/api/streams/league_userrecent_' + id
           );
         } catch (e) {
-          console.error(e);
+          logger.error(`Failed to get user league record`, { e });
           continue;
         }
         match = match.data.records;
@@ -539,7 +543,7 @@ async function refresh(bot) {
               'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id
             );
           } catch (e) {
-            console.error(e);
+            logger.error(`Failed to get user data`, { e });
             continue;
           }
           cur.endcontext[0].user.username =
@@ -559,7 +563,7 @@ async function refresh(bot) {
               'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id
             );
           } catch (e) {
-            console.error(e);
+            logger.error(`Failed to get user data`, { e });
             continue;
           }
           cur.endcontext[1].user.username =
@@ -653,7 +657,7 @@ async function refresh(bot) {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
             } catch (e) {
-              console.error(e);
+              logger.error(`Failed to send message`, { e });
               continue;
             }
           }
@@ -667,18 +671,18 @@ async function refresh(bot) {
     monitor.set(channel, curm);
   }
   save();
-  console.log(`Done refresh`);
+  logger.info(`Normal refresh finished.`);
   load_next = 1;
 }
 
 async function forceRefresh() {
   var cur = parseInt(Date.now());
   if (load_next == 0 && last_load + force_load > cur) {
-    console.log('denied refresh');
+    logger.info('denied refresh');
     return;
   }
   last_load = cur;
-  console.log(`Force refreshing, time: ${last_load}`);
+  logger.info(`Force refreshing, time: ${last_load}`);
   load_next = 0;
 
   for (var curm of monitor) {
@@ -695,7 +699,7 @@ async function forceRefresh() {
         );
         record = record.data.records;
       } catch (e) {
-        console.error(e);
+        logger.error(`Failed to get user records`, { e });
         continue;
       }
       if (record.blitz.record == null) val.blitz = null;
@@ -721,7 +725,7 @@ async function forceRefresh() {
         );
         // match = JSON.parse(request('GET', 'https://ch.tetr.io/api/streams/league_userrecent_' + id).getBody());
       } catch (e) {
-        console.error(e);
+        logger.error(`Failed to get user league records`, { e });
         continue;
       }
       match = match.data.records;
@@ -732,7 +736,7 @@ async function forceRefresh() {
     monitor.set(channel, curm);
   }
   save();
-  console.log(`Done force refresh`);
+  logger.info(`Force refresh finished.`);
   load_next = 1;
 }
 
@@ -769,7 +773,7 @@ async function updatePlayers(country) {
     players.has(country) == false ||
     players.get(country).time + cacheTime < cur
   ) {
-    console.log('updating players for ' + country);
+    logger.info('updating players for ' + country);
     var temp;
     try {
       temp = await async_request(
@@ -778,7 +782,7 @@ async function updatePlayers(country) {
           '&limit=100&after=0'
       );
     } catch (e) {
-      console.error(e);
+      logger.error(`Failed to update players`, { e });
       return;
     }
     temp = temp.data.users;
@@ -797,7 +801,7 @@ async function updatePlayers(country) {
             temp[temp.length - 1].xp
         );
       } catch (e) {
-        console.error(e);
+        logger.error(`Failed to update players`, { e });
         return;
       }
       temp = temp.data.users;
@@ -818,7 +822,7 @@ async function blitzLb(bot, msg, country) {
       'https://ch.tetr.io/api/streams/blitz_global'
     );
   } catch (e) {
-    console.error(e);
+    logger.error(`Failed to get leaderboard`, { e });
     return;
   }
   records = records.data.records;
@@ -875,7 +879,7 @@ async function fortyLinesLb(bot, msg, country) {
   try {
     records = await async_request('https://ch.tetr.io/api/streams/40l_global');
   } catch (e) {
-    console.error(e);
+    logger.error(`Failed to get leaderboard`, { e });
     return;
   }
   records = records.data.records;
@@ -938,7 +942,7 @@ async function printGlobal(bot, msg, args) {
         'https://ch.tetr.io/api/streams/blitz_global'
       );
     } catch (e) {
-      console.error(e);
+      logger.error(`Failed to get leaderboard`, { e });
       return;
     }
     records = records.data.records;
@@ -986,7 +990,7 @@ async function printGlobal(bot, msg, args) {
         'https://ch.tetr.io/api/streams/40l_global'
       );
     } catch (e) {
-      console.error(e);
+      logger.error(`Failed to get leaderboard`, { e });
       return;
     }
     records = records.data.records;
@@ -1169,7 +1173,7 @@ async function printCountries(bot, msg, args) {
   bot.on('interactionCreate', (interaction) => {
     if (!interaction.isButton()) return;
     if (interaction.message.embeds.length == 0) return;
-    // console.log(interaction);
+    // logger.info(interaction);
     // interaction.update({embeds: [embeds[0]], components: [row]});
     var idx = -1;
     for (var i = 0; i < embeds.length; ++i) {
@@ -1223,7 +1227,7 @@ module.exports = {
           '**^tetr players <country>** - shows the number of players for <country>\n';
         str +=
           '**^tetr countries** - lists all available countries, along with their codes[\n';
-        // console.log(str);
+        // logger.info(str);
         var strAdmin =
           '**^tetr remove <user>** - remove <user> from monitor list\n';
         strAdmin +=
@@ -1257,7 +1261,7 @@ module.exports = {
         try {
           user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
         } catch (e) {
-          console.error(e);
+          logger.error(`Failed to get user records`, { e });
           return;
         }
         if (user.success == false) {
@@ -1281,10 +1285,10 @@ module.exports = {
             'https://ch.tetr.io/api/streams/league_userrecent_' + id
           );
         } catch (e) {
-          console.error(e);
+          logger.error(`Failed to get user league records`, { e });
           return;
         }
-        // console.log(match);
+        // logger.info(match);
         match = match.data.records[0];
         if (match == undefined) {
           match = { _id: null };
@@ -1368,7 +1372,7 @@ module.exports = {
         try {
           user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
         } catch (e) {
-          console.error(e);
+          logger.error(`Failed to get user data`, { e });
           return;
         }
         if (user.success == false) {
@@ -1441,9 +1445,9 @@ module.exports = {
       case 'rpm':
         var rpm = reqcnt / ((parseInt(Date.now()) - startupTime) / 60000);
         msg.channel.send(
-          `RPM: ${rpm}\nRequests: ${reqcnt}\nUptime: ${
-            (parseInt(Date.now()) - startupTime) / 1000
-          } s`
+          `RPM: ${rpm}\nRequests: ${reqcnt}\nFailed requests: ${failedreq}\nFail rate: ${
+            (failedreq / reqcnt) * 100
+          }%\nUptime: ${(parseInt(Date.now()) - startupTime) / 1000} s`
         );
     }
   },
@@ -1455,7 +1459,7 @@ module.exports = {
           refresh(bot);
         })
         .on('error', function (e) {
-          console.error(e);
+          logger.error(`Failed refreshing`, { e });
         });
     }, refreshTime);
   },

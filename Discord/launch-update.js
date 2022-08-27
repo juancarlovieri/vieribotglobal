@@ -99,6 +99,7 @@ async function init() {
   }
   console.log('downloaded launches');
   for (var i = 0; i < list.length; i++) {
+    if (published.has('all')) continue;
     var cur = list[i];
     var time = cur.sort_date;
     time *= 1000;
