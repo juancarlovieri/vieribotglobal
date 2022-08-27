@@ -81,6 +81,16 @@ async function checkUsernameChange(bot, m, user) {
   return false;
 }
 
+async function checkGametimeChange(m, user) {
+  if (user.gametime !== m.gametime) {
+    // eslint-disable-next-line no-param-reassign
+    m.gametime = user.gametime;
+    await m.save();
+    return false;
+  }
+  return true;
+}
+
 function createAvatar(userId) {
   return {
     url: `https://tetr.io/user-content/avatars/${userId}.jpg`,
@@ -311,12 +321,15 @@ async function tryUpdate40lPb(bot, m, { record, rank }) {
 
 async function refreshUser(bot, m) {
   const user = await tetrApi.fetchUser(m.userId);
+  const refreshedMonitor = await Monitor.findById(m.id);
+  if (await checkGametimeChange(refreshedMonitor, user)) {
+    return { updated: false };
+  }
   if (!user) {
     throw new Error(`Empty fetch user for ${m.username}`);
   }
   const records = await tetrApi.getRecords(m.userId);
   // m can be stale since getRecords may be slow
-  const refreshedMonitor = await Monitor.findById(m.id);
   await checkUsernameChange(bot, refreshedMonitor, user);
   const jobs = await Promise.allSettled([
     tryUpdateBlitzPb(bot, refreshedMonitor, records.blitz),
