@@ -142,8 +142,6 @@ const axios = require('axios');
 
 var lastwarn = 0;
 
-logger.info(token.opchannel);
-
 async function async_request(option) {
   reqcnt += 1;
   //  return new Promise( (resolve, reject) => {
