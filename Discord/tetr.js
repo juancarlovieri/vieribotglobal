@@ -14,7 +14,8 @@ const MongoClient = require('mongodb').MongoClient;
 const token = require('./auth.json');
 const refreshTime = 600000;
 var startupTime = parseInt(Date.now());
-var reqcnt = 0;
+var reqcnt = 0,
+  failedreq = 0;
 const { logger } = require('./logger');
 const {
   MessageActionRow,
@@ -151,6 +152,7 @@ async function async_request(option) {
   var temp = await axios.get(option);
   temp = temp.data;
   if (!temp.success) {
+    failedreq += 1;
     throw new Error('Unable to fetch data');
   }
   return temp;
@@ -223,7 +225,7 @@ async function refresh(bot) {
     return;
   }
   last_load = cur;
-  logger.info(`Refreshing`);
+  logger.info(`Normal refreshing`);
   load_next = 0;
   for (var curm of monitor) {
     var channel = curm[0];
@@ -669,7 +671,7 @@ async function refresh(bot) {
     monitor.set(channel, curm);
   }
   save();
-  logger.info(`Refresh finished.`);
+  logger.info(`Normal refresh finished.`);
   load_next = 1;
 }
 
@@ -1443,9 +1445,9 @@ module.exports = {
       case 'rpm':
         var rpm = reqcnt / ((parseInt(Date.now()) - startupTime) / 60000);
         msg.channel.send(
-          `RPM: ${rpm}\nRequests: ${reqcnt}\nUptime: ${
-            (parseInt(Date.now()) - startupTime) / 1000
-          } s`
+          `RPM: ${rpm}\nRequests: ${reqcnt}\nFailed requests: ${failedreq}\nFail rate: ${
+            (failedreq / reqcnt) * 100
+          }%\nUptime: ${(parseInt(Date.now()) - startupTime) / 1000} s`
         );
     }
   },
