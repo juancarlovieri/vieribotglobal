@@ -81,8 +81,9 @@ async function checkUsernameChange(bot, m, user) {
   return false;
 }
 
-async function checkGametimeChange(bot, m, user) {
-  if (user.gametime != m.gametime) {
+async function checkGametimeChange(m, user) {
+  if (user.gametime !== m.gametime) {
+    // eslint-disable-next-line no-param-reassign
     m.gametime = user.gametime;
     await m.save();
     return false;
@@ -321,8 +322,9 @@ async function tryUpdate40lPb(bot, m, { record, rank }) {
 async function refreshUser(bot, m) {
   const user = await tetrApi.fetchUser(m.userId);
   const refreshedMonitor = await Monitor.findById(m.id);
-  if (await checkGametimeChange(bot, refreshedMonitor, user))
+  if (await checkGametimeChange(refreshedMonitor, user)) {
     return { updated: false };
+  }
   if (!user) {
     throw new Error(`Empty fetch user for ${m.username}`);
   }
