@@ -5,6 +5,7 @@ const monitorSchema = new mongoose.Schema({
   userId: String,
   username: String,
   lastMatchId: String,
+  gametime: Number,
   lastPersonalBest: {
     blitz: Number,
     '40l': Number,
