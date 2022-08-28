@@ -1474,11 +1474,11 @@ module.exports = {
         playerCount(bot, msg, country);
         break;
       case 'rpm':
-        var hours = (parseInt(Date.now()) - startupTime) / 60000;
-        var rpm = reqcnt / hours;
+        var minutes = (parseInt(Date.now()) - startupTime) / 60000;
+        var rpm = reqcnt / minutes;
         msg.channel.send(
           `RPM: ${rpm}\nRPM for last hour: ${
-            reqs.length / hours
+            reqs.length / 60
           }\nRequests: ${reqcnt}\nFailed requests: ${failedreq}\nFail rate: ${
             (failedreq / reqcnt) * 100
           }%\nFail rate for last hour: ${
