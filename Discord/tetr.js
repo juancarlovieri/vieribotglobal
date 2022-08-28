@@ -15,6 +15,7 @@ const token = require('./auth.json');
 const refreshTime = 300000;
 const warnInterval = 600000;
 const keepReq = 3600000;
+const forceForceRefresh = 86400000;
 const failrateLimit = 0.1;
 var startupTime = parseInt(Date.now());
 var reqcnt = 0,
@@ -128,8 +129,14 @@ async function init() {
   } catch (err) {
     logger.error(`Reading file failed`, { err });
   }
+  if (
+    !players.has(`lastRefresh`) ||
+    players.get(`lastRefresh`) < startupTime - forceForceRefresh
+  ) {
+    await forceRefresh();
+    players.set(`lastRefresh`, startupTime);
+  }
   save();
-  forceRefresh();
 }
 
 init();
@@ -250,6 +257,8 @@ var last_load = 1;
 var force_load = 1200000;
 
 async function refresh(bot) {
+  players.set(`lastRefresh`, parseInt(Date.now()));
+  save();
   var cur = parseInt(Date.now());
   if (load_next == 0 && last_load + force_load > cur) {
     logger.info('denied refresh');
