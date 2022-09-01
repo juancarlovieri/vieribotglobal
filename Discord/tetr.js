@@ -170,12 +170,13 @@ async function async_request(option) {
   reqs.push(curtime);
 
   while (reqs.length > 0 && reqs[0] + keepReq < curtime) reqs.shift();
+  while (failedreqs.length > 0 && failedreqs[0] + keepReq < curtime)
+    failedreqs.shift();
 
   if (!temp.success) {
+    logger.error('Failed request.', { temp });
     failedreq += 1;
     failedreqs.push(curtime);
-    while (failedreqs.length > 0 && failedreqs[0] + keepReq < curtime)
-      failedreqs.shift();
     if (
       failedreqs.length / reqs.length > failrateLimit &&
       curtime - lastwarn > warnInterval
