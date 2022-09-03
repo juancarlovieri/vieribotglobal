@@ -118,14 +118,18 @@ async function init() {
         var dateStr = new Date(0);
         await dateStr.setUTCSeconds(utcSeconds);
         // console.log(dateStr.toString());
-        dateStr = dateStr.toString();
+        dateStr = dateStr.toLocaleString('en-US', {
+          dateStyle: 'long',
+          timeStyle: 'long',
+          timeZone: 'Asia/Jakarta',
+        });
         var pos = dateStr.indexOf('GMT');
         if (pos == -1) {
           console.error(" 'GMT' not found");
           return;
         }
         dateStr = dateStr.substr(0, pos);
-        console.log(dateStr);
+        // console.log(dateStr);
         var vieri = new Discord.MessageAttachment('../viericorp.png');
         var embed = {
           color: 16764006,
@@ -165,7 +169,7 @@ async function init() {
           ],
           timestamp: new Date(),
           footer: {
-            text: 'By Vieri Corp.™ All Rights Reserved',
+            text: 'All the dates shown are in GMT+7\nBy Vieri Corp.™ All Rights Reserved',
           },
         };
         console.log('new timer');
@@ -223,7 +227,7 @@ async function news() {
       },
       timestamp: new Date(),
       footer: {
-        text: 'By Vieri Corp.™ All Rights Reserved',
+        text: 'All the dates shown are in GMT+7\nBy Vieri Corp.™ All Rights Reserved',
       },
     };
     const channel = bot.channels.cache.get('761766016807469057');
@@ -254,15 +258,18 @@ async function printUpcoming(bot, msg) {
     var utcSeconds = Math.round(list[i].sort_date);
     var dateStr = new Date(0);
     await dateStr.setUTCSeconds(utcSeconds);
-    // console.log(dateStr.toString());
-    dateStr = dateStr.toString();
+    dateStr = dateStr.toLocaleString('en-US', {
+      dateStyle: 'long',
+      timeStyle: 'long',
+      timeZone: 'Asia/Jakarta',
+    });
     var pos = dateStr.indexOf('GMT');
     if (pos == -1) {
       console.error(" 'GMT' not found");
       return;
     }
     dateStr = dateStr.substr(0, pos);
-    console.log(dateStr);
+    // console.log(dateStr);
     arr[i] = {
       name: list[i].provider.name + ' ' + list[i].vehicle.name,
       value: dateStr,
@@ -282,7 +289,7 @@ async function printUpcoming(bot, msg) {
     fields: arr,
     timestamp: new Date(),
     footer: {
-      text: 'By Vieri Corp.™ All Rights Reserved',
+      text: 'All the dates shown are in GMT+7\nBy Vieri Corp.™ All Rights Reserved',
     },
   };
   msg.channel.send({ files: [vieri], embeds: [embed] });
@@ -316,7 +323,12 @@ async function printView(bot, msg, args) {
   var dateStr = new Date(0);
   await dateStr.setUTCSeconds(utcSeconds);
   // console.log(dateStr.toString());
-  dateStr = dateStr.toString();
+  dateStr = dateStr.toLocaleString('en-US', {
+    dateStyle: 'long',
+    timeStyle: 'long',
+    timeZone: 'Asia/Jakarta',
+  });
+  // dateStr = dateStr.toString();
   var pos = dateStr.indexOf('GMT');
   if (pos == -1) {
     console.error(" 'GMT' not found");
@@ -362,7 +374,7 @@ async function printView(bot, msg, args) {
     ],
     timestamp: new Date(),
     footer: {
-      text: 'By Vieri Corp.™ All Rights Reserved',
+      text: 'All the dates shown are in GMT+7\nBy Vieri Corp.™ All Rights Reserved',
     },
   };
   msg.channel.send({ files: [vieri], embeds: [embed] });
