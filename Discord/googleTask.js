@@ -49,7 +49,7 @@ async function sendReminder({ bot, task, epoch }) {
     title: `${title} in ${remindTimeStr}`,
     link: `https://tasksboard.com/app`,
     description: notes,
-    fields: [{ name: `\u200B`, value: `<t:${epoch / 1000}>` }],
+    fields: [{ name: `\u200B`, value: `<t:${Math.round(epoch / 1000)}>` }],
     timestamp: new Date(),
     footer: {
       text: 'By Vieri Corp.™ All Rights Reserved',
