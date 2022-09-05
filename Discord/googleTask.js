@@ -62,6 +62,7 @@ async function sendReminder({ bot, task, epoch }) {
 
 function runAtDate(date, func, payload) {
   var diff = Math.max(date - Date.now(), 0);
+  if (diff < -10000) return;
   if (diff > 0x7fffffff)
     setTimeout(() => {
       runAtDate(date, func, payload);

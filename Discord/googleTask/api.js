@@ -57,7 +57,7 @@ async function getTaskLists() {
   return res.data.items;
 }
 
-async function getUncompletedTasks(taskId) {
+async function getIncompleteTasks(taskId) {
   const res = await service.tasks.list({
     tasklist: taskId,
     showCompleted: false,
@@ -68,6 +68,6 @@ async function getUncompletedTasks(taskId) {
 module.exports = {
   startLoadAuth,
   getTaskLists,
-  getUncompletedTasks,
+  getIncompleteTasks,
   saveRefreshToken,
 };
