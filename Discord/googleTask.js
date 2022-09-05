@@ -2,7 +2,6 @@ const Discord = require(`discord.js`);
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
-const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
 const { Channel } = require('./googleTask/channel');
 const { logger } = require('./logger');
