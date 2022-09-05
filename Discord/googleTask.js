@@ -81,7 +81,7 @@ async function refreshTask(bot, task) {
 }
 
 async function refreshTaskList(bot, taskList) {
-  const tasks = await api.getUncompletedTasks(taskList.id);
+  const tasks = await api.getIncompleteTasks(taskList.id);
   tasks.filter((t) => t.due != null);
   const jobs = await Promise.allSettled(tasks.map((m) => refreshTask(bot, m)));
   const results = logAndThrow(jobs, `Refresh task lists failed`);
