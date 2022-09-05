@@ -139,9 +139,48 @@ async function token(bot, msg) {
   else msg.channel.send(`failed!`);
 }
 
+async function sendList(bot, msg, results, group) {
+  const embed = {
+    color: '#fcca03',
+    title: `Task list for ${group}`,
+    link: `https://tasksboard.com/app`,
+    fields: results,
+    timestamp: new Date(),
+    footer: {
+      text: 'By Vieri Corp.™ All Rights Reserved',
+    },
+  };
+
+  msg.channel.send({ embeds: [embed] });
+}
+
+async function list(bot, msg) {
+  const args = msg.content.split(/\s+/);
+  if (args.length === 2) {
+    const taskLists = await api.getTaskLists();
+
+    const jobs = await Promise.allSettled(
+      taskLists.map((t) => api.getIncompleteTasks(t.id))
+    );
+    var results = logAndThrow(jobs, `Getting tasks list failed.`);
+    results = results.flat(1);
+    results = results.map((r) => ({
+      name: r.title,
+      value: `<t:${Math.round(new Date(r.due).getTime() / 1000)}>`,
+      epoch: Math.round(new Date(r.due).getTime() / 1000),
+    }));
+    results.sort((a, b) => {
+      return a.epoch - b.epoch;
+    });
+    sendList(bot, msg, results, `all`);
+    return;
+  }
+}
+
 const cmdMap = {
   remind,
   token,
+  list,
 };
 
 async function cmd(bot, msg) {
