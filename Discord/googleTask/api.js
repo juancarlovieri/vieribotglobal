@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
-const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
 const { logger } = require('../logger');
 
