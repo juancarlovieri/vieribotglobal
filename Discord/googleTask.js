@@ -49,7 +49,7 @@ async function sendReminder({ bot, task, epoch }) {
     title: `${title} in ${remindTimeStr}`,
     link: `https://tasksboard.com/app`,
     description: notes,
-    fields: [{ name: `\u200B`, value: `<t:${epoch}>` }],
+    fields: [{ name: `\u200B`, value: `<t:${epoch / 1000}>` }],
     timestamp: new Date(),
     footer: {
       text: 'By Vieri Corp.™ All Rights Reserved',
@@ -74,7 +74,7 @@ var vis = [];
 async function refreshTask(bot, task) {
   if (!task.due) return;
 
-  var epoch = new Date(task.due).getTime() / 1000;
+  var epoch = new Date(task.due).getTime();
   runAtDate(epoch - remindTime, sendReminder, { bot, task, epoch });
 
   vis.push(task);
