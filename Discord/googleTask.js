@@ -97,11 +97,15 @@ async function refresh(bot) {
 }
 
 async function init(bot) {
+  const res = await api.startLoadAuth();
+  if (!res.success) {
+    logger.error(`Google tasks init error.`);
+    return;
+  }
+
   refresh(bot);
   setInterval(() => refresh(bot), refreshInterval);
 }
-
-api.startLoadAuth();
 
 async function remind(bot, msg) {
   if (!hasAdmin(msg)) {
