@@ -34,6 +34,7 @@ const gamble = require('./gamble.js');
 // const music = require('./music.js');
 const tetr = require('./tetr.js');
 const tetrNew = require('./tetr_new');
+const googleTask = require('./googleTask');
 
 // console.log((1599715800000 - 3600000) - Date.now());
 
@@ -414,6 +415,9 @@ function command(args, msg) {
     case '^tetr2':
       tetrNew.cmd(bot, msg);
       break;
+    case '^tasks':
+      googleTask.cmd(bot, msg);
+      break;
     case '^ping':
       msg.channel.send(
         `Pong! Latency is ${
@@ -569,6 +573,7 @@ bot.on('ready', (msg) => {
   launch.new(bot);
   tetr.startRefresh(bot);
   tetrNew.startRefresh(bot);
+  googleTask.init(bot);
 });
 
 bot.on('messageCreate', (msg) => {
