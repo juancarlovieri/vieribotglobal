@@ -154,27 +154,57 @@ async function sendList(bot, msg, results, group) {
   msg.channel.send({ embeds: [embed] });
 }
 
+async function searchGroup(keyword) {
+  var taskLists = await api.getTaskLists();
+
+  taskLists = taskLists.filter((t) => t.title.indexOf(keyword) != -1);
+
+  return taskLists;
+}
+
 async function list(bot, msg) {
   const args = msg.content.split(/\s+/);
+  var results = [];
+
+  var groupName;
   if (args.length === 2) {
     const taskLists = await api.getTaskLists();
 
     const jobs = await Promise.allSettled(
       taskLists.map((t) => api.getIncompleteTasks(t.id))
     );
-    var results = logAndThrow(jobs, `Getting tasks list failed.`);
-    results = results.flat(1);
-    results = results.map((r) => ({
-      name: r.title,
-      value: `<t:${Math.round(new Date(r.due).getTime() / 1000)}>`,
-      epoch: Math.round(new Date(r.due).getTime() / 1000),
-    }));
-    results.sort((a, b) => {
-      return a.epoch - b.epoch;
-    });
-    sendList(bot, msg, results, `all`);
-    return;
+
+    results = logAndThrow(jobs, `Getting tasks list failed.`);
+    groupName = `all`;
+  } else {
+    args.splice(0, 2);
+    groupName = args.join(' ');
+    const taskLists = await searchGroup(groupName);
+
+    const jobs = await Promise.allSettled(
+      taskLists.map((t) => api.getIncompleteTasks(t.id))
+    );
+
+    results = logAndThrow(jobs, `Search task list failed.`);
   }
+
+  results = results.flat(1);
+  results = results.map((r) => ({
+    name: r.title,
+    value:
+      r.due != null
+        ? `<t:${Math.round(new Date(r.due).getTime() / 1000)}>`
+        : `No due`,
+    epoch:
+      r.due != null
+        ? Math.round(new Date(r.due).getTime() / 1000)
+        : 100000000000000000,
+  }));
+  await results.sort((a, b) => {
+    return a.epoch - b.epoch;
+  });
+
+  sendList(bot, msg, results, groupName);
 }
 
 const cmdMap = {
