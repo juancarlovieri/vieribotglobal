@@ -48,7 +48,7 @@ async function sendReminder({ bot, task, epoch }) {
     title: `${title} in ${remindTimeStr}`,
     link: `https://tasksboard.com/app`,
     description: notes,
-    fields: [{ name: `\u200B`, value: `<t:${Math.round(epoch / 1000)}>` }],
+    fields: [{ name: `\u200B`, value: `<t:${Math.round(epoch / 1000)}:D>` }],
     timestamp: new Date(),
     footer: {
       text: 'By Vieri Corp.™ All Rights Reserved',
@@ -210,7 +210,7 @@ async function list(bot, msg) {
     fields.push({
       name:
         time !== 100000000000000000
-          ? `<t:${Math.round(time / 1000)}>`
+          ? `<t:${Math.round(time / 1000)}:D>`
           : `No due`,
       value: `\`\`\`${tasks.join('\n')}\`\`\``,
     });
