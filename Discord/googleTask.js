@@ -44,7 +44,7 @@ async function sendMsg(bot, embed, channel) {
 async function sendReminder({ bot, task, epoch }) {
   const { title, notes } = task;
   const embed = {
-    color: '#a832a4',
+    color: '#ff00e6',
     title: `${title} in ${remindTimeStr}`,
     link: `https://tasksboard.com/app`,
     description: notes,
@@ -141,7 +141,7 @@ async function token(bot, msg) {
 
 async function sendList(bot, msg, results, group) {
   const embed = {
-    color: '#fcca03',
+    color: '#00ff08',
     title: `Task list for ${group}`,
     link: `https://tasksboard.com/app`,
     fields: results,
@@ -207,10 +207,34 @@ async function list(bot, msg) {
   sendList(bot, msg, results, groupName);
 }
 
+async function groups(bot, msg) {
+  var taskLists = await api.getTaskLists();
+  taskLists = taskLists.map((t) => t.title);
+
+  const res = `\`\`\`${taskLists.join(`\n`)}\`\`\``;
+
+  const embed = {
+    color: '#00fffb',
+    title: `Group lists`,
+    link: `https://tasksboard.com/app`,
+    fields: { name: `\u200b`, value: res },
+    timestamp: new Date(),
+    footer: {
+      text: 'By Vieri Corp.™ All Rights Reserved',
+    },
+  };
+  try {
+    msg.channel.send({ embeds: [embed] });
+  } catch (error) {
+    logger.error(`Error sending group lists.`, { error });
+  }
+}
+
 const cmdMap = {
   remind,
   token,
   list,
+  groups,
 };
 
 async function cmd(bot, msg) {
