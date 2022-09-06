@@ -44,7 +44,7 @@ async function sendMsg(bot, embed, channel) {
 async function sendReminder({ bot, task, epoch }) {
   const { title, notes } = task;
   const embed = {
-    color: '#a832a4',
+    color: '#ff00e6',
     title: `${title} in ${remindTimeStr}`,
     link: `https://tasksboard.com/app`,
     description: notes,
@@ -141,7 +141,7 @@ async function token(bot, msg) {
 
 async function sendList(bot, msg, results, group) {
   const embed = {
-    color: '#fcca03',
+    color: '#00ff08',
     title: `Task list for ${group}`,
     link: `https://tasksboard.com/app`,
     fields: results,
@@ -154,26 +154,79 @@ async function sendList(bot, msg, results, group) {
   msg.channel.send({ embeds: [embed] });
 }
 
+async function searchGroup(keyword) {
+  var taskLists = await api.getTaskLists();
+
+  taskLists = taskLists.filter((t) => t.title.indexOf(keyword) != -1);
+
+  return taskLists;
+}
+
 async function list(bot, msg) {
   const args = msg.content.split(/\s+/);
+  var results = [];
+
+  var groupName;
   if (args.length === 2) {
     const taskLists = await api.getTaskLists();
 
     const jobs = await Promise.allSettled(
       taskLists.map((t) => api.getIncompleteTasks(t.id))
     );
-    var results = logAndThrow(jobs, `Getting tasks list failed.`);
-    results = results.flat(1);
-    results = results.map((r) => ({
-      name: r.title,
-      value: `<t:${Math.round(new Date(r.due).getTime() / 1000)}>`,
-      epoch: Math.round(new Date(r.due).getTime() / 1000),
-    }));
-    results.sort((a, b) => {
-      return a.epoch - b.epoch;
-    });
-    sendList(bot, msg, results, `all`);
-    return;
+
+    results = logAndThrow(jobs, `Getting tasks list failed.`);
+    groupName = `all`;
+  } else {
+    args.splice(0, 2);
+    groupName = args.join(' ');
+    const taskLists = await searchGroup(groupName);
+
+    const jobs = await Promise.allSettled(
+      taskLists.map((t) => api.getIncompleteTasks(t.id))
+    );
+
+    results = logAndThrow(jobs, `Search task list failed.`);
+  }
+
+  results = results.flat(1);
+  results = results.map((r) => ({
+    name: r.title,
+    value:
+      r.due != null
+        ? `<t:${Math.round(new Date(r.due).getTime() / 1000)}>`
+        : `No due`,
+    epoch:
+      r.due != null
+        ? Math.round(new Date(r.due).getTime() / 1000)
+        : 100000000000000000,
+  }));
+  await results.sort((a, b) => {
+    return a.epoch - b.epoch;
+  });
+
+  sendList(bot, msg, results, groupName);
+}
+
+async function groups(bot, msg) {
+  var taskLists = await api.getTaskLists();
+  taskLists = taskLists.map((t) => t.title);
+
+  const res = `\`\`\`${taskLists.join(`\n`)}\`\`\``;
+
+  const embed = {
+    color: '#00fffb',
+    title: `Group lists`,
+    link: `https://tasksboard.com/app`,
+    fields: { name: `\u200b`, value: res },
+    timestamp: new Date(),
+    footer: {
+      text: 'By Vieri Corp.™ All Rights Reserved',
+    },
+  };
+  try {
+    msg.channel.send({ embeds: [embed] });
+  } catch (error) {
+    logger.error(`Error sending group lists.`, { error });
   }
 }
 
@@ -181,6 +234,7 @@ const cmdMap = {
   remind,
   token,
   list,
+  groups,
 };
 
 async function cmd(bot, msg) {
