@@ -76,6 +76,11 @@ async function refreshTask(bot, task) {
   if (!task.due) return;
 
   var epoch = new Date(task.due).getTime();
+
+  if (Date.now() + remindTime * 2 < epoch) return;
+
+  console.log(task);
+
   runAtDate(epoch - remindTime, sendReminder, { bot, task, epoch });
 
   vis.push(task);
