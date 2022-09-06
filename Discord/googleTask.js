@@ -139,12 +139,12 @@ async function token(bot, msg) {
   else msg.channel.send(`failed!`);
 }
 
-async function sendList(bot, msg, results, group) {
+async function sendList(bot, msg, fields, group) {
   const embed = {
     color: '#00ff08',
     title: `Task list for ${group}`,
     link: `https://tasksboard.com/app`,
-    fields: results,
+    fields: fields,
     timestamp: new Date(),
     footer: {
       text: 'By Vieri Corp.™ All Rights Reserved',
@@ -189,22 +189,34 @@ async function list(bot, msg) {
   }
 
   results = results.flat(1);
-  results = results.map((r) => ({
-    name: r.title,
-    value:
-      r.due != null
-        ? `<t:${Math.round(new Date(r.due).getTime() / 1000)}>`
-        : `No due`,
-    epoch:
-      r.due != null
-        ? Math.round(new Date(r.due).getTime() / 1000)
-        : 100000000000000000,
-  }));
-  await results.sort((a, b) => {
-    return a.epoch - b.epoch;
+
+  var times = results.map((r) =>
+    r.due != null ? new Date(r.due).getTime() : 100000000000000000
+  );
+  times = times.filter((value, index, self) => self.indexOf(value) === index);
+  times.sort((a, b) => {
+    return a - b;
   });
 
-  sendList(bot, msg, results, groupName);
+  var fields = [];
+  times.forEach((time) => {
+    var tasks = results.filter(
+      (r) =>
+        time ===
+        (r.due != null ? new Date(r.due).getTime() : 100000000000000000)
+    );
+    tasks = tasks.map((t) => t.title);
+
+    fields.push({
+      name:
+        time !== 100000000000000000
+          ? `<t:${Math.round(time / 1000)}>`
+          : `No due`,
+      value: `\`\`\`${tasks.join('\n')}\`\`\``,
+    });
+  });
+
+  sendList(bot, msg, fields, groupName);
 }
 
 async function groups(bot, msg) {
