@@ -47,6 +47,8 @@ async function startLoadAuth() {
 
   var newToken = await oAuth2Client.refreshToken(refresh_token);
   newToken = newToken.tokens;
+  newToken.refresh_token = refresh_token;
+
   oAuth2Client.setCredentials(newToken);
   service = google.tasks({ version: 'v1', auth: oAuth2Client });
   return { success: true };
