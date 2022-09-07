@@ -77,7 +77,7 @@ async function refreshTask(bot, task) {
 
   var epoch = new Date(task.due).getTime();
 
-  if (Date.now() + refreshInterval * 2 < epoch) return;
+  if (Date.now() + refreshInterval * 2 < epoch - remindTime) return;
 
   runAtDate(epoch - remindTime, sendReminder, { bot, task, epoch });
 
