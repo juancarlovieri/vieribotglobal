@@ -73,6 +73,7 @@ function runAtDate(date, func, payload) {
 var vis = [];
 
 async function refreshTask(bot, task) {
+  if (vis.includes(task.id)) return;
   if (!task.due) return;
 
   var epoch = new Date(task.due).getTime();
@@ -81,7 +82,7 @@ async function refreshTask(bot, task) {
 
   runAtDate(epoch - remindTime, sendReminder, { bot, task, epoch });
 
-  vis.push(task);
+  await vis.push(task.id);
 }
 
 async function refreshTaskList(bot, taskList) {
@@ -106,7 +107,7 @@ async function init(bot) {
     return;
   }
 
-  refresh(bot);
+  await refresh(bot);
   setInterval(() => refresh(bot), refreshInterval);
 }
 
