@@ -74,10 +74,7 @@ function runAtDate(date, func, payload) {
 var vis = [];
 
 async function refreshTask(bot, task) {
-  if (vis.includes(task.id)) {
-    console.log('Tes');
-    return;
-  }
+  if (vis.includes(task.id)) return;
   if (!task.due) return;
 
   var epoch = new Date(task.due).getTime();
