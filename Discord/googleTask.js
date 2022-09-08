@@ -44,12 +44,14 @@ async function sendMsg(bot, embed, channel) {
 
 async function sendReminder({ bot, task, epoch }) {
   const { title, notes } = task;
+  epoch = Math.round(epoch / 1000);
+
   const embed = {
     color: '#ff00e6',
-    title: `${title} in ${remindTimeStr}`,
+    title: `${title} <t:${epoch}:R>`,
     link: `https://tasksboard.com/app`,
     description: notes,
-    fields: [{ name: `\u200B`, value: `<t:${Math.round(epoch / 1000)}:D>` }],
+    fields: [{ name: `\u200B`, value: `<t:${epoch}:D>` }],
     timestamp: new Date(),
     footer: {
       text: 'By Vieri Corp.™ All Rights Reserved',
@@ -80,7 +82,7 @@ async function refreshTask(bot, task) {
   var epoch = new Date(task.due).getTime();
 
   if (Date.now() + refreshInterval * 2 < epoch - remindTime) return;
-
+  // epoch = Date.now() + remindTime + 1000;
   runAtDate(epoch - remindTime, sendReminder, { bot, task, epoch });
 
   await vis.push(task.id);
@@ -226,7 +228,7 @@ async function list(bot, msg) {
 
   const fields = await convertTasksToFields(results);
 
-  sendList(bot, msg, fields, groupName, msg);
+  await sendList(bot, msg, fields, groupName, msg);
 }
 
 async function groups(bot, msg) {
