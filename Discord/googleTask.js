@@ -1,3 +1,4 @@
+'use strict';
 const Discord = require(`discord.js`);
 const fs = require('fs');
 const path = require('path');
@@ -143,7 +144,7 @@ async function token(bot, msg) {
   else msg.channel.send(`failed!`);
 }
 
-async function sendList(bot, msg, fields, group) {
+async function sendList(bot, msg, fields, group, sender) {
   const embed = {
     color: '#00ff08',
     title: `Task list for ${group}`,
@@ -155,7 +156,7 @@ async function sendList(bot, msg, fields, group) {
     },
   };
 
-  msg.channel.send({ embeds: [embed] });
+  await sender.reply({ embeds: [embed] });
 }
 
 async function searchGroup(keyword) {
@@ -164,6 +165,35 @@ async function searchGroup(keyword) {
   taskLists = taskLists.filter((t) => t.title.indexOf(keyword) != -1);
 
   return taskLists;
+}
+
+async function convertTasksToFields(results) {
+  var times = results.map((r) =>
+    r.due != null ? new Date(r.due).getTime() : 100000000000000000
+  );
+  times = times.filter((value, index, self) => self.indexOf(value) === index);
+  times.sort((a, b) => {
+    return a - b;
+  });
+
+  var fields = [];
+  times.forEach((time) => {
+    var tasks = results.filter(
+      (r) =>
+        time ===
+        (r.due != null ? new Date(r.due).getTime() : 100000000000000000)
+    );
+    tasks = tasks.map((t) => t.title);
+
+    fields.push({
+      name:
+        time !== 100000000000000000
+          ? `<t:${Math.round(time / 1000)}:D>`
+          : `No due`,
+      value: `\`\`\`${tasks.join('\n')}\`\`\``,
+    });
+  });
+  return fields;
 }
 
 async function list(bot, msg) {
@@ -194,33 +224,9 @@ async function list(bot, msg) {
 
   results = results.flat(1);
 
-  var times = results.map((r) =>
-    r.due != null ? new Date(r.due).getTime() : 100000000000000000
-  );
-  times = times.filter((value, index, self) => self.indexOf(value) === index);
-  times.sort((a, b) => {
-    return a - b;
-  });
+  const fields = await convertTasksToFields(results);
 
-  var fields = [];
-  times.forEach((time) => {
-    var tasks = results.filter(
-      (r) =>
-        time ===
-        (r.due != null ? new Date(r.due).getTime() : 100000000000000000)
-    );
-    tasks = tasks.map((t) => t.title);
-
-    fields.push({
-      name:
-        time !== 100000000000000000
-          ? `<t:${Math.round(time / 1000)}:D>`
-          : `No due`,
-      value: `\`\`\`${tasks.join('\n')}\`\`\``,
-    });
-  });
-
-  sendList(bot, msg, fields, groupName);
+  sendList(bot, msg, fields, groupName, msg);
 }
 
 async function groups(bot, msg) {
@@ -246,6 +252,46 @@ async function groups(bot, msg) {
   }
 }
 
+async function chooseTaskLists(bot, msg) {
+  const taskLists = await api.getTaskLists();
+  const options = taskLists.map((t) => ({ label: t.title, value: t.id }));
+  const row = {
+    type: 'ACTION_ROW',
+    components: [
+      {
+        type: 'SELECT_MENU',
+        customId: 'chooseTasks',
+        placeholder: 'Choose a group',
+        options,
+        disabled: false,
+      },
+    ],
+  };
+  await msg.reply({ content: 'Choose a group', components: [row] });
+
+  bot.on('interactionCreate', async (interaction) => {
+    if (!interaction.isSelectMenu() || interaction.customId !== 'chooseTasks')
+      return;
+    const picked = interaction.values[0];
+    var taskLists = await api.getTaskLists();
+    taskLists = taskLists.filter((t) => t.id === picked);
+
+    if (taskLists.length !== 1) {
+      interaction.update({
+        content: `The chosen group is not found.`,
+        components: [],
+      });
+      logger.error(`Tasks: Chosen group not found`);
+      return;
+    }
+
+    const task = await api.getIncompleteTasks(taskLists[0].id);
+    const fields = await convertTasksToFields(task);
+    // await interaction.update({content: 'tests', components: []});
+    await sendList(bot, msg, fields, taskLists[0].title, interaction);
+  });
+}
+
 const cmdMap = {
   remind,
   token,
@@ -256,7 +302,10 @@ const cmdMap = {
 async function cmd(bot, msg) {
   try {
     const args = msg.content.split(/\s+/);
-    if (args.length === 1) return;
+    if (args.length === 1) {
+      chooseTaskLists(bot, msg);
+      return;
+    }
     if (!(args[1] in cmdMap)) return;
     await cmdMap[args[1]](bot, msg);
   } catch (error) {
