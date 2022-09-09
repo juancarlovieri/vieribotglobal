@@ -113,7 +113,7 @@ function cmp(a, b) {
 
 function save() {
   var jsonObj = Object.fromEntries(ongoing);
-  console.log(jsonObj);
+  // console.log(jsonObj);
   var jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(ongoingLagrangePath, jsonContent, 'utf8', function (err) {
     if (err) {
@@ -131,7 +131,7 @@ function save() {
     console.log('saved');
   });
   jsonObj = Object.fromEntries(rank);
-  console.log(jsonObj);
+  // console.log(jsonObj);
   jsonContent = JSON.stringify(jsonObj);
   fs.writeFileSync(
     '../lagrange_rank.json',
