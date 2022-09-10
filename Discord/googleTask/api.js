@@ -63,6 +63,7 @@ async function getIncompleteTasks(taskId) {
   const res = await service.tasks.list({
     tasklist: taskId,
     showCompleted: false,
+    maxResults: 100,
   });
   return res.data.items;
 }
