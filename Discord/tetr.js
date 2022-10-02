@@ -410,6 +410,18 @@ async function refresh(bot) {
               text: 'By Vieri Corp.™ All Rights Reserved',
             },
           };
+
+          var cfriend = userData.data.user;
+
+          var avatar = cfriend.avatar_revision;
+          avatar = avatar === undefined ? 0 : avatar;
+          if (avatar) {
+            embed.thumbnail = {
+              url:
+                'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
+            };
+          }
+
           if (perms.get(channel).blitz) {
             try {
               bot.channels.cache.get(val.channel).send({ embeds: [embed] });
@@ -531,6 +543,17 @@ async function refresh(bot) {
               text: 'By Vieri Corp.™ All Rights Reserved',
             },
           };
+
+          var cfriend = userData.data.user;
+
+          var avatar = cfriend.avatar_revision;
+          avatar = avatar === undefined ? 0 : avatar;
+          if (avatar) {
+            embed.thumbnail = {
+              url:
+                'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
+            };
+          }
 
           if (perms.get(channel)['40l']) {
             try {
@@ -686,8 +709,12 @@ async function refresh(bot) {
               text: 'By Vieri Corp.™ All Rights Reserved',
             },
           };
+
           cfriend = cfriend.data.user;
-          if (cfriend.avatar_revision != undefined) {
+
+          var avatar = cfriend.avatar_revision;
+          avatar = avatar === undefined ? 0 : avatar;
+          if (avatar) {
             embed.thumbnail = {
               url:
                 'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
@@ -723,7 +750,7 @@ async function forceRefresh() {
     return;
   }
   last_load = cur;
-  logger.info(`Force refreshing, time: ${last_load}`);
+  logger.info(`Force refreshing`);
   load_next = 0;
 
   for (var curm of monitor) {
