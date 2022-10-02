@@ -1321,6 +1321,31 @@ async function addMonitor(args, msg, channelId) {
   msg.channel.send('saved!');
 }
 
+async function removeMonitor(args, msg, channelId) {
+  var user;
+  try {
+    user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
+  } catch (e) {
+    logger.error(`Failed to get user data`, { e });
+    return;
+  }
+  if (user.success == false) {
+    msg.channel.send('who is dat');
+    return;
+  }
+  var channel = channelId;
+  var id = user.data.user._id;
+  if (monitor.has(channel) == false || monitor.get(channel).has(id) == false) {
+    msg.channel.send("nope, I wasn't monitoring him");
+    return;
+  }
+  var temp = monitor.get(channel);
+  temp.delete(id);
+  monitor.set(channel, temp);
+  msg.channel.send('removed');
+  save();
+}
+
 module.exports = {
   cmd: async function (bot, msg) {
     var args = msg.content.split(' ');
@@ -1457,35 +1482,31 @@ module.exports = {
           msg.channel.send('no');
           return;
         }
+
+        if (args.length == 4) {
+          if (args[3].length < 4) {
+            msg.channel.send(`Invalid channel.`);
+            return;
+          }
+
+          var channelId = args[3].substr(2, args[3].length - 3);
+          try {
+            if (bot.channels.cache.get(channelId) === undefined) {
+              msg.channel.send(`Invalid channel.`);
+              return;
+            }
+            removeMonitor(args, msg, channelId);
+          } catch (error) {
+            logger.error(`Error checking channel.`, { error });
+          }
+          return;
+        }
+
         if (args.length != 3) {
           msg.channel.send('wot');
           return;
         }
-        var user;
-        try {
-          user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
-        } catch (e) {
-          logger.error(`Failed to get user data`, { e });
-          return;
-        }
-        if (user.success == false) {
-          msg.channel.send('who is dat');
-          return;
-        }
-        var channel = msg.channel.id;
-        var id = user.data.user._id;
-        if (
-          monitor.has(channel) == false ||
-          monitor.get(channel).has(id) == false
-        ) {
-          msg.channel.send("nope, I wasn't monitoring him");
-          return;
-        }
-        var temp = monitor.get(channel);
-        temp.delete(id);
-        monitor.set(channel, temp);
-        msg.channel.send('removed');
-        save();
+        removeMonitor(args, msg, msg.channel.id);
         break;
       case 'forceRefresh':
         if (!isOwner(msg)) {
