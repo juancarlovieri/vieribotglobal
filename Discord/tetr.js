@@ -1273,6 +1273,54 @@ async function printCountries(bot, msg, args) {
   });
 }
 
+async function addMonitor(args, msg, channelId) {
+  var user;
+  try {
+    user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
+  } catch (e) {
+    logger.error(`Failed to get user records`, { e });
+    return;
+  }
+  if (user.success == false) {
+    msg.channel.send('who is dat');
+    return;
+  }
+  var id = user.data.user._id;
+  var channel = channelId;
+  if (monitor.has(channel) == false) {
+    monitor.set(channel, new Map());
+  }
+  var curm = monitor.get(channel);
+  if (curm.has(id)) {
+    msg.channel.send('bruh we have that guy');
+    return;
+  }
+
+  var match;
+  try {
+    match = await async_request(
+      'https://ch.tetr.io/api/streams/league_userrecent_' + id
+    );
+  } catch (e) {
+    logger.error(`Failed to get user league records`, { e });
+    return;
+  }
+  // logger.info(match);
+  match = match.data.records[0];
+  if (match == undefined) {
+    match = { _id: null };
+  }
+  var dat = {
+    last: match._id,
+    channel: channelId,
+    username: user.data.user.username,
+  };
+  curm.set(id, dat);
+  monitor.set(channel, curm);
+  save();
+  msg.channel.send('saved!');
+}
+
 module.exports = {
   cmd: async function (bot, msg) {
     var args = msg.content.split(' ');
@@ -1321,62 +1369,39 @@ module.exports = {
         });
         break;
       case 'monitor':
+        if (args.length == 4) {
+          if (args[3].length < 4) {
+            msg.channel.send(`Invalid channel.`);
+            return;
+          }
+
+          var channelId = args[3].substr(2, args[3].length - 3);
+          try {
+            if (bot.channels.cache.get(channelId) === undefined) {
+              msg.channel.send(`Invalid channel.`);
+              return;
+            }
+            addMonitor(args, msg, channelId);
+          } catch (error) {
+            logger.error(`Error checking channel.`, { error });
+          }
+          return;
+        }
+
         if (args.length != 3) {
           msg.channel.send('wot');
           return;
         }
-        var user;
-        try {
-          user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
-        } catch (e) {
-          logger.error(`Failed to get user records`, { e });
-          return;
-        }
-        if (user.success == false) {
-          msg.channel.send('who is dat');
-          return;
-        }
-        var id = user.data.user._id;
-        var channel = msg.channel.id;
-        if (monitor.has(channel) == false) {
-          monitor.set(channel, new Map());
-        }
-        var curm = monitor.get(channel);
-        if (curm.has(id)) {
-          msg.channel.send('bruh we have that guy');
-          return;
-        }
 
-        var match;
-        try {
-          match = await async_request(
-            'https://ch.tetr.io/api/streams/league_userrecent_' + id
-          );
-        } catch (e) {
-          logger.error(`Failed to get user league records`, { e });
-          return;
-        }
-        // logger.info(match);
-        match = match.data.records[0];
-        if (match == undefined) {
-          match = { _id: null };
-        }
-        var dat = {
-          last: match._id,
-          channel: msg.channel.id,
-          username: user.data.user.username,
-        };
-        curm.set(id, dat);
-        monitor.set(channel, curm);
-        save();
-        msg.channel.send('saved!');
+        addMonitor(args, msg, msg.channel.id);
+
         break;
       case 'refresh':
         refresh(bot);
         break;
       case 'toggle':
         if (!hasAdmin(msg)) {
-          msg.channel.send('no');
+          msg.channel.send('no, you have to be admin');
           return;
         }
         var channel = msg.channel.id;
