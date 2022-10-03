@@ -282,7 +282,7 @@ async function refresh(bot) {
         username = await async_request('https://ch.tetr.io/api/users/' + id);
         userData = username;
         var newGametime = username.data.user.gametime;
-        if (val.lastLoad != newGametime) {
+        if (val.lastLoad != newGametime || newGametime === -1) {
           val.lastLoad = newGametime;
         } else {
           continue;
@@ -567,7 +567,10 @@ async function refresh(bot) {
         }
       }
 
-      if (val.gamesplayed != userData.data.user.league.gamesplayed) {
+      if (
+        val.gamesplayed != userData.data.user.league.gamesplayed ||
+        val.gamesplayed === -1
+      ) {
         val.gamesplayed = userData.data.user.league.gamesplayed;
         var match;
         try {
