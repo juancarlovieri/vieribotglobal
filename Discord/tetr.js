@@ -1349,6 +1349,20 @@ async function removeMonitor(args, msg, channelId) {
   save();
 }
 
+async function listMonitored(args, msg, channelId) {
+  var channel = channelId;
+  if (monitor.has(channel) == false || monitor.get(channel).length == 0) {
+    msg.channel.send('nope, no one');
+    return;
+  }
+  var arr = monitor.get(channel);
+  var ans = '**List of monitored people**:\n';
+  for (var cur of arr) {
+    ans += cur[1].username + '\n';
+  }
+  msg.channel.send(ans);
+}
+
 module.exports = {
   cmd: async function (bot, msg) {
     var args = msg.content.split(' ');
@@ -1468,17 +1482,26 @@ module.exports = {
         save();
         break;
       case 'list':
-        var channel = msg.channel.id;
-        if (monitor.has(channel) == false || monitor.get(channel).length == 0) {
-          msg.channel.send('nope, no one');
+        if (args.length == 3) {
+          if (args[2].length < 4) {
+            msg.channel.send(`Invalid channel.`);
+            return;
+          }
+
+          var channelId = args[2].substr(2, args[2].length - 3);
+          try {
+            if (bot.channels.cache.get(channelId) === undefined) {
+              msg.channel.send(`Invalid channel.`);
+              return;
+            }
+            listMonitored(args, msg, channelId);
+          } catch (error) {
+            logger.error(`Error checking channel.`, { error });
+          }
           return;
         }
-        var arr = monitor.get(channel);
-        var ans = '**List of monitored people**:\n';
-        for (var cur of arr) {
-          ans += cur[1].username + '\n';
-        }
-        msg.channel.send(ans);
+
+        listMonitored(args, msg, msg.channel.id);
         break;
       case 'remove':
         if (!hasAdmin(msg)) {
