@@ -186,7 +186,7 @@ async function async_request(option) {
         var msg = `WARNING, request fail rate: ${
           (failedreqs.length / reqs.length) * 100
         }% for the past hour`;
-        bot.channels.cache.get(token.opchannel).send(msg);
+        await bot.channels.cache.get(token.opchannel).send(msg);
       } catch (err) {
         logger.error(`Unable to send warning message.`, { err });
         lastwarn = 0;
@@ -424,7 +424,9 @@ async function refresh(bot) {
 
           if (perms.get(channel).blitz) {
             try {
-              bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+              await bot.channels.cache
+                .get(val.channel)
+                .send({ embeds: [embed] });
             } catch (e) {
               logger.error(`Failed to send message`, { e });
               continue;
@@ -557,7 +559,9 @@ async function refresh(bot) {
 
           if (perms.get(channel)['40l']) {
             try {
-              bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+              await bot.channels.cache
+                .get(val.channel)
+                .send({ embeds: [embed] });
             } catch (e) {
               logger.error(`Failed to send message`, { e });
               continue;
@@ -726,7 +730,9 @@ async function refresh(bot) {
 
           if (perms.get(channel).ranked) {
             try {
-              bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+              await bot.channels.cache
+                .get(val.channel)
+                .send({ embeds: [embed] });
             } catch (e) {
               logger.error(`Failed to send message`, { e });
               continue;
@@ -939,7 +945,7 @@ async function blitzLb(bot, msg, country) {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
   };
-  msg.channel.send({ embeds: [embed] });
+  await msg.channel.send({ embeds: [embed] });
 }
 
 async function fortyLinesLb(bot, msg, country) {
@@ -995,14 +1001,14 @@ async function fortyLinesLb(bot, msg, country) {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
   };
-  msg.channel.send({ embeds: [embed] });
+  await msg.channel.send({ embeds: [embed] });
 }
 
 async function playerCount(bot, msg, country) {
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
-  msg.channel.send(arr.length.toFixed());
+  await msg.channel.send(arr.length.toFixed());
 }
 
 async function printGlobal(bot, msg, args) {
@@ -1053,7 +1059,7 @@ async function printGlobal(bot, msg, args) {
         text: 'By Vieri Corp.™ All Rights Reserved',
       },
     };
-    msg.channel.send({ embeds: [embed] });
+    await msg.channel.send({ embeds: [embed] });
   } else if (args[2] == '40l') {
     var records;
     try {
@@ -1102,7 +1108,7 @@ async function printGlobal(bot, msg, args) {
         text: 'By Vieri Corp.™ All Rights Reserved',
       },
     };
-    msg.channel.send({ embeds: [embed] });
+    await msg.channel.send({ embeds: [embed] });
   }
 }
 
@@ -1186,7 +1192,7 @@ async function printMonitored(bot, msg, args) {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
   };
-  msg.channel.send({ embeds: [embed] });
+  await msg.channel.send({ embeds: [embed] });
 }
 
 async function printCountries(bot, msg, args) {
@@ -1240,7 +1246,7 @@ async function printCountries(bot, msg, args) {
         .setLabel('next')
         .setStyle('PRIMARY')
     );
-  msg.channel.send({ embeds: [embeds[0]], components: [row] });
+  await msg.channel.send({ embeds: [embeds[0]], components: [row] });
   bot.on('interactionCreate', (interaction) => {
     if (!interaction.isButton()) return;
     if (interaction.message.embeds.length == 0) return;
@@ -1285,7 +1291,7 @@ async function addMonitor(args, msg, channelId) {
     return;
   }
   if (user.success == false) {
-    msg.channel.send('who is dat');
+    await msg.channel.send('who is dat');
     return;
   }
   var id = user.data.user._id;
@@ -1295,7 +1301,7 @@ async function addMonitor(args, msg, channelId) {
   }
   var curm = monitor.get(channel);
   if (curm.has(id)) {
-    msg.channel.send('bruh we have that guy');
+    await msg.channel.send('bruh we have that guy');
     return;
   }
 
@@ -1321,7 +1327,7 @@ async function addMonitor(args, msg, channelId) {
   curm.set(id, dat);
   monitor.set(channel, curm);
   save();
-  msg.channel.send('saved!');
+  await msg.channel.send('saved!');
 }
 
 async function removeMonitor(args, msg, channelId) {
@@ -1333,26 +1339,26 @@ async function removeMonitor(args, msg, channelId) {
     return;
   }
   if (user.success == false) {
-    msg.channel.send('who is dat');
+    await msg.channel.send('who is dat');
     return;
   }
   var channel = channelId;
   var id = user.data.user._id;
   if (monitor.has(channel) == false || monitor.get(channel).has(id) == false) {
-    msg.channel.send("nope, I wasn't monitoring him");
+    await msg.channel.send("nope, I wasn't monitoring him");
     return;
   }
   var temp = monitor.get(channel);
   temp.delete(id);
   monitor.set(channel, temp);
-  msg.channel.send('removed');
+  await msg.channel.send('removed');
   save();
 }
 
 async function listMonitored(args, msg, channelId) {
   var channel = channelId;
   if (monitor.has(channel) == false || monitor.get(channel).length == 0) {
-    msg.channel.send('nope, no one');
+    await msg.channel.send('nope, no one');
     return;
   }
   var arr = monitor.get(channel);
@@ -1360,7 +1366,7 @@ async function listMonitored(args, msg, channelId) {
   for (var cur of arr) {
     ans += cur[1].username + '\n';
   }
-  msg.channel.send(ans);
+  await msg.channel.send(ans);
 }
 
 module.exports = {
@@ -1390,7 +1396,7 @@ module.exports = {
           '**^tetr remove <user>** - remove <user> from monitor list\n';
         strAdmin +=
           '**^tetr toggle <gameMode>** - disables/enables notification for <gameMode>, gameMode can be blitz, 40l, or ranked\n';
-        msg.channel.send({
+        await msg.channel.send({
           files: [vieri],
           embeds: [
             {
@@ -1413,14 +1419,14 @@ module.exports = {
       case 'monitor':
         if (args.length == 4) {
           if (args[3].length < 4) {
-            msg.channel.send(`Invalid channel.`);
+            await msg.channel.send(`Invalid channel.`);
             return;
           }
 
           var channelId = args[3].substr(2, args[3].length - 3);
           try {
             if (bot.channels.cache.get(channelId) === undefined) {
-              msg.channel.send(`Invalid channel.`);
+              await msg.channel.send(`Invalid channel.`);
               return;
             }
             addMonitor(args, msg, channelId);
@@ -1431,7 +1437,7 @@ module.exports = {
         }
 
         if (args.length != 3) {
-          msg.channel.send('wot');
+          await msg.channel.send('wot');
           return;
         }
 
@@ -1443,7 +1449,7 @@ module.exports = {
         break;
       case 'toggle':
         if (!hasAdmin(msg)) {
-          msg.channel.send('no, you have to be admin');
+          await msg.channel.send('no, you have to be admin');
           return;
         }
         var channel = msg.channel.id;
@@ -1453,28 +1459,28 @@ module.exports = {
           case 'blitz':
             if (cur.blitz == true) {
               cur.blitz = false;
-              msg.channel.send('disabled blitz');
+              await msg.channel.send('disabled blitz');
             } else {
               cur.blitz = true;
-              msg.channel.send('enabled blitz');
+              await msg.channel.send('enabled blitz');
             }
             break;
           case '40l':
             if (cur['40l'] == true) {
               cur['40l'] = false;
-              msg.channel.send('disabled 40l');
+              await msg.channel.send('disabled 40l');
             } else {
               cur['40l'] = true;
-              msg.channel.send('enabled 40l');
+              await msg.channel.send('enabled 40l');
             }
             break;
           case 'ranked':
             if (cur.ranked == true) {
               cur.ranked = false;
-              msg.channel.send('disabled ranked');
+              await msg.channel.send('disabled ranked');
             } else {
               cur.ranked = true;
-              msg.channel.send('enabled ranked');
+              await msg.channel.send('enabled ranked');
             }
             break;
         }
@@ -1484,7 +1490,7 @@ module.exports = {
       case 'list':
         if (args.length == 3) {
           if (args[2].length < 4) {
-            msg.channel.send(`Invalid channel.`);
+            await msg.channel.send(`Invalid channel.`);
             return;
           }
 
@@ -1505,20 +1511,20 @@ module.exports = {
         break;
       case 'remove':
         if (!hasAdmin(msg)) {
-          msg.channel.send('no');
+          await msg.channel.send('no');
           return;
         }
 
         if (args.length == 4) {
           if (args[3].length < 4) {
-            msg.channel.send(`Invalid channel.`);
+            await msg.channel.send(`Invalid channel.`);
             return;
           }
 
           var channelId = args[3].substr(2, args[3].length - 3);
           try {
             if (bot.channels.cache.get(channelId) === undefined) {
-              msg.channel.send(`Invalid channel.`);
+              await msg.channel.send(`Invalid channel.`);
               return;
             }
             removeMonitor(args, msg, channelId);
@@ -1529,14 +1535,14 @@ module.exports = {
         }
 
         if (args.length != 3) {
-          msg.channel.send('wot');
+          await msg.channel.send('wot');
           return;
         }
         removeMonitor(args, msg, msg.channel.id);
         break;
       case 'forceRefresh':
         if (!isOwner(msg)) {
-          msg.channel.send('no');
+          await msg.channel.send('no');
           return;
         }
         forceRefresh();
@@ -1553,13 +1559,13 @@ module.exports = {
           return;
         }
         if (country.length != 2) {
-          msg.channel.send(
+          await msg.channel.send(
             'invalid country, list of available coutnries on ^tetr countries'
           );
           return;
         }
         if (allCountries.has(country.toUpperCase()) == false) {
-          msg.channel.send(
+          await msg.channel.send(
             'invalid country, list of available coutnries on ^tetr countries'
           );
           return;
@@ -1572,12 +1578,12 @@ module.exports = {
         break;
       case 'players':
         if (args.length != 3) {
-          msg.channel.send('wot');
+          await msg.channel.send('wot');
           return;
         }
         var country = args[2];
         if (country.length != 2) {
-          msg.channel.send('invalid country');
+          await msg.channel.send('invalid country');
           return;
         }
         playerCount(bot, msg, country);
@@ -1585,7 +1591,7 @@ module.exports = {
       case 'rpm':
         var minutes = (parseInt(Date.now()) - startupTime) / 60000;
         var rpm = reqcnt / minutes;
-        msg.channel.send(
+        await msg.channel.send(
           `RPM: ${rpm}\nRPM for last hour: ${
             reqs.length / 60
           }\nRequests: ${reqcnt}\nFailed requests: ${failedreq}\nFail rate: ${
