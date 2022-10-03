@@ -661,7 +661,7 @@ async function refresh(bot) {
               {
                 name: 'Rank',
                 value: friend.rank + ' / ' + friend.rating.toFixed(2) + ' TR',
-                inline: true,
+                inline: false,
               },
               {
                 name: 'PPS',
@@ -685,7 +685,7 @@ async function refresh(bot) {
               {
                 name: 'Rank',
                 value: foe.rank + ' / ' + foe.rating.toFixed(2) + ' TR',
-                inline: true,
+                inline: false,
               },
               {
                 name: 'PPS',
