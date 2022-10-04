@@ -1327,6 +1327,7 @@ async function printCountries(bot, msg, args) {
 
 async function addMonitor(args, msg, channelId) {
   var user;
+  args[2] = args[2].toLowerCase();
   try {
     user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
   } catch (e) {
@@ -1370,7 +1371,7 @@ async function addMonitor(args, msg, channelId) {
   curm.set(id, dat);
   monitor.set(channel, curm);
   save();
-  await msg.channel.send('saved!');
+  await msg.channel.send(`${dat.username} saved!`);
 }
 
 async function removeMonitor(args, msg, channelId) {
