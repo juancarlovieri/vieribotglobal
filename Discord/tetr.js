@@ -1422,11 +1422,11 @@ module.exports = {
         str += '**^tetr refresh** - refreshes the spied users instantly\n';
         str += '**^tetr list** - lists the users being monitored\n';
         str +=
-          '**^tetr lb <gameMode> <country>** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
+          '**^tetr lb <gameMode> <country 1> <country 2>...** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
         str +=
-          '**^tetr lb <gameMode> monitored** - shows the <gameMode> leaderboard for spied users, <gameMode> can be blitz or 40l\n';
+          '**^tetr lb <gameMode> monitored (<channel>)** - shows the <gameMode> leaderboard for spied users, <gameMode> can be blitz or 40l\n';
         str +=
-          '**^tetr players <country>** - shows the number of players for <country>\n';
+          '**^tetr players <country 1> <country 2>...** - shows the number of players for <country>\n';
         str +=
           '**^tetr countries** - lists all available countries, along with their codes[\n';
         // logger.info(str);
