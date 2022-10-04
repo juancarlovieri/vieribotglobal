@@ -893,9 +893,15 @@ async function updatePlayers(country) {
 }
 
 async function blitzLb(bot, msg, country) {
-  country = country.toUpperCase();
-  await updatePlayers(country);
-  var arr = players.get(country).arr;
+  country = country.map((c) => c.toUpperCase());
+
+  var arr = [];
+  const jobs = await Promise.allSettled(country.map((c) => updatePlayers(c)));
+
+  for (var cur of country) {
+    arr = arr.concat(players.get(cur).arr);
+  }
+
   var records;
   try {
     records = await async_request(
@@ -933,15 +939,14 @@ async function blitzLb(bot, msg, country) {
       ans[i].user.username +
       '\n';
   }
+
+  var flags = country.map((c) => `:flag_${c.toLowerCase()}:`);
+  flags = flags.join(` `);
+  country = country.join(` `);
   str += '```';
   const embed = {
     color: '#ebc334',
-    title:
-      'Blitz Leaderboard for ' +
-      country +
-      ' :flag_' +
-      country.toLowerCase() +
-      ':',
+    title: 'Blitz Leaderboard for ' + country + ' ' + flags,
     description: str,
     timestamp: new Date(),
     footer: {
@@ -952,9 +957,15 @@ async function blitzLb(bot, msg, country) {
 }
 
 async function fortyLinesLb(bot, msg, country) {
-  country = country.toUpperCase();
-  await updatePlayers(country);
-  var arr = players.get(country).arr;
+  country = country.map((c) => c.toUpperCase());
+
+  var arr = [];
+  const jobs = await Promise.allSettled(country.map((c) => updatePlayers(c)));
+
+  for (var cur of country) {
+    arr = arr.concat(players.get(cur).arr);
+  }
+
   var records;
   try {
     records = await async_request('https://ch.tetr.io/api/streams/40l_global');
@@ -989,15 +1000,15 @@ async function fortyLinesLb(bot, msg, country) {
       ans[i].user.username +
       '\n';
   }
+
+  var flags = country.map((c) => `:flag_${c.toLowerCase()}:`);
+  flags = flags.join(` `);
+  country = country.join(` `);
+
   str += '```';
   const embed = {
     color: '#ebc334',
-    title:
-      '40l Leaderboard for ' +
-      country +
-      ' :flag_' +
-      country.toLowerCase() +
-      ':',
+    title: '40L Leaderboard for ' + country + ' ' + flags,
     description: str,
     timestamp: new Date(),
     footer: {
@@ -1117,7 +1128,31 @@ async function printGlobal(bot, msg, args) {
 
 async function printMonitored(bot, msg, args) {
   var channel = msg.channel.id;
-  if (monitor.has(channel) == false) return;
+  if (args.length == 5) {
+    if (args[4].length < 4) {
+      await msg.channel.send(`Invalid channel.`);
+      return;
+    }
+
+    var channelId = args[4].substr(2, args[4].length - 3);
+    var channelName;
+    try {
+      var tmp = bot.channels.cache.get(channelId);
+      if (tmp === undefined) {
+        msg.channel.send(`Invalid channel.`);
+        return;
+      }
+      channelName = tmp.name;
+      channel = channelId;
+    } catch (error) {
+      logger.error(`Error checking channel.`, { error });
+      return;
+    }
+  }
+  if (monitor.has(channel) == false) {
+    await msg.channel.send(`no one`);
+    return;
+  }
   var arr = await monitor.get(channel);
   var all = [];
   for (var cur of arr) {
@@ -1188,7 +1223,7 @@ async function printMonitored(bot, msg, args) {
   if (args[2] == 'blitz') args[2] = 'Blitz';
   const embed = {
     color: '#ebc334',
-    title: args[2] + ' Leaderboard for monitored users',
+    title: args[2] + `Leaderboard for monitored users #${channelName}`,
     description: str,
     timestamp: new Date(),
     footer: {
@@ -1387,11 +1422,11 @@ module.exports = {
         str += '**^tetr refresh** - refreshes the spied users instantly\n';
         str += '**^tetr list** - lists the users being monitored\n';
         str +=
-          '**^tetr lb <gameMode> <country>** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
+          '**^tetr lb <gameMode> <country 1> <country 2>...** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
         str +=
-          '**^tetr lb <gameMode> monitored** - shows the <gameMode> leaderboard for spied users, <gameMode> can be blitz or 40l\n';
+          '**^tetr lb <gameMode> monitored (<channel>)** - shows the <gameMode> leaderboard for spied users, <gameMode> can be blitz or 40l\n';
         str +=
-          '**^tetr players <country>** - shows the number of players for <country>\n';
+          '**^tetr players <country 1> <country 2>...** - shows the number of players for <country>\n';
         str +=
           '**^tetr countries** - lists all available countries, along with their codes[\n';
         // logger.info(str);
@@ -1556,23 +1591,25 @@ module.exports = {
           return;
         }
         if (args.length < 4) return;
-        var country = args[3];
-        if (country == 'monitored') {
+        var country = args.slice(3);
+        if (country[0] == 'monitored') {
           printMonitored(bot, msg, args);
           return;
         }
-        if (country.length != 2) {
-          await msg.channel.send(
-            'invalid country, list of available coutnries on ^tetr countries'
-          );
-          return;
+
+        country = country
+          .map((c) => c.toUpperCase())
+          .filter((v, i, a) => a.indexOf(v) === i);
+
+        for (var cur of country) {
+          if (cur.length != 2 || allCountries.has(cur) == false) {
+            await msg.channel.send(
+              'invalid country, list of available countries on ^tetr countries'
+            );
+            return;
+          }
         }
-        if (allCountries.has(country.toUpperCase()) == false) {
-          await msg.channel.send(
-            'invalid country, list of available coutnries on ^tetr countries'
-          );
-          return;
-        }
+
         if (args[2] == 'blitz') {
           blitzLb(bot, msg, country);
         } else if (args[2] == '40l') {
