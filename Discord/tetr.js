@@ -1488,7 +1488,9 @@ module.exports = {
 
         break;
       case 'refresh':
-        refresh(bot);
+        await msg.channel.send(`Refreshing`);
+        await refresh(bot);
+        await msg.channel.send(`Refresh finished`);
         break;
       case 'toggle':
         if (!hasAdmin(msg)) {
