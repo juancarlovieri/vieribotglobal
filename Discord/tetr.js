@@ -257,6 +257,474 @@ var load_next = 1;
 var last_load = 1;
 var force_load = 1200000;
 
+async function refreshChannel(bot, curm) {
+  var channel = curm[0];
+  checkPerms(channel);
+  curm = curm[1];
+  for (var temp of curm) {
+    var val = temp[1],
+      id = temp[0];
+    var record = null,
+      username = null;
+    var userData;
+    try {
+      username = await async_request('https://ch.tetr.io/api/users/' + id);
+      userData = username;
+      var newGametime = username.data.user.gametime;
+      if (val.lastLoad != newGametime || newGametime === -1) {
+        val.lastLoad = newGametime;
+      } else {
+        continue;
+      }
+      username = username.data.user.username;
+      record = await async_request(
+        'https://ch.tetr.io/api/users/' + id + '/records'
+      );
+      record = record.data.records;
+    } catch (e) {
+      logger.error(`Error getting user data records`, { e });
+      continue;
+    }
+    if (val.blitz == undefined) {
+      if (record.blitz.record == null) val.blitz = null;
+      else val.blitz = Math.round(record.blitz.record.endcontext.score);
+      if (record['40l'].record == null) val['40l'] = null;
+      else val['40l'] = Math.round(record['40l'].record.endcontext.finalTime);
+      curm.set(id, val);
+      continue;
+    }
+    if (record.blitz.record != null) {
+      var newblitz = Math.round(record.blitz.record.endcontext.score);
+      if (val.blitz == null || newblitz > val.blitz) {
+        var cur = record.blitz.record;
+        var dat = cur.endcontext;
+        var rank = '>#1000';
+        if (record.blitz.rank != null) {
+          rank = '#' + record.blitz.rank.toFixed(0);
+        }
+        const embed = {
+          color: '#0394fc',
+          title:
+            cur.user.username.toUpperCase() +
+            ' just achieved a new blitz personal best!',
+          url: 'https://tetr.io/#r:' + cur.replayid,
+          description: '**' + cur.endcontext.score.toFixed(0) + '**',
+          fields: [
+            { name: 'Rank', value: rank, inline: true },
+            {
+              name: 'PPS',
+              value: (dat.piecesplaced / 120).toFixed(2),
+              inline: true,
+            },
+            {
+              name: 'Finesse',
+              value:
+                ((dat.finesse.perfectpieces * 100) / dat.piecesplaced).toFixed(
+                  2
+                ) + '%',
+              inline: true,
+            },
+            {
+              name: 'Finesse faults',
+              value: dat.finesse.faults.toFixed(0),
+              inline: true,
+            },
+            { name: 'Level', value: dat.level.toFixed(0), inline: true },
+            { name: '\u200B', value: '**Clears**' },
+            {
+              name: 'Singles',
+              value: dat.clears.singles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Doubles',
+              value: dat.clears.doubles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Triples',
+              value: dat.clears.triples.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Quads',
+              value: dat.clears.quads.toFixed(0),
+              inline: true,
+            },
+            { name: '\u200B', value: '**T-spins**' },
+            {
+              name: 'Real',
+              value: dat.clears.realtspins.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Mini',
+              value: dat.clears.minitspins.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Mini Singles',
+              value: dat.clears.minitspinsingles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Singles',
+              value: dat.clears.tspinsingles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Mini Doubles',
+              value: dat.clears.minitspindoubles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Doubles',
+              value: dat.clears.tspindoubles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Triples',
+              value: dat.clears.tspintriples.toFixed(0),
+              inline: true,
+            },
+            { name: 'All clears', value: dat.clears.allclear.toFixed(0) },
+            {
+              name: '\u200B',
+              value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
+            },
+          ],
+          timestamp: new Date(),
+          footer: {
+            text: 'By Vieri Corp.™ All Rights Reserved',
+          },
+        };
+
+        var cfriend = userData.data.user;
+
+        var avatar = cfriend.avatar_revision;
+        avatar = avatar === undefined ? 0 : avatar;
+        if (avatar) {
+          embed.thumbnail = {
+            url: 'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
+          };
+        }
+
+        if (perms.get(channel).blitz) {
+          try {
+            await bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+          } catch (e) {
+            logger.error(`Failed to send message`, { e });
+            continue;
+          }
+        }
+        val.blitz = newblitz;
+      }
+    }
+    if (record['40l'].record != null) {
+      var new40l = Math.round(record['40l'].record.endcontext.finalTime);
+      if (val['40l'] == null || new40l < val['40l']) {
+        var cur = record['40l'].record;
+        var dat = cur.endcontext;
+        var rank = '>#1000';
+        if (record['40l'].rank != null) {
+          rank = '#' + record['40l'].rank.toFixed(0);
+        }
+        const embed = {
+          color: '#0394fc',
+          title:
+            cur.user.username.toUpperCase() +
+            ' just achieved a new 40 lines personal best!',
+          url: 'https://tetr.io/#r:' + cur.replayid,
+          description:
+            '**' +
+            prettyMilliseconds(cur.endcontext.finalTime, {
+              secondsDecimalDigits: 3,
+            }) +
+            '**',
+          fields: [
+            { name: 'Rank', value: rank, inline: true },
+            {
+              name: 'PPS',
+              value: (dat.piecesplaced / (new40l / 1000)).toFixed(2),
+              inline: true,
+            },
+            {
+              name: 'Finesse',
+              value:
+                ((dat.finesse.perfectpieces * 100) / dat.piecesplaced).toFixed(
+                  2
+                ) + '%',
+              inline: true,
+            },
+            {
+              name: 'Finesse faults',
+              value: dat.finesse.faults.toFixed(0),
+              inline: true,
+            },
+            { name: '\u200B', value: '**Clears**' },
+            {
+              name: 'Singles',
+              value: dat.clears.singles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Doubles',
+              value: dat.clears.doubles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Triples',
+              value: dat.clears.triples.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Quads',
+              value: dat.clears.quads.toFixed(0),
+              inline: true,
+            },
+            { name: '\u200B', value: '**T-spins**' },
+            {
+              name: 'Real',
+              value: dat.clears.realtspins.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Mini',
+              value: dat.clears.minitspins.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Mini Singles',
+              value: dat.clears.minitspinsingles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Singles',
+              value: dat.clears.tspinsingles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Mini Doubles',
+              value: dat.clears.minitspindoubles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Doubles',
+              value: dat.clears.tspindoubles.toFixed(0),
+              inline: true,
+            },
+            {
+              name: 'Triples',
+              value: dat.clears.tspintriples.toFixed(0),
+              inline: true,
+            },
+            { name: 'All clears', value: dat.clears.allclear.toFixed(0) },
+            {
+              name: '\u200B',
+              value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
+            },
+          ],
+          timestamp: new Date(),
+          footer: {
+            text: 'By Vieri Corp.™ All Rights Reserved',
+          },
+        };
+
+        var cfriend = userData.data.user;
+
+        var avatar = cfriend.avatar_revision;
+        avatar = avatar === undefined ? 0 : avatar;
+        if (avatar) {
+          embed.thumbnail = {
+            url: 'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
+          };
+        }
+
+        if (perms.get(channel)['40l']) {
+          try {
+            await bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+          } catch (e) {
+            logger.error(`Failed to send message`, { e });
+            continue;
+          }
+        }
+        val['40l'] = new40l;
+      }
+    }
+
+    if (
+      val.gamesplayed != userData.data.user.league.gamesplayed ||
+      val.gamesplayed === -1
+    ) {
+      val.gamesplayed = userData.data.user.league.gamesplayed;
+      var match;
+      try {
+        match = await async_request(
+          'https://ch.tetr.io/api/streams/league_userrecent_' + id
+        );
+      } catch (e) {
+        logger.error(`Failed to get user league record`, { e });
+        continue;
+      }
+      match = match.data.records;
+      var last = match.length;
+      for (var i = 0; i < match.length; ++i) {
+        if (match[i]._id == val.last) {
+          last = i;
+          break;
+        }
+      }
+      for (var i = last - 1; i >= 0; --i) {
+        var cur = match[i];
+        var color, state;
+        if (cur.endcontext[0].user.username != cur.user.username) {
+          state = 'lost';
+          color = '#a83232';
+          cur.endcontext[1] = [
+            cur.endcontext[0],
+            (cur.endcontext[0] = cur.endcontext[1]),
+          ][0];
+        } else {
+          state = 'won';
+          color = '#32a844';
+        }
+        await timeout(10000);
+        var friend;
+        try {
+          friend = await async_request(
+            'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id
+          );
+        } catch (e) {
+          logger.error(`Failed to get user data`, { e });
+          continue;
+        }
+        cur.endcontext[0].user.username =
+          cur.endcontext[0].user.username.toUpperCase();
+        if (friend.data.user.country != null)
+          cur.endcontext[0].user.username +=
+            ' :flag_' + friend.data.user.country.toLowerCase() + ':';
+        var cfriend = friend;
+        friend = friend.data.user.league;
+        if (friend.rank == 'z') friend.rank = '?';
+        if (emoji.has(friend.rank)) {
+          friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
+        }
+        var foe;
+        try {
+          foe = await async_request(
+            'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id
+          );
+        } catch (e) {
+          logger.error(`Failed to get user data`, { e });
+          continue;
+        }
+        cur.endcontext[1].user.username =
+          cur.endcontext[1].user.username.toUpperCase();
+        if (foe.data.user.country != null)
+          cur.endcontext[1].user.username +=
+            ' :flag_' + foe.data.user.country.toLowerCase() + ':';
+        foe = foe.data.user.league;
+        // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;
+        if (foe.rank == 'z') foe.rank = '?';
+        if (emoji.has(foe.rank)) {
+          foe.rank = '<:a:' + emoji.get(foe.rank) + '>';
+        }
+        const embed = {
+          color: color,
+          title: cur.user.username.toUpperCase() + ' just ' + state + ' a game',
+          url: 'https://tetr.io/#r:' + cur.replayid,
+          description:
+            cur.endcontext[0].wins.toFixed(0) +
+            ' - ' +
+            cur.endcontext[1].wins.toFixed(0),
+          fields: [
+            {
+              name: '\u200B',
+              value: '**' + cur.endcontext[0].user.username + '**',
+            },
+            {
+              name: 'Rank',
+              value: friend.rank + ' / ' + friend.rating.toFixed(2) + ' TR',
+              inline: false,
+            },
+            {
+              name: 'PPS',
+              value: cur.endcontext[0].points.tertiary.toFixed(2),
+              inline: true,
+            },
+            {
+              name: 'APM',
+              value: cur.endcontext[0].points.secondary.toFixed(2),
+              inline: true,
+            },
+            {
+              name: 'VS',
+              value: cur.endcontext[0].points.extra.vs.toFixed(2),
+              inline: true,
+            },
+            {
+              name: '\u200B',
+              value: '**' + cur.endcontext[1].user.username + '**',
+            },
+            {
+              name: 'Rank',
+              value: foe.rank + ' / ' + foe.rating.toFixed(2) + ' TR',
+              inline: false,
+            },
+            {
+              name: 'PPS',
+              value: cur.endcontext[1].points.tertiary.toFixed(2),
+              inline: true,
+            },
+            {
+              name: 'APM',
+              value: cur.endcontext[1].points.secondary.toFixed(2),
+              inline: true,
+            },
+            {
+              name: 'VS',
+              value: cur.endcontext[1].points.extra.vs.toFixed(2),
+              inline: true,
+            },
+            {
+              name: '\u200B',
+              value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
+            },
+          ],
+          timestamp: new Date(),
+          footer: {
+            text: 'By Vieri Corp.™ All Rights Reserved',
+          },
+        };
+
+        cfriend = cfriend.data.user;
+
+        var avatar = cfriend.avatar_revision;
+        avatar = avatar === undefined ? 0 : avatar;
+        if (avatar) {
+          embed.thumbnail = {
+            url: 'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
+          };
+        }
+
+        if (perms.get(channel).ranked) {
+          try {
+            await bot.channels.cache.get(val.channel).send({ embeds: [embed] });
+          } catch (e) {
+            logger.error(`Failed to send message`, { e });
+            continue;
+          }
+        }
+      }
+      if (match.length == 0) match[0] = { _id: null };
+      val.last = match[0]._id;
+    }
+    val.username = username;
+    curm.set(id, val);
+  }
+  monitor.set(channel, curm);
+}
+
 async function refresh(bot) {
   players.set(`lastRefresh`, parseInt(Date.now()));
   save();
@@ -268,485 +736,22 @@ async function refresh(bot) {
   last_load = cur;
   logger.info(`Normal refreshing`);
   load_next = 0;
-  for (var curm of monitor) {
-    var channel = curm[0];
-    checkPerms(channel);
-    curm = curm[1];
-    for (var temp of curm) {
-      var val = temp[1],
-        id = temp[0];
-      var record = null,
-        username = null;
-      var userData;
-      try {
-        username = await async_request('https://ch.tetr.io/api/users/' + id);
-        userData = username;
-        var newGametime = username.data.user.gametime;
-        if (val.lastLoad != newGametime || newGametime === -1) {
-          val.lastLoad = newGametime;
-        } else {
-          continue;
-        }
-        username = username.data.user.username;
-        record = await async_request(
-          'https://ch.tetr.io/api/users/' + id + '/records'
-        );
-        record = record.data.records;
-      } catch (e) {
-        logger.error(`Error getting user data records`, { e });
-        continue;
-      }
-      if (val.blitz == undefined) {
-        if (record.blitz.record == null) val.blitz = null;
-        else val.blitz = Math.round(record.blitz.record.endcontext.score);
-        if (record['40l'].record == null) val['40l'] = null;
-        else val['40l'] = Math.round(record['40l'].record.endcontext.finalTime);
-        curm.set(id, val);
-        continue;
-      }
-      if (record.blitz.record != null) {
-        var newblitz = Math.round(record.blitz.record.endcontext.score);
-        if (val.blitz == null || newblitz > val.blitz) {
-          var cur = record.blitz.record;
-          var dat = cur.endcontext;
-          var rank = '>#1000';
-          if (record.blitz.rank != null) {
-            rank = '#' + record.blitz.rank.toFixed(0);
-          }
-          const embed = {
-            color: '#0394fc',
-            title:
-              cur.user.username.toUpperCase() +
-              ' just achieved a new blitz personal best!',
-            url: 'https://tetr.io/#r:' + cur.replayid,
-            description: '**' + cur.endcontext.score.toFixed(0) + '**',
-            fields: [
-              { name: 'Rank', value: rank, inline: true },
-              {
-                name: 'PPS',
-                value: (dat.piecesplaced / 120).toFixed(2),
-                inline: true,
-              },
-              {
-                name: 'Finesse',
-                value:
-                  (
-                    (dat.finesse.perfectpieces * 100) /
-                    dat.piecesplaced
-                  ).toFixed(2) + '%',
-                inline: true,
-              },
-              {
-                name: 'Finesse faults',
-                value: dat.finesse.faults.toFixed(0),
-                inline: true,
-              },
-              { name: 'Level', value: dat.level.toFixed(0), inline: true },
-              { name: '\u200B', value: '**Clears**' },
-              {
-                name: 'Singles',
-                value: dat.clears.singles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Doubles',
-                value: dat.clears.doubles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Triples',
-                value: dat.clears.triples.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Quads',
-                value: dat.clears.quads.toFixed(0),
-                inline: true,
-              },
-              { name: '\u200B', value: '**T-spins**' },
-              {
-                name: 'Real',
-                value: dat.clears.realtspins.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Mini',
-                value: dat.clears.minitspins.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Mini Singles',
-                value: dat.clears.minitspinsingles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Singles',
-                value: dat.clears.tspinsingles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Mini Doubles',
-                value: dat.clears.minitspindoubles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Doubles',
-                value: dat.clears.tspindoubles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Triples',
-                value: dat.clears.tspintriples.toFixed(0),
-                inline: true,
-              },
-              { name: 'All clears', value: dat.clears.allclear.toFixed(0) },
-              {
-                name: '\u200B',
-                value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              text: 'By Vieri Corp.™ All Rights Reserved',
-            },
-          };
 
-          var cfriend = userData.data.user;
+  try {
+    var jobs = [];
 
-          var avatar = cfriend.avatar_revision;
-          avatar = avatar === undefined ? 0 : avatar;
-          if (avatar) {
-            embed.thumbnail = {
-              url:
-                'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
-            };
-          }
-
-          if (perms.get(channel).blitz) {
-            try {
-              await bot.channels.cache
-                .get(val.channel)
-                .send({ embeds: [embed] });
-            } catch (e) {
-              logger.error(`Failed to send message`, { e });
-              continue;
-            }
-          }
-          val.blitz = newblitz;
-        }
-      }
-      if (record['40l'].record != null) {
-        var new40l = Math.round(record['40l'].record.endcontext.finalTime);
-        if (val['40l'] == null || new40l < val['40l']) {
-          var cur = record['40l'].record;
-          var dat = cur.endcontext;
-          var rank = '>#1000';
-          if (record['40l'].rank != null) {
-            rank = '#' + record['40l'].rank.toFixed(0);
-          }
-          const embed = {
-            color: '#0394fc',
-            title:
-              cur.user.username.toUpperCase() +
-              ' just achieved a new 40 lines personal best!',
-            url: 'https://tetr.io/#r:' + cur.replayid,
-            description:
-              '**' +
-              prettyMilliseconds(cur.endcontext.finalTime, {
-                secondsDecimalDigits: 3,
-              }) +
-              '**',
-            fields: [
-              { name: 'Rank', value: rank, inline: true },
-              {
-                name: 'PPS',
-                value: (dat.piecesplaced / (new40l / 1000)).toFixed(2),
-                inline: true,
-              },
-              {
-                name: 'Finesse',
-                value:
-                  (
-                    (dat.finesse.perfectpieces * 100) /
-                    dat.piecesplaced
-                  ).toFixed(2) + '%',
-                inline: true,
-              },
-              {
-                name: 'Finesse faults',
-                value: dat.finesse.faults.toFixed(0),
-                inline: true,
-              },
-              { name: '\u200B', value: '**Clears**' },
-              {
-                name: 'Singles',
-                value: dat.clears.singles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Doubles',
-                value: dat.clears.doubles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Triples',
-                value: dat.clears.triples.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Quads',
-                value: dat.clears.quads.toFixed(0),
-                inline: true,
-              },
-              { name: '\u200B', value: '**T-spins**' },
-              {
-                name: 'Real',
-                value: dat.clears.realtspins.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Mini',
-                value: dat.clears.minitspins.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Mini Singles',
-                value: dat.clears.minitspinsingles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Singles',
-                value: dat.clears.tspinsingles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Mini Doubles',
-                value: dat.clears.minitspindoubles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Doubles',
-                value: dat.clears.tspindoubles.toFixed(0),
-                inline: true,
-              },
-              {
-                name: 'Triples',
-                value: dat.clears.tspintriples.toFixed(0),
-                inline: true,
-              },
-              { name: 'All clears', value: dat.clears.allclear.toFixed(0) },
-              {
-                name: '\u200B',
-                value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              text: 'By Vieri Corp.™ All Rights Reserved',
-            },
-          };
-
-          var cfriend = userData.data.user;
-
-          var avatar = cfriend.avatar_revision;
-          avatar = avatar === undefined ? 0 : avatar;
-          if (avatar) {
-            embed.thumbnail = {
-              url:
-                'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
-            };
-          }
-
-          if (perms.get(channel)['40l']) {
-            try {
-              await bot.channels.cache
-                .get(val.channel)
-                .send({ embeds: [embed] });
-            } catch (e) {
-              logger.error(`Failed to send message`, { e });
-              continue;
-            }
-          }
-          val['40l'] = new40l;
-        }
-      }
-
-      if (
-        val.gamesplayed != userData.data.user.league.gamesplayed ||
-        val.gamesplayed === -1
-      ) {
-        val.gamesplayed = userData.data.user.league.gamesplayed;
-        var match;
-        try {
-          match = await async_request(
-            'https://ch.tetr.io/api/streams/league_userrecent_' + id
-          );
-        } catch (e) {
-          logger.error(`Failed to get user league record`, { e });
-          continue;
-        }
-        match = match.data.records;
-        var last = match.length;
-        for (var i = 0; i < match.length; ++i) {
-          if (match[i]._id == val.last) {
-            last = i;
-            break;
-          }
-        }
-        for (var i = last - 1; i >= 0; --i) {
-          var cur = match[i];
-          var color, state;
-          if (cur.endcontext[0].user.username != cur.user.username) {
-            state = 'lost';
-            color = '#a83232';
-            cur.endcontext[1] = [
-              cur.endcontext[0],
-              (cur.endcontext[0] = cur.endcontext[1]),
-            ][0];
-          } else {
-            state = 'won';
-            color = '#32a844';
-          }
-          await timeout(10000);
-          var friend;
-          try {
-            friend = await async_request(
-              'https://ch.tetr.io/api/users/' + cur.endcontext[0].user._id
-            );
-          } catch (e) {
-            logger.error(`Failed to get user data`, { e });
-            continue;
-          }
-          cur.endcontext[0].user.username =
-            cur.endcontext[0].user.username.toUpperCase();
-          if (friend.data.user.country != null)
-            cur.endcontext[0].user.username +=
-              ' :flag_' + friend.data.user.country.toLowerCase() + ':';
-          var cfriend = friend;
-          friend = friend.data.user.league;
-          if (friend.rank == 'z') friend.rank = '?';
-          if (emoji.has(friend.rank)) {
-            friend.rank = '<:a:' + emoji.get(friend.rank) + '>';
-          }
-          var foe;
-          try {
-            foe = await async_request(
-              'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id
-            );
-          } catch (e) {
-            logger.error(`Failed to get user data`, { e });
-            continue;
-          }
-          cur.endcontext[1].user.username =
-            cur.endcontext[1].user.username.toUpperCase();
-          if (foe.data.user.country != null)
-            cur.endcontext[1].user.username +=
-              ' :flag_' + foe.data.user.country.toLowerCase() + ':';
-          foe = foe.data.user.league;
-          // var foe = JSON.parse(request('GET', 'https://ch.tetr.io/api/users/' + cur.endcontext[1].user._id).getBody()).data.user.league;
-          if (foe.rank == 'z') foe.rank = '?';
-          if (emoji.has(foe.rank)) {
-            foe.rank = '<:a:' + emoji.get(foe.rank) + '>';
-          }
-          const embed = {
-            color: color,
-            title:
-              cur.user.username.toUpperCase() + ' just ' + state + ' a game',
-            url: 'https://tetr.io/#r:' + cur.replayid,
-            description:
-              cur.endcontext[0].wins.toFixed(0) +
-              ' - ' +
-              cur.endcontext[1].wins.toFixed(0),
-            fields: [
-              {
-                name: '\u200B',
-                value: '**' + cur.endcontext[0].user.username + '**',
-              },
-              {
-                name: 'Rank',
-                value: friend.rank + ' / ' + friend.rating.toFixed(2) + ' TR',
-                inline: false,
-              },
-              {
-                name: 'PPS',
-                value: cur.endcontext[0].points.tertiary.toFixed(2),
-                inline: true,
-              },
-              {
-                name: 'APM',
-                value: cur.endcontext[0].points.secondary.toFixed(2),
-                inline: true,
-              },
-              {
-                name: 'VS',
-                value: cur.endcontext[0].points.extra.vs.toFixed(2),
-                inline: true,
-              },
-              {
-                name: '\u200B',
-                value: '**' + cur.endcontext[1].user.username + '**',
-              },
-              {
-                name: 'Rank',
-                value: foe.rank + ' / ' + foe.rating.toFixed(2) + ' TR',
-                inline: false,
-              },
-              {
-                name: 'PPS',
-                value: cur.endcontext[1].points.tertiary.toFixed(2),
-                inline: true,
-              },
-              {
-                name: 'APM',
-                value: cur.endcontext[1].points.secondary.toFixed(2),
-                inline: true,
-              },
-              {
-                name: 'VS',
-                value: cur.endcontext[1].points.extra.vs.toFixed(2),
-                inline: true,
-              },
-              {
-                name: '\u200B',
-                value: '[replay link](https://tetr.io/#r:' + cur.replayid + ')',
-              },
-            ],
-            timestamp: new Date(),
-            footer: {
-              text: 'By Vieri Corp.™ All Rights Reserved',
-            },
-          };
-
-          cfriend = cfriend.data.user;
-
-          var avatar = cfriend.avatar_revision;
-          avatar = avatar === undefined ? 0 : avatar;
-          if (avatar) {
-            embed.thumbnail = {
-              url:
-                'https://tetr.io/user-content/avatars/' + cfriend._id + '.jpg',
-            };
-          }
-
-          if (perms.get(channel).ranked) {
-            try {
-              await bot.channels.cache
-                .get(val.channel)
-                .send({ embeds: [embed] });
-            } catch (e) {
-              logger.error(`Failed to send message`, { e });
-              continue;
-            }
-          }
-        }
-        if (match.length == 0) match[0] = { _id: null };
-        val.last = match[0]._id;
-      }
-      val.username = username;
-      curm.set(id, val);
+    for (var curm of monitor) {
+      jobs.push(refreshChannel(bot, curm));
     }
-    monitor.set(channel, curm);
+
+    jobs = await Promise.allSettled(jobs);
+  } catch (error) {
+    logger.error(`Error refreshing.`, { error });
+    console.error(error);
+    load_next = 1;
+    return;
   }
+
   save();
   logger.info(`Normal refresh finished.`);
   load_next = 1;
