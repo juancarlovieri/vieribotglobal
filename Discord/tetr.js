@@ -1117,7 +1117,31 @@ async function printGlobal(bot, msg, args) {
 
 async function printMonitored(bot, msg, args) {
   var channel = msg.channel.id;
-  if (monitor.has(channel) == false) return;
+  if (args.length == 5) {
+    if (args[4].length < 4) {
+      await msg.channel.send(`Invalid channel.`);
+      return;
+    }
+
+    var channelId = args[4].substr(2, args[4].length - 3);
+    var channelName;
+    try {
+      var tmp = bot.channels.cache.get(channelId);
+      if (tmp === undefined) {
+        msg.channel.send(`Invalid channel.`);
+        return;
+      }
+      channelName = tmp.name;
+      channel = channelId;
+    } catch (error) {
+      logger.error(`Error checking channel.`, { error });
+      return;
+    }
+  }
+  if (monitor.has(channel) == false) {
+    await msg.channel.send(`no one`);
+    return;
+  }
   var arr = await monitor.get(channel);
   var all = [];
   for (var cur of arr) {
@@ -1188,7 +1212,7 @@ async function printMonitored(bot, msg, args) {
   if (args[2] == 'blitz') args[2] = 'Blitz';
   const embed = {
     color: '#ebc334',
-    title: args[2] + ' Leaderboard for monitored users',
+    title: args[2] + `Leaderboard for monitored users #${channelName}`,
     description: str,
     timestamp: new Date(),
     footer: {
