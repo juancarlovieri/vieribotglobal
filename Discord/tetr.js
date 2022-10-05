@@ -898,6 +898,12 @@ async function updatePlayers(country) {
 }
 
 async function blitzLb(bot, msg, country) {
+  try {
+    msg = await msg.reply(`Wait..`);
+  } catch (e) {
+    logger.error(`Error sending message.`, { error });
+  }
+
   country = country.map((c) => c.toUpperCase());
 
   var arr = [];
@@ -958,10 +964,20 @@ async function blitzLb(bot, msg, country) {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
   };
-  await msg.channel.send({ embeds: [embed] });
+  try {
+    await msg.edit({ content: `\u200b`, embeds: [embed] });
+  } catch (error) {
+    logger.error(`Error sending message.`, { error });
+  }
 }
 
 async function fortyLinesLb(bot, msg, country) {
+  try {
+    msg = await msg.reply(`Wait..`);
+  } catch (e) {
+    logger.error(`Error sending message.`, { error });
+  }
+
   country = country.map((c) => c.toUpperCase());
 
   var arr = [];
@@ -1020,14 +1036,34 @@ async function fortyLinesLb(bot, msg, country) {
       text: 'By Vieri Corp.™ All Rights Reserved',
     },
   };
-  await msg.channel.send({ embeds: [embed] });
+
+  try {
+    await msg.edit({ content: `\u200b`, embeds: [embed] });
+  } catch (error) {
+    logger.error(`Error sending message.`, { error });
+  }
 }
 
 async function playerCount(bot, msg, country) {
+  try {
+    msg = await msg.reply(`Wait..`);
+  } catch (e) {
+    logger.error(`Error sending message.`, { error });
+  }
+
   country = country.toUpperCase();
   await updatePlayers(country);
   var arr = players.get(country).arr;
-  await msg.channel.send(arr.length.toFixed());
+
+  try {
+    await msg.edit({
+      content: `Number of players for :flag_${country.toLowerCase()}:: ${
+        arr.length
+      }`,
+    });
+  } catch (error) {
+    logger.error(`Error sending message.`, { error });
+  }
 }
 
 async function printGlobal(bot, msg, args) {
@@ -1406,11 +1442,22 @@ async function listMonitored(args, msg, channelId) {
     return;
   }
   var arr = monitor.get(channel);
-  var ans = '**List of monitored people**:\n';
+  var ans = '```';
   for (var cur of arr) {
     ans += cur[1].username + '\n';
   }
-  await msg.channel.send(ans);
+  ans += '```';
+  const embed = {
+    color: '#ebc334',
+    title: 'List of monitored people:',
+    description: ans,
+    timestamp: new Date(),
+    footer: {
+      text: 'By Vieri Corp.™ All Rights Reserved',
+    },
+  };
+
+  await msg.channel.send({ embeds: [embed] });
 }
 
 module.exports = {
