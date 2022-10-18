@@ -1,5 +1,6 @@
 var bills = new Map();
 const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 function newBill(bot, msg) {
   if (bills.has(msg.author.id)) {
@@ -14,7 +15,7 @@ function newBill(bot, msg) {
 async function print(embed, vieri, msg) {
   // msg.channel.send({files: [vieri], embeds: [embed]});
   for (var i = 0; i < embed.length; ++i) {
-    await msg.channel.send({ files: [vieri], embeds: [embed][i] });
+    await msg.channel.send({ files: [vieri], embeds: [embed[i]] });
   }
 }
 
