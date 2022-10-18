@@ -153,6 +153,12 @@ function closeBill(bot, msg, args) {
     };
     embed[embed.length] = temp;
   });
+  for (var i = 0; i < embed.length; ++i) {
+    for (var j = 0; j < embed[i].fields.length; ++j) {
+      embed[i].fields[j].value = embed[i].fields[j].value.toFixed(2);
+    }
+  }
+
   print(embed, vieri, msg);
   bill = 0;
   bills.delete(msg.author.id);
