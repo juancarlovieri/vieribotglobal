@@ -1115,7 +1115,7 @@ async function printGlobal(bot, msg, args) {
       },
     };
     await msg.channel.send({ embeds: [embed] });
-  } else if (args[2] == '40l') {
+  } else if (args[2].toLowerCase() == '40l') {
     var records;
     try {
       records = await async_request(
@@ -1156,7 +1156,7 @@ async function printGlobal(bot, msg, args) {
     str += '```';
     const embed = {
       color: '#ebc334',
-      title: '40l Leaderboard for global',
+      title: '40L Leaderboard for global',
       description: str,
       timestamp: new Date(),
       footer: {
