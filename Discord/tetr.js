@@ -306,7 +306,7 @@ async function refreshChannel(bot, curm) {
           color: '#0394fc',
           title:
             cur.user.username.toUpperCase() +
-            ' just achieved a new blitz personal best!',
+            ' just achieved a new BLITZ personal best!',
           url: 'https://tetr.io/#r:' + cur.replayid,
           description: '**' + cur.endcontext.score.toFixed(0) + '**',
           fields: [
@@ -433,7 +433,7 @@ async function refreshChannel(bot, curm) {
           color: '#0394fc',
           title:
             cur.user.username.toUpperCase() +
-            ' just achieved a new 40 lines personal best!',
+            ' just achieved a new 40LINES personal best!',
           url: 'https://tetr.io/#r:' + cur.replayid,
           description:
             '**' +
@@ -957,7 +957,7 @@ async function blitzLb(bot, msg, country) {
   str += '```';
   const embed = {
     color: '#ebc334',
-    title: 'Blitz Leaderboard for ' + country + ' ' + flags,
+    title: 'BLITZ Leaderboard for ' + country + ' ' + flags,
     description: str,
     timestamp: new Date(),
     footer: {
@@ -1067,7 +1067,7 @@ async function playerCount(bot, msg, country) {
 }
 
 async function printGlobal(bot, msg, args) {
-  if (args[2] == 'blitz') {
+  if (args[2].toLowerCase() == 'blitz') {
     var records;
     try {
       records = await async_request(
@@ -1107,7 +1107,7 @@ async function printGlobal(bot, msg, args) {
     str += '```';
     const embed = {
       color: '#ebc334',
-      title: 'Blitz Leaderboard for global',
+      title: 'BLITZ Leaderboard for global',
       description: str,
       timestamp: new Date(),
       footer: {
@@ -1115,7 +1115,7 @@ async function printGlobal(bot, msg, args) {
       },
     };
     await msg.channel.send({ embeds: [embed] });
-  } else if (args[2] == '40l') {
+  } else if (args[2].toLowerCase() == '40l') {
     var records;
     try {
       records = await async_request(
@@ -1156,7 +1156,7 @@ async function printGlobal(bot, msg, args) {
     str += '```';
     const embed = {
       color: '#ebc334',
-      title: '40l Leaderboard for global',
+      title: '40L Leaderboard for global',
       description: str,
       timestamp: new Date(),
       footer: {
@@ -1198,28 +1198,29 @@ async function printMonitored(bot, msg, args) {
   var all = [];
   for (var cur of arr) {
     cur = cur[1];
-    if (args[2] == '40l') {
+    if (args[2].toLowerCase() == '40l') {
       if (cur['40l'] == null) continue;
       all[all.length] = {
         username: cur.username,
         score: cur['40l'],
-        gm: '40l',
+        gm: '40L',
       };
-    } else if (args[2] == 'blitz') {
+    } else if (args[2].toLowerCase() == 'blitz') {
       if (cur.blitz == null) continue;
       all[all.length] = {
         username: cur.username,
         score: cur.blitz,
-        gm: 'blitz',
+        gm: 'BLITZ',
       };
     }
   }
   all.sort((a, b) => {
-    if (a.gm == 'blitz') {
+    if (a.gm == 'BLITZ') {
       return a.score < b.score ? 1 : -1;
     } else {
       return a.score > b.score ? 1 : -1;
     }
+    2;
   });
   if (all.length > 50) {
     all = all.slice(0, 50);
@@ -1228,7 +1229,7 @@ async function printMonitored(bot, msg, args) {
   for (var i = 0; i < all.length; ++i) {
     var spaces = ' ';
     if ((i + 1).toFixed().length == 1) spaces += ' ';
-    if (args[2] == 'blitz') {
+    if (args[2].toLowerCase() == 'blitz') {
       var spaces2 = ' ';
       for (var j = 0; j < maxScoreChar - all[i].score.toFixed().length; ++j)
         spaces2 += ' ';
@@ -1241,7 +1242,7 @@ async function printMonitored(bot, msg, args) {
         '| ' +
         all[i].username +
         '\n';
-    } else if (args[2] == '40l') {
+    } else if (args[2].toLowerCase() == '40l') {
       var spaces2 = ' ';
       for (
         var j = 0;
@@ -1261,7 +1262,7 @@ async function printMonitored(bot, msg, args) {
     }
   }
   str += '```';
-  if (args[2] == 'blitz') args[2] = 'Blitz';
+  if (args[2].toLowerCase() == 'blitz') args[2] = 'BLITZ';
   const embed = {
     color: '#ebc334',
     title: args[2] + `Leaderboard for monitored users #${channelName}`,
@@ -1475,9 +1476,9 @@ module.exports = {
         str += '**^tetr refresh** - refreshes the spied users instantly\n';
         str += '**^tetr list** - lists the users being monitored\n';
         str +=
-          '**^tetr lb <gameMode> <country 1> <country 2>...** - shows the <gameMode> leaderboard for <country>, <gameMode> can be blitz or 40l\n';
+          '**^tetr lb <gameMode> <country 1> <country 2>...** - shows the <gameMode> leaderboard for <country>, <gameMode> can be BLITZ or 40L\n';
         str +=
-          '**^tetr lb <gameMode> monitored (<channel>)** - shows the <gameMode> leaderboard for spied users, <gameMode> can be blitz or 40l\n';
+          '**^tetr lb <gameMode> monitored (<channel>)** - shows the <gameMode> leaderboard for spied users, <gameMode> can be BLITZ or 40L\n';
         str +=
           '**^tetr players <country 1> <country 2>...** - shows the number of players for <country>\n';
         str +=
@@ -1486,7 +1487,7 @@ module.exports = {
         var strAdmin =
           '**^tetr remove <user>** - remove <user> from monitor list\n';
         strAdmin +=
-          '**^tetr toggle <gameMode>** - disables/enables notification for <gameMode>, gameMode can be blitz, 40l, or ranked\n';
+          '**^tetr toggle <gameMode>** - disables/enables notification for <gameMode>, gameMode can be BLITZ, 40L, or ranked\n';
         await msg.channel.send({
           files: [vieri],
           embeds: [
@@ -1552,10 +1553,10 @@ module.exports = {
           case 'blitz':
             if (cur.blitz == true) {
               cur.blitz = false;
-              await msg.channel.send('disabled blitz');
+              await msg.channel.send('disabled BLITZ');
             } else {
               cur.blitz = true;
-              await msg.channel.send('enabled blitz');
+              await msg.channel.send('enabled BLITZ');
             }
             break;
           case '40l':
@@ -1665,7 +1666,7 @@ module.exports = {
           }
         }
 
-        if (args[2] == 'blitz') {
+        if (args[2].toLowerCase() == 'blitz') {
           blitzLb(bot, msg, country);
         } else if (args[2] == '40l') {
           fortyLinesLb(bot, msg, country);
