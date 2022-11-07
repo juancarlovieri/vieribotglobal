@@ -1412,23 +1412,23 @@ async function addMonitor(args, msg, channelId) {
 }
 
 async function removeMonitor(args, msg, channelId) {
-  var user;
-  try {
-    user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
-  } catch (e) {
-    logger.error(`Failed to get user data`, { e });
-    return;
-  }
-  if (user.success == false) {
-    await msg.channel.send('who is dat');
-    return;
-  }
+  var uname = args[2];
   var channel = channelId;
-  var id = user.data.user._id;
-  if (monitor.has(channel) == false || monitor.get(channel).has(id) == false) {
+  if (monitor.has(channel) == false) {
     await msg.channel.send("nope, I wasn't monitoring him");
     return;
   }
+
+  var arr = Array.from(monitor.get(channel), ([name, value]) => ({
+    id: name,
+    username: value.username,
+  }));
+  arr = arr.filter((val) => val.username == uname);
+  if (arr.length !== 1) {
+    await msg.channel.send(`Couldn't find him.`);
+    return;
+  }
+  var id = arr[0].id;
   var temp = monitor.get(channel);
   temp.delete(id);
   monitor.set(channel, temp);
