@@ -900,7 +900,7 @@ async function updatePlayers(country) {
 async function blitzLb(bot, msg, country) {
   try {
     msg = await msg.reply(`Wait..`);
-  } catch (e) {
+  } catch (error) {
     logger.error(`Error sending message.`, { error });
   }
 
@@ -1696,6 +1696,14 @@ module.exports = {
             (failedreqs.length / reqs.length) * 100
           }%\nUptime: ${(parseInt(Date.now()) - startupTime) / 1000} s`
         );
+        break;
+      case 'send':
+        if (!isOwner(msg)) return;
+        try {
+          msg.channel.send({ files: [pathMonitor] });
+        } catch (error) {
+          logger.error(`Error sending monitor file.`, { error });
+        }
     }
   },
   startRefresh: function (Bot) {
