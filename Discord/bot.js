@@ -1,9 +1,15 @@
-const { Client, Intents } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 const Discord = require('discord.js');
 const mongoose = require('mongoose');
-
+const { Player } = require('discord-player');
 var bot = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 var auth = require('./auth.json');
 const ytdl = require('ytdl-core');
@@ -35,6 +41,42 @@ const gamble = require('./gamble.js');
 const tetr = require('./tetr.js');
 const tetrNew = require('./tetr_new');
 const googleTask = require('./googleTask');
+
+bot.config = {
+  app: {
+    global: true,
+    guild: 'XXX',
+  },
+  opt: {
+    DJ: {
+      enabled: false,
+      roleName: '',
+      commands: [],
+    },
+    maxVol: 100,
+    leaveOnEnd: true,
+    loopMessage: false,
+    spotifyBridge: true,
+    defaultvolume: 75,
+    discordPlayer: {
+      ytdlOptions: {
+        quality: 'highestaudio',
+        highWaterMark: 1 << 25,
+      },
+    },
+  },
+};
+
+global.client = bot;
+global.player = new Player(bot, {
+  ytdlOptions: {
+    quality: 'highestaudio',
+    highWaterMark: 1 << 25,
+  },
+});
+
+require('./music/src/loader');
+require('./music/src/events');
 
 // console.log((1599715800000 - 3600000) - Date.now());
 
