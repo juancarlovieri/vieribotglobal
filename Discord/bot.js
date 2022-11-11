@@ -548,6 +548,7 @@ function play5() {
 }
 
 function setPresence() {
+  console.log(`Servers: ${bot.guilds.cache.size}`);
   bot.user.setPresence({
     status: 'dnd',
     activities: [
