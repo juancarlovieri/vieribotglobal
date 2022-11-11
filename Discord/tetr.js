@@ -282,7 +282,7 @@ async function refreshChannel(bot, curm) {
       );
       record = record.data.records;
     } catch (e) {
-      logger.error(`Error getting user data records`, { e });
+      logger.error(`Error getting user data records for ${id}`, { e });
       continue;
     }
     if (val.blitz == undefined) {
@@ -1286,7 +1286,7 @@ async function printCountries(bot, msg, args) {
   while (ans.length > 0) {
     var cur = ans.slice(0, 50);
     ans = ans.slice(50);
-    var str = '```';
+    var str = '```\n';
     for (var i of cur) {
       str += i + '\n';
     }
@@ -1412,23 +1412,23 @@ async function addMonitor(args, msg, channelId) {
 }
 
 async function removeMonitor(args, msg, channelId) {
-  var uname = args[2];
+  var user;
+  try {
+    user = await async_request('https://ch.tetr.io/api/users/' + args[2]);
+  } catch (e) {
+    logger.error(`Failed to get user data`, { e });
+    return;
+  }
+  if (user.success == false) {
+    await msg.channel.send('who is dat');
+    return;
+  }
   var channel = channelId;
-  if (monitor.has(channel) == false) {
+  var id = user.data.user._id;
+  if (monitor.has(channel) == false || monitor.get(channel).has(id) == false) {
     await msg.channel.send("nope, I wasn't monitoring him");
     return;
   }
-
-  var arr = Array.from(monitor.get(channel), ([name, value]) => ({
-    id: name,
-    username: value.username,
-  }));
-  arr = arr.filter((val) => val.username == uname);
-  if (arr.length !== 1) {
-    await msg.channel.send(`Couldn't find him.`);
-    return;
-  }
-  var id = arr[0].id;
   var temp = monitor.get(channel);
   temp.delete(id);
   monitor.set(channel, temp);
@@ -1443,7 +1443,7 @@ async function listMonitored(args, msg, channelId) {
     return;
   }
   var arr = monitor.get(channel);
-  var ans = '```';
+  var ans = '```\n';
   for (var cur of arr) {
     ans += cur[1].username + '\n';
   }
