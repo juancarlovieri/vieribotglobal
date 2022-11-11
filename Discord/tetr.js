@@ -22,9 +22,9 @@ var reqcnt = 0,
   failedreq = 0;
 const { logger } = require('./logger');
 const {
-  ActionRowBuilder,
-  SelectMenuBuilder,
-  ButtonBuilder,
+  MessageActionRow,
+  MessageSelectMenu,
+  MessageButton,
 } = require('discord.js');
 const countryCodes = require('country-codes-list');
 const allCountries = new Map(
@@ -1312,16 +1312,16 @@ async function printCountries(bot, msg, args) {
   //     text: "By Vieri Corp.™ All Rights Reserved"
   //   }
   // };
-  const row = new ActionRowBuilder()
+  const row = new MessageActionRow()
     .addComponents(
-      new ButtonBuilder()
+      new MessageButton()
         .setCustomId('prev')
         .setLabel('prev')
         .setStyle('PRIMARY')
         .setDisabled(true)
     )
     .addComponents(
-      new ButtonBuilder()
+      new MessageButton()
         .setCustomId('next')
         .setLabel('next')
         .setStyle('PRIMARY')
@@ -1343,16 +1343,16 @@ async function printCountries(bot, msg, args) {
     idx = Math.min(idx, embeds.length - 1);
     var prev = idx == 0,
       next = idx == embeds.length - 1;
-    const row = new ActionRowBuilder()
+    const row = new MessageActionRow()
       .addComponents(
-        new ButtonBuilder()
+        new MessageButton()
           .setCustomId('prev')
           .setLabel('prev')
           .setStyle('PRIMARY')
           .setDisabled(prev)
       )
       .addComponents(
-        new ButtonBuilder()
+        new MessageButton()
           .setCustomId('next')
           .setLabel('next')
           .setStyle('PRIMARY')
@@ -1470,7 +1470,7 @@ module.exports = {
         printCountries(bot, msg, args);
         break;
       case 'help':
-        var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+        var vieri = new Discord.MessageAttachment('../viericorp.png');
         var str =
           '**^tetr monitor <user>** - spy on <user>, you will get notified when they play ranked or achieve new pbs\n';
         str += '**^tetr refresh** - refreshes the spied users instantly\n';

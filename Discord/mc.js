@@ -17,7 +17,7 @@ function splitMsg(msg) {
 }
 
 async function help(bot, msg) {
-  const vieriImg = new Discord.AttachmentBuilder('../viericorp.png');
+  const vieriImg = new Discord.MessageAttachment('../viericorp.png');
   const str = `**^${cmdName} status** - check server status`;
   const strAdmin = `**^${cmdName} set <ip>** - set server ip to <ip>`;
   msg.channel.send({

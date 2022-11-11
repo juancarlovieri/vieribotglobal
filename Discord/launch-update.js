@@ -120,7 +120,7 @@ async function init() {
         }
         var utcSeconds = Math.round(time / 1000);
         var dateStr = getTime(utcSeconds);
-        var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+        var vieri = new Discord.MessageAttachment('../viericorp.png');
         var embed = {
           color: 16764006,
           author: {
@@ -191,7 +191,7 @@ async function news() {
     //       if(j != list[i].tags.length - 1)tags += ', ';
     //     }
     //     if(tags == "")tags = "none";
-    var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+    var vieri = new Discord.MessageAttachment('../viericorp.png');
     var summary = list[i].summary;
     if (summary == '') summary = 'not available';
     if (summary.length > 1000) summary = summary.substr(0, 1000) + '...';
@@ -254,7 +254,7 @@ async function printUpcoming(bot, msg) {
     };
   }
   // console.log(arr);
-  var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
   arr.sort(compare);
   var embed = {
     color: 16764006,
@@ -298,7 +298,7 @@ async function printView(bot, msg, args) {
   }
   var utcSeconds = Math.round(cur.sort_date);
   var dateStr = getTime(utcSeconds);
-  var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
   var embed = {
     color: 16764006,
     author: {

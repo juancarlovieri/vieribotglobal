@@ -80,7 +80,7 @@ async function printRank(msg, bot) {
     let temp = await bot.users.fetch(list[i].name);
     list[i].name = i + 1 + '. ' + temp.username;
   }
-  var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
   msg.channel.send({
     files: [vieri],
     embeds: [

@@ -270,7 +270,7 @@ async function printGambles(bot, msg, args) {
     ++rank;
   }
   // console.log(arr);
-  var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
   msg.channel.send({
     files: [vieri],
     embeds: [
@@ -409,7 +409,7 @@ function check(bot, msg, args) {
 }
 
 function help(bot, msg) {
-  var vieri = new Discord.AttachmentBuilder('../viericorp.png');
+  var vieri = new Discord.MessageAttachment('../viericorp.png');
   var str = '**group name** - the category you are voting for (e.g. duel-5)\n';
   str += '**candidate name** - the candidate you are voting for (e.g. rama)\n';
   str += '**balance** - your balance\n';
