@@ -303,7 +303,7 @@ async function refreshChannel(bot, curm) {
           rank = '#' + record.blitz.rank.toFixed(0);
         }
         const embed = {
-          color: '#0394fc',
+          color: 234748,
           title:
             cur.user.username.toUpperCase() +
             ' just achieved a new BLITZ personal best!',
@@ -430,7 +430,7 @@ async function refreshChannel(bot, curm) {
           rank = '#' + record['40l'].rank.toFixed(0);
         }
         const embed = {
-          color: '#0394fc',
+          color: 234748,
           title:
             cur.user.username.toUpperCase() +
             ' just achieved a new 40LINES personal best!',
@@ -579,14 +579,14 @@ async function refreshChannel(bot, curm) {
         var color, state;
         if (cur.endcontext[0].user.username != cur.user.username) {
           state = 'lost';
-          color = '#a83232';
+          color = 11022898;
           cur.endcontext[1] = [
             cur.endcontext[0],
             (cur.endcontext[0] = cur.endcontext[1]),
           ][0];
         } else {
           state = 'won';
-          color = '#32a844';
+          color = 3319876;
         }
         await timeout(10000);
         var friend;
@@ -956,7 +956,7 @@ async function blitzLb(bot, msg, country) {
   country = country.join(` `);
   str += '```';
   const embed = {
-    color: '#ebc334',
+    color: 15450932,
     title: 'BLITZ Leaderboard for ' + country + ' ' + flags,
     description: str,
     timestamp: new Date(),
@@ -1028,7 +1028,7 @@ async function fortyLinesLb(bot, msg, country) {
 
   str += '```';
   const embed = {
-    color: '#ebc334',
+    color: 15450932,
     title: '40L Leaderboard for ' + country + ' ' + flags,
     description: str,
     timestamp: new Date(),
@@ -1106,7 +1106,7 @@ async function printGlobal(bot, msg, args) {
     }
     str += '```';
     const embed = {
-      color: '#ebc334',
+      color: 15450932,
       title: 'BLITZ Leaderboard for global',
       description: str,
       timestamp: new Date(),
@@ -1155,7 +1155,7 @@ async function printGlobal(bot, msg, args) {
     }
     str += '```';
     const embed = {
-      color: '#ebc334',
+      color: 15450932,
       title: '40L Leaderboard for global',
       description: str,
       timestamp: new Date(),
@@ -1264,7 +1264,7 @@ async function printMonitored(bot, msg, args) {
   str += '```';
   if (args[2].toLowerCase() == 'blitz') args[2] = 'BLITZ';
   const embed = {
-    color: '#ebc334',
+    color: 15450932,
     title: args[2] + `Leaderboard for monitored users #${channelName}`,
     description: str,
     timestamp: new Date(),
@@ -1293,7 +1293,7 @@ async function printCountries(bot, msg, args) {
     str += '```';
     ++pg;
     const embed = {
-      color: '#ebc334',
+      color: 15450932,
       title: 'List of available countries pg. ' + pg,
       description: str,
       timestamp: new Date(),
@@ -1449,7 +1449,7 @@ async function listMonitored(args, msg, channelId) {
   }
   ans += '```';
   const embed = {
-    color: '#ebc334',
+    color: 15450932,
     title: 'List of monitored people:',
     description: ans,
     timestamp: new Date(),

@@ -47,7 +47,7 @@ async function sendReminder({ bot, task, epoch }) {
   epoch = Math.round(epoch / 1000);
 
   const embed = {
-    color: '#ff00e6',
+    color: 16711910,
     title: `${title} <t:${epoch}:R>`,
     link: `https://tasksboard.com/app`,
     description: notes,
@@ -148,7 +148,7 @@ async function token(bot, msg) {
 
 async function sendList(bot, msg, fields, group, sender) {
   const embed = {
-    color: '#00ff08',
+    color: 65288,
     title: `Task list for ${group}`,
     link: `https://tasksboard.com/app`,
     fields: fields,
@@ -238,7 +238,7 @@ async function groups(bot, msg) {
   const res = `\`\`\`${taskLists.join(`\n`)}\`\`\``;
 
   const embed = {
-    color: '#00fffb',
+    color: 65531,
     title: `Group lists`,
     link: `https://tasksboard.com/app`,
     fields: { name: `\u200b`, value: res },
