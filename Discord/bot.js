@@ -44,8 +44,6 @@ const googleTask = require('./googleTask');
 
 bot.config = {
   app: {
-    token: 'ODA0MzQ3MDkyNDQ0MzgxMjM0.YBLAmg.jQp1q8aJmNCAoWM-3QmTZE48UDo',
-    playing: 'by Zerio ❤️',
     global: true,
     guild: 'XXX',
   },
