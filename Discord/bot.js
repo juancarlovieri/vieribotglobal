@@ -92,7 +92,7 @@ function command(args, msg) {
   console.log(args[0]);
   switch (args[0]) {
     case '^help':
-      var vieri = new Discord.MessageAttachment('../viericorp.png');
+      var vieri = new Discord.AttachmentBuilder('../viericorp.png');
       var str = '**^tetr help** - help page for tetris section\n';
       str += '**^mc help** - help page for minecraft section\n';
       str += '**^gamble help** - help page for gamble section\n';
@@ -154,7 +154,7 @@ function command(args, msg) {
         return;
       }
       // msg.channel.send(hasil);
-      var vieri = new Discord.MessageAttachment('../viericorp.png');
+      var vieri = new Discord.AttachmentBuilder('../viericorp.png');
       msg.channel.send({
         files: [vieri],
         embeds: [

@@ -29,7 +29,7 @@ function logAndThrow(jobs, message) {
 }
 
 async function help(bot, msg) {
-  const vieriImg = new Discord.MessageAttachment('../viericorp.png');
+  const vieriImg = new Discord.AttachmentBuilder('../viericorp.png');
   const str = `**^${cmdName} monitor <user>** - spy on <user>, you will get notified when they play ranked or achieve new pbs
 **^${cmdName} refresh** - refreshes the spied users instantly
 **^${cmdName} list** - lists the users being monitored
