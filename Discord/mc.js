@@ -5,8 +5,8 @@ const { Server } = require('./mc/server');
 const { logger } = require('./logger');
 
 const cmdName = 'mc';
-const green = '#32a844';
-const red = '#a83232';
+const green = 3319876;
+const red = 11022898;
 
 function hasAdmin(msg) {
   return msg.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_CHANNELS);

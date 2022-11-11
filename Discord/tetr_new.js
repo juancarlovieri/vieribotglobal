@@ -203,7 +203,7 @@ async function sendNewPbMessage(bot, m, { record, rank, scoreStr }, gameName) {
   const ppsValue = tetrApi.getPpsValue(ec, gameName);
 
   const embed = {
-    color: '#0394fc',
+    color: 234748,
     title: `${m.username.toUpperCase()} just achieved a new ${gameName} personal best!`,
     url: `https://tetr.io/#r:${record.replayid}`,
     description: `**${scoreStr}**`,
