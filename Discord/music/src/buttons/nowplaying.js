@@ -35,7 +35,7 @@ module.exports = async ({ client, inter, queue }) => {
         }**\nRequested by ${track.requestedBy}`
       )
       .setFooter({
-        text: 'Music comes first - Made with heart by Zerio ❤️',
+        text: 'Developed by Vieri Corp.',
         iconURL: inter.member.avatarURL({ dynamic: true }),
       })
       .setColor('ff0000')
