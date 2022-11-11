@@ -86,7 +86,7 @@ function closeBill(bot, msg, args) {
   if (realtot < subtot + taxtot) sign = '';
   var error = realtot - grandtot;
   console.log(realtot);
-  var vieri = new Discord.MessageAttachment('../viericorp.png');
+  var vieri = new Discord.AttachmentBuilder('../viericorp.png');
   var embed = [];
   embed[0] = {
     color: 16764006,

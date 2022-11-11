@@ -238,7 +238,7 @@ module.exports = {
               '\u200b \u200b \u200b \u200b \u200b \u200b' + res + '\n\u200b',
           };
         }
-        var vieri = new Discord.MessageAttachment('../viericorp.png');
+        var vieri = new Discord.AttachmentBuilder('../viericorp.png');
         msg.channel.send({
           files: [vieri],
           embeds: [
@@ -285,7 +285,7 @@ module.exports = {
               '\u200b \u200b \u200b \u200b \u200b \u200b' + res + '\n\u200b',
           };
         }
-        var vieri = new Discord.MessageAttachment('../viericorp.png');
+        var vieri = new Discord.AttachmentBuilder('../viericorp.png');
         msg.channel.send({
           files: [vieri],
           embeds: [
