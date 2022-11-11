@@ -282,7 +282,7 @@ async function refreshChannel(bot, curm) {
       );
       record = record.data.records;
     } catch (e) {
-      logger.error(`Error getting user data records`, { e });
+      logger.error(`Error getting user data records for ${id}`, { e });
       continue;
     }
     if (val.blitz == undefined) {
@@ -1286,7 +1286,7 @@ async function printCountries(bot, msg, args) {
   while (ans.length > 0) {
     var cur = ans.slice(0, 50);
     ans = ans.slice(50);
-    var str = '```';
+    var str = '```\n';
     for (var i of cur) {
       str += i + '\n';
     }
@@ -1443,7 +1443,7 @@ async function listMonitored(args, msg, channelId) {
     return;
   }
   var arr = monitor.get(channel);
-  var ans = '```';
+  var ans = '```\n';
   for (var cur of arr) {
     ans += cur[1].username + '\n';
   }
