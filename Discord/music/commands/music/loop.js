@@ -66,6 +66,7 @@ module.exports = {
 
           const success = queue.loop(QueueRepeatMode.Track);
 
+
           return inter.editReply({
             content: success
               ? `Repeat mode **enabled** the current song will be repeated endlessly (you can end the loop with /loop disable)`

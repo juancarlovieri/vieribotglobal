@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const Discord = require('discord.js');
 const mongoose = require('mongoose');
-const { Player } = require('discord-player');
+const { Player } = require('olebeh-music-player');
 var bot = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -72,6 +72,10 @@ global.player = new Player(bot, {
   ytdlOptions: {
     quality: 'highestaudio',
     highWaterMark: 1 << 25,
+  },
+
+  authorization: {
+    spotify: auth.spotify,
   },
 });
 
