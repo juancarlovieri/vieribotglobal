@@ -75,13 +75,7 @@ global.player = new Player(bot, {
   },
 
   authorization: {
-    spotify: {
-      client_id: '65f2e815ecd84084acbbde8af75ac6f9',
-      client_secret: '93819505716c4805b6e661aeeb20b9c8',
-      refresh_token:
-        'AQACmZbe3K4F4LXfyXum1fvopZSYkYwQM5ZGYL0we-nXNNF6jRKf_UZXt4IrFdqJIah7McUWLaMl2SOUT6GaypmzD90dvvjQotHqzSbPz1xbswTykU2Aci3jxrzmf4Tq2W8',
-      market: 'ID',
-    },
+    spotify: auth.spotify,
   },
 });
 
