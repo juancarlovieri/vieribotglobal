@@ -17,9 +17,7 @@ module.exports = {
           name: client.user.username,
           iconURL: client.user.displayAvatarURL({ size: 1024, dynamic: true }),
         })
-        .setDescription(
-          'This code comes from a GitHub project [ZerioDev/Music-bot](https://github.com/ZerioDev/Music-bot).\nThe use of this one is possible while keeping the credits for free.\nIf you want to remove the credits join the Discord support server.'
-        )
+        .setDescription('Developed by Vieri Corp.')
         .addFields([
           {
             name: `Enabled - ${commands.size}`,

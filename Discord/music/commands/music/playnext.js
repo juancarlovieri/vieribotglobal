@@ -1,7 +1,7 @@
 const { logger } = require('../../../logger');
 
 const { ApplicationCommandOptionType } = require('discord.js');
-const { QueryType } = require('discord-player');
+// const { QueryType } = require('discord-player');
 
 module.exports = {
   name: 'playnext',
@@ -21,7 +21,7 @@ module.exports = {
       await inter.deferReply();
       const queue = player.getQueue(inter.guildId);
 
-      if (!queue || !queue.playing)
+      if (!queue || !queue.current)
         return inter.editReply({
           content: `No music currently playing ${inter.member}... try again ? ❌`,
           ephemeral: true,
@@ -31,7 +31,7 @@ module.exports = {
 
       const res = await player.search(song, {
         requestedBy: inter.member,
-        searchEngine: QueryType.AUTO,
+        // searchEngine: QueryType.AUTO,
       });
 
       if (!res || !res.tracks.length)

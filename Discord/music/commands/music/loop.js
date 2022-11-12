@@ -1,6 +1,6 @@
 const { logger } = require('../../../logger');
 
-const { QueueRepeatMode } = require('discord-player');
+const { QueueRepeatMode } = require('olebeh-music-player');
 const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
@@ -25,7 +25,7 @@ module.exports = {
       await inter.deferReply();
       const queue = player.getQueue(inter.guildId);
 
-      if (!queue || !queue.playing)
+      if (!queue || !queue.current)
         return inter.editReply({
           content: `No music currently playing ${inter.member}... try again ? ❌`,
           ephemeral: true,
@@ -38,7 +38,7 @@ module.exports = {
               ephemeral: true,
             });
 
-          const success = queue.setRepeatMode(QueueRepeatMode.QUEUE);
+          const success = queue.loop(QueueRepeatMode.Queue);
 
           return inter.editReply({
             content: success
@@ -48,7 +48,7 @@ module.exports = {
           break;
         }
         case 'disable_loop': {
-          const success = queue.setRepeatMode(QueueRepeatMode.OFF);
+          const success = queue.loop(QueueRepeatMode.Off);
 
           return inter.editReply({
             content: success
@@ -64,7 +64,7 @@ module.exports = {
               ephemeral: true,
             });
 
-          const success = queue.setRepeatMode(QueueRepeatMode.TRACK);
+          const success = queue.loop(QueueRepeatMode.Track);
 
           return inter.editReply({
             content: success
@@ -75,7 +75,7 @@ module.exports = {
         }
       }
     } catch (error) {
-      logger.error(`Loop error.`, { error });
+      logger.error(`Loop error: ${error.message}`, { error });
     }
   },
 };

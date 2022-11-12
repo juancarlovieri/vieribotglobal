@@ -23,7 +23,7 @@ module.exports = {
       await inter.deferReply();
       const queue = player.getQueue(inter.guildId);
 
-      if (!queue || !queue.playing)
+      if (!queue || !queue.current)
         return inter.editReply({
           content: `No music currently playing... try again ? ❌`,
           ephemeral: true,
@@ -45,7 +45,7 @@ module.exports = {
         })}** ✅`,
       });
     } catch (error) {
-      logger.error(`Seek error.`, { error });
+      logger.error(`Remove error.`, { error });
     }
   },
 };

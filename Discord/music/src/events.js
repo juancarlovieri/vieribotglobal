@@ -54,29 +54,29 @@ player.on('trackStart', (queue, track) => {
     queuebutton,
     skip
   );
-  queue.metadata.send({ embeds: [embed], components: [row1] });
+  queue.channel.send({ embeds: [embed], components: [row1] });
 });
 
 player.on('trackAdd', (queue, track) => {
-  queue.metadata.send(`Track ${track.title} added in the queue ✅`);
+  queue.channel.send(`Track ${track.title} added in the queue ✅`);
 });
 
 player.on('botDisconnect', (queue) => {
-  queue.metadata.send(
+  queue.channel.send(
     'I was manually disconnected from the voice channel, clearing queue... ❌'
   );
 });
 
 player.on('channelEmpty', (queue) => {
-  // queue.metadata.send(
+  // queue.channel.send(
   //   'Nobody is in the voice channel, leaving the voice channel... ❌'
   // );
 });
 
 player.on('queueEnd', (queue) => {
-  queue.metadata.send('I finished reading the whole queue ✅');
+  queue.channel.send('I finished reading the whole queue ✅');
 });
 
 player.on('tracksAdd', (queue, tracks) => {
-  queue.metadata.send(`All the songs in playlist added into the queue ✅`);
+  queue.channel.send(`All the songs in playlist added into the queue ✅`);
 });
