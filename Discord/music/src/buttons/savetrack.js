@@ -5,7 +5,7 @@ const { logger } = require('../../../logger');
 module.exports = async ({ inter, queue }) => {
   try {
     await inter.deferReply();
-    if (!queue || !queue.playing)
+    if (!queue || !queue.current)
       return inter.editReply({
         content: `No music currently playing... try again ? ❌`,
         ephemeral: true,

@@ -9,8 +9,8 @@ module.exports = {
     try {
       await inter.deferReply();
       const queue = player.getQueue(inter.guildId);
-
-      if (!queue || !queue.playing)
+      console.log(queue);
+      if (!queue || !queue.current)
         return inter.editReply({
           content: `No music currently playing ${inter.member}... try again ? ❌`,
           ephemeral: true,
@@ -24,7 +24,7 @@ module.exports = {
           : `Something went wrong ${inter.member}... try again ? ❌`,
       });
     } catch (error) {
-      logger.error(`Remove error.`, { error });
+      logger.error(`Skip error: ${error.message}`, { error });
     }
   },
 };
