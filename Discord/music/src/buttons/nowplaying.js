@@ -4,7 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = async ({ client, inter, queue }) => {
   try {
     await inter.deferReply();
-    if (!queue || !queue.playing)
+    if (!queue || !queue.current)
       return inter.editReply({
         content: `No music currently playing... try again ? ❌`,
         ephemeral: true,
