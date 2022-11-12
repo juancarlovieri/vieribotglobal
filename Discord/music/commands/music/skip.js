@@ -9,7 +9,7 @@ module.exports = {
     try {
       await inter.deferReply();
       const queue = player.getQueue(inter.guildId);
-      console.log(queue);
+
       if (!queue || !queue.current)
         return inter.editReply({
           content: `No music currently playing ${inter.member}... try again ? ❌`,

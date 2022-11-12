@@ -38,7 +38,7 @@ module.exports = {
               ephemeral: true,
             });
 
-          const success = queue.setRepeatMode(QueueRepeatMode.Queue);
+          const success = queue.loop(QueueRepeatMode.Queue);
 
           return inter.editReply({
             content: success
@@ -48,7 +48,7 @@ module.exports = {
           break;
         }
         case 'disable_loop': {
-          const success = queue.setRepeatMode(QueueRepeatMode.Off);
+          const success = queue.loop(QueueRepeatMode.Off);
 
           return inter.editReply({
             content: success
@@ -64,7 +64,8 @@ module.exports = {
               ephemeral: true,
             });
 
-          const success = queue.setRepeatMode(QueueRepeatMode.Track);
+          const success = queue.loop(QueueRepeatMode.Track);
+
 
           return inter.editReply({
             content: success
@@ -75,7 +76,7 @@ module.exports = {
         }
       }
     } catch (error) {
-      logger.error(`Loop error.`, { error });
+      logger.error(`Loop error: ${error.message}`, { error });
     }
   },
 };
