@@ -45,7 +45,7 @@ module.exports = {
         })}** ✅`,
       });
     } catch (error) {
-      logger.error(`Remove error.`, { error });
+      logger.error(`Seek error.`, { error });
     }
   },
 };
