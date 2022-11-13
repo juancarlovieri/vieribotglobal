@@ -42,6 +42,11 @@ const tetr = require('./tetr.js');
 const tetrNew = require('./tetr_new');
 const googleTask = require('./googleTask');
 
+process.on('uncaughtException', function (err) {
+  console.log(err.stack);
+  throw err;
+});
+
 bot.config = {
   app: {
     global: true,
@@ -76,6 +81,7 @@ global.player = new Player(bot, {
 
   authorization: {
     spotify: auth.spotify,
+    youtube: auth.youtube,
   },
 });
 

@@ -4,7 +4,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 
 module.exports = {
   name: 'nowplaying',
-  description: 'veiw what is playing!',
+  description: 'view what is playing!',
   voiceChannel: true,
 
   async execute({ inter }) {
@@ -84,7 +84,7 @@ module.exports = {
 
       inter.editReply({ embeds: [embed], components: [row] });
     } catch (error) {
-      logger.error(`Now playing error.`, { error });
+      logger.error(`Now playing error: ${error.message}`, { error });
     }
   },
 };
