@@ -41,10 +41,13 @@ const gamble = require('./gamble.js');
 const tetr = require('./tetr.js');
 const tetrNew = require('./tetr_new');
 const googleTask = require('./googleTask');
+const { logger } = require('./logger');
 
-process.on('uncaughtException', function (err) {
-  console.log(err.stack);
-  throw err;
+process.on('uncaughtException', function (error) {
+  // console.log(err.stack);
+  // throw err;
+  logger.error(`Uncaught Exception: ${error.message}`, { error });
+  return;
 });
 
 bot.config = {
