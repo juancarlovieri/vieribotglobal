@@ -76,6 +76,7 @@ global.player = new Player(bot, {
 
   authorization: {
     spotify: auth.spotify,
+    youtube: auth.youtube,
   },
 });
 
