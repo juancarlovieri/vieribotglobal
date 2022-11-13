@@ -47,7 +47,9 @@ module.exports = {
         });
       }
       await inter.editReply({
-        content: `Loading your ${res.playlist ? 'playlist' : 'track'}... 🎧`,
+        content: `Loading your ${
+          res.playlist ? `playlist of ${res.tracks.length} songs` : 'track'
+        }... 🎧`,
       });
 
       res.playlist
