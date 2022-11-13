@@ -88,8 +88,8 @@ global.player = new Player(bot, {
   },
 });
 
-require('./music/src/loader');
-require('./music/src/events');
+// require('./music/src/loader');
+// require('./music/src/events');
 
 // console.log((1599715800000 - 3600000) - Date.now());
 
