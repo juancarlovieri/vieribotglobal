@@ -2,6 +2,7 @@
 const Discord = require('discord.js');
 var bot;
 const fs = require('fs');
+const { logger } = require('./logger');
 
 const publishedPath = 'datas/published.json';
 
@@ -69,10 +70,14 @@ function timer(time, embed, file) {
   const channel = bot.channels.cache.get('758646515983712287');
   const channel2 = bot.channels.cache.get('576623116394954762');
   console.log(time);
-  runAtDate(time, function print() {
-    channel.send('<@&758716095141642282>');
-    channel.send({ files: [file], embeds: [embed] });
-    channel2.send({ files: [file], embeds: [embed] });
+  runAtDate(time, async function print() {
+    try {
+      await channel.send('<@&758716095141642282>');
+      await channel.send({ files: [file], embeds: [embed] });
+      await channel2.send({ files: [file], embeds: [embed] });
+    } catch (error) {
+      logger.error(`Sending message failed: ${error.message}`, { error });
+    }
   });
 }
 
@@ -220,11 +225,15 @@ async function news() {
         text: 'By Vieri Corp.™ All Rights Reserved',
       },
     };
-    const channel = bot.channels.cache.get('761766016807469057');
-    channel.send('<@&758716095141642282>');
-    channel.send({ files: [vieri], embeds: [embed] });
-    const channel2 = bot.channels.cache.get('576623116394954762');
-    channel2.send({ files: [vieri], embeds: [embed] });
+    try {
+      const channel = bot.channels.cache.get('761766016807469057');
+      await channel.send('<@&758716095141642282>');
+      await channel.send({ files: [vieri], embeds: [embed] });
+      const channel2 = bot.channels.cache.get('576623116394954762');
+      await channel2.send({ files: [vieri], embeds: [embed] });
+    } catch (error) {
+      logger.error(`Sending news failed: ${error.message}`, { error });
+    }
     published.set(list[i].id, 1);
     save();
   }
