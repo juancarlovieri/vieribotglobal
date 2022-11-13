@@ -36,7 +36,7 @@ module.exports = {
       const tracks = queue.tracks.map(
         (track, i) =>
           `**${i + 1}** - ${track.title} | ${track.author} (requested by : ${
-            track.requestedBy.username
+            track.requestedBy.nickname
           })`
       );
 
