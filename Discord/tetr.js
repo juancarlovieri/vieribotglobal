@@ -192,7 +192,7 @@ async function async_request(option) {
         lastwarn = 0;
       }
     }
-    throw new Error('Unable to fetch data');
+    throw new Error(temp.error);
   }
   return temp;
 }
@@ -282,6 +282,14 @@ async function refreshChannel(bot, curm) {
       );
       record = record.data.records;
     } catch (e) {
+      if (
+        e.message ===
+        'No such user! | Either you mistyped something, or the account no longer exists.'
+      ) {
+        logger.info(`Deleting removed user: ${id}`, { temp });
+        curm.delete(id);
+        continue;
+      }
       logger.error(`Error getting user data records for ${id}`, { e });
       continue;
     }
