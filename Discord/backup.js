@@ -14,12 +14,10 @@ async function send() {
 
     output.on(`close`, async () => {
       logger.info(`Zipping finished.`);
-      await bot.channels.cache
-        .get(token.opchannel)
-        .send({
-          content: new Date().toISOString(),
-          files: [`datas/datas.zip`],
-        });
+      await bot.channels.cache.get(token.spamchannel).send({
+        content: new Date().toISOString(),
+        files: [`datas/datas.zip`],
+      });
       logger.info(`Backup finished.`);
     });
 
