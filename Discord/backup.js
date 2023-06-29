@@ -9,14 +9,17 @@ const { logger } = require('./logger');
 async function send() {
   logger.info(`Backup started.`);
   try {
-    var output = fs.createWriteStream(`datas.zip`);
+    var output = fs.createWriteStream(`datas/datas.zip`);
     var archive = archiver(`zip`);
 
     output.on(`close`, async () => {
       logger.info(`Zipping finished.`);
       await bot.channels.cache
         .get(token.opchannel)
-        .send({ content: new Date().toISOString(), files: [`datas.zip`] });
+        .send({
+          content: new Date().toISOString(),
+          files: [`datas/datas.zip`],
+        });
       logger.info(`Backup finished.`);
     });
 
