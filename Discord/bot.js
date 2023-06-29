@@ -42,6 +42,7 @@ const tetr = require('./tetr.js');
 const tetrNew = require('./tetr_new');
 const googleTask = require('./googleTask');
 const { logger } = require('./logger');
+const backup = require(`./backup`);
 
 process.on('uncaughtException', function (error) {
   // console.log(err.stack);
@@ -623,6 +624,7 @@ bot.on('ready', (msg) => {
   //   play4();
   //   play5();
   // bot.user.setStatus("idle", "lagrange");
+  backup.start(bot);
   test.run(bot);
   setPresence();
   setInterval(setPresence, 3600000);
