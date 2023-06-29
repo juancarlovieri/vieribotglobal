@@ -369,7 +369,7 @@ module.exports = {
     // console.log('tes');
     init();
     setInterval(init, 3600000);
-    news();
-    setInterval(news, 3600000);
+    // news();
+    // setInterval(news, 3600000);
   },
 };
