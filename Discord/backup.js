@@ -9,6 +9,8 @@ const { logger } = require('./logger');
 async function send() {
   logger.info(`Backup started.`);
   try {
+    // if (fs.existsSync(`./datas/datas.zip`))
+    //   await fs.unlinkSync(`./datas/datas.zip`);
     var output = fs.createWriteStream(`datas/datas.zip`);
     var archive = archiver(`zip`);
 
@@ -27,11 +29,13 @@ async function send() {
 
     archive.pipe(output);
 
-    archive.directory(`datas/`, `datas`);
+    // archive.directory(`datas/`, `datas`);
+    archive.glob(`**/*`, { cwd: `datas`, ignore: [`datas.zip`] }, {});
 
     logger.info(`Zipping started`);
     archive.finalize();
   } catch (error) {
+    console.error(error);
     logger.error(`Backup error.`, { error });
     return;
   }
