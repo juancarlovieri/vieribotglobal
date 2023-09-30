@@ -6,6 +6,7 @@ services:
     restart: always
     volumes:
       - ./Discord/datas:/usr/src/bot/Discord/datas
+      - ./Discord/auth.json:/usr/src/bot/Discord/auth.json:ro
     deploy:
       resources:
         limits:
