@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  discord:
+    build: .
+    restart: always
+    volumes:
+      - ./Discord/datas:/usr/src/bot/Discord/datas
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-file: 2
+        max-size: "10m"
