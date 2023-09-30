@@ -1,7 +1,8 @@
 version: "3.8"
 services:
   discord:
-    build: .
+    # build: .
+    image: vieribotglobal-discord
     restart: always
     volumes:
       - ./Discord/datas:/usr/src/bot/Discord/datas
@@ -9,7 +10,7 @@ services:
       resources:
         limits:
           cpus: '1'
-          memory: 1G
+          memory: 500M
     logging:
       driver: "json-file"
       options:
